@@ -177,7 +177,6 @@ typedef struct {
 	unsigned int size;
 	unsigned int RCA;
 } mmc_card_data;
-
 #define mmc_reg_out(addr, mask, val)\
 	writel((readl(addr) & (~(mask))) | ((val) & (mask)), (addr))
 
