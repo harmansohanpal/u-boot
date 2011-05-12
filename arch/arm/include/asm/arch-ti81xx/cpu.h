@@ -147,6 +147,62 @@
 #define PIN_CTRL_BASE			(CTRL_BASE + 0x800)
 #define N_PINS				(271) /* PIN1=800, PIN 271=800+270*4=C38) */
 
+/* ddr control register */
+#define DDR0_CMD_CTRL			(CTRL_BASE + 0x1400)
+#define DDR0_DATA0_CS0_CTRL0		(CTRL_BASE + 0x1440)
+#define DDR0_DATA0_CS0_CTRL1		(CTRL_BASE + 0x1444)
+#define DDR0_DATA0_CS1_CTRL0		(CTRL_BASE + 0x1448)
+#define DDR0_DATA0_CS1_CTRL1		(CTRL_BASE + 0x144C)
+
+#define DDR0_DATA1_CS0_CTRL0		(CTRL_BASE + 0x1450)
+#define DDR0_DATA1_CS0_CTRL1		(CTRL_BASE + 0x1454)
+#define DDR0_DATA1_CS1_CTRL0		(CTRL_BASE + 0x1458)
+#define DDR0_DATA1_CS1_CTRL1		(CTRL_BASE + 0x145C)
+
+#define DDR0_DATA2_CS0_CTRL0		(CTRL_BASE + 0x1460)
+#define DDR0_DATA2_CS0_CTRL1		(CTRL_BASE + 0x1464)
+#define DDR0_DATA2_CS1_CTRL0		(CTRL_BASE + 0x1468)
+#define DDR0_DATA2_CS1_CTRL1		(CTRL_BASE + 0x146C)
+
+#define DDR0_DATA3_CS0_CTRL0		(CTRL_BASE + 0x1470)
+#define DDR0_DATA3_CS0_CTRL1		(CTRL_BASE + 0x1474)
+#define DDR0_DATA3_CS1_CTRL0		(CTRL_BASE + 0x1478)
+#define DDR0_DATA3_CS1_CTRL1		(CTRL_BASE + 0x147C)
+#define DDR0_DATA0_CTRL			(CTRL_BASE + 0x1420)
+#define DDR0_DATA1_CTRL			(CTRL_BASE + 0x1424)
+#define DDR0_DATA2_CTRL			(CTRL_BASE + 0x1428)
+#define DDR0_DATA3_CTRL			(CTRL_BASE + 0x142C)
+
+#define DDR1_CMD_CTRL			(CTRL_BASE + 0x1500)
+#define DDR1_DATA0_CS0_CTRL0		(CTRL_BASE + 0x1540)
+#define DDR1_DATA0_CS0_CTRL1		(CTRL_BASE + 0x1544)
+#define DDR1_DATA0_CS1_CTRL0		(CTRL_BASE + 0x1548)
+#define DDR1_DATA0_CS1_CTRL1		(CTRL_BASE + 0x154C)
+
+#define DDR1_DATA1_CS0_CTRL0		(CTRL_BASE + 0x1550)
+#define DDR1_DATA1_CS0_CTRL1		(CTRL_BASE + 0x1554)
+#define DDR1_DATA1_CS1_CTRL0		(CTRL_BASE + 0x1558)
+#define DDR1_DATA1_CS1_CTRL1		(CTRL_BASE + 0x155C)
+
+#define DDR1_DATA2_CS0_CTRL0		(CTRL_BASE + 0x1560)
+#define DDR1_DATA2_CS0_CTRL1		(CTRL_BASE + 0x1564)
+#define DDR1_DATA2_CS1_CTRL0		(CTRL_BASE + 0x1568)
+#define DDR1_DATA2_CS1_CTRL1		(CTRL_BASE + 0x156C)
+
+#define DDR1_DATA3_CS0_CTRL0		(CTRL_BASE + 0x1570)
+#define DDR1_DATA3_CS0_CTRL1		(CTRL_BASE + 0x1574)
+#define DDR1_DATA3_CS1_CTRL0		(CTRL_BASE + 0x1578)
+#define DDR1_DATA3_CS1_CTRL1		(CTRL_BASE + 0x157C)
+#define DDR1_DATA0_CTRL			(CTRL_BASE + 0x1520)
+#define DDR1_DATA1_CTRL			(CTRL_BASE + 0x1524)
+#define DDR1_DATA2_CTRL			(CTRL_BASE + 0x1528)
+#define DDR1_DATA3_CTRL			(CTRL_BASE + 0x152C)
+
+#define DDR0_IO_CTRL			(CTRL_BASE + 0x0E04)
+#define DDR1_IO_CTRL			(CTRL_BASE + 0x0E08)
+#define VTP0_CTRL_REG			(CTRL_BASE + 0x0E0C)
+#define VTP1_CTRL_REG			(CTRL_BASE + 0x0E10)
+
 /* Clocks are derived from ADPLLJ */
 #define ADPLLJ_CLKCTRL			0x4
 #define ADPLLJ_TENABLE			0x8
@@ -174,7 +230,7 @@
 #define USB_PLL_BASE			(PLL_SUBSYS_BASE + 0x260)
 #define DDR_PLL_BASE			(PLL_SUBSYS_BASE + 0x290)
 
-#define OSC_SRC_CTRL			(PLL_SUBSYS_BASE + 0x2C0)
+#define OSC_SRC				(PLL_SUBSYS_BASE + 0x2C0)
 #define ARM_CLKSRC			(PLL_SUBSYS_BASE + 0x2C4)
 #define VIDEO_PLL_CLKSRC		(PLL_SUBSYS_BASE + 0x2C8)
 #define MLB_ATL_CLKSRC			(PLL_SUBSYS_BASE + 0x2CC)
@@ -303,6 +359,21 @@
 #define EMIF4_1_DDR_PHY_CTRL_1_SHADOW	(EMIF4_1_CFG_BASE + 0xE8)
 #define EMIF4_1_IODFT_TLGC		(EMIF4_1_CFG_BASE + 0x60)
 
+#define EMIF4_REGION_SIZE		(EMIF4_1_CFG_BASE - EMIF4_0_CFG_BASE)
+#define EMIF4_SDRAM_CONFIG		(0x08)
+#define EMIF4_SDRAM_CONFIG2		(0x0C)
+#define EMIF4_SDRAM_REF_CTRL		(0x10)
+#define EMIF4_SDRAM_REF_CTRL_SHADOW	(0x14)
+#define EMIF4_SDRAM_TIM_1		(0x18)
+#define EMIF4_SDRAM_TIM_1_SHADOW	(0x1C)
+#define EMIF4_SDRAM_TIM_2		(0x20)
+#define EMIF4_SDRAM_TIM_2_SHADOW	(0x24)
+#define EMIF4_SDRAM_TIM_3		(0x28)
+#define EMIF4_SDRAM_TIM_3_SHADOW	(0x2C)
+#define EMIF4_DDR_PHY_CTRL_1		(0xE4)
+#define EMIF4_DDR_PHY_CTRL_1_SHADOW	(0xE8)
+#define EMIF4_IODFT_TLGC		(0x60)
+
 #define VTP0_CTRL_REG			0x48140E0C
 #define VTP1_CTRL_REG			0x48140E10
 
@@ -397,6 +468,7 @@
 
 #ifndef __KERNEL_STRICT_NAMES
 #ifndef __ASSEMBLY__
+#include <asm/io.h>
 struct gpmc_cs {
 	u32 config1;		/* 0x00 */
 	u32 config2;		/* 0x04 */
@@ -414,8 +486,6 @@ struct gpmc_cs {
 struct bch_res_0_3 {
 	u32 bch_result_x[4];
 };
-
-
 
 struct gpmc {
 	u8 res1[0x10];
@@ -451,6 +521,13 @@ struct gpmc {
 
 /* Used for board specific gpmc initialization */
 extern struct gpmc *gpmc_cfg;
+
+static inline void ti81xx_write_emif(s8 emif, u32 reg, u32 val)
+{
+	u32 mmr = EMIF4_0_CFG_BASE + (emif * EMIF4_REGION_SIZE) + reg;
+	__raw_writel(val, mmr);
+
+}
 
 #endif /* __ASSEMBLY__ */
 #endif /* __KERNEL_STRICT_NAMES */

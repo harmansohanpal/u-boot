@@ -21,13 +21,6 @@
 #ifndef _CLOCKS_TI814X_H_
 #define _CLOCKS_TI814X_H_
 
-/* CLK_SRC */
-#define OSC_SRC0	0
-#define OSC_SRC1	1
-
-#define L3_OSC_SRC	OSC_SRC0
-#define AUDIO_OSC_SRC	OSC_SRC0
-
 /* Put the pll config values over here */
 #define AUDIO_N		19
 #define AUDIO_M		800
@@ -40,7 +33,7 @@
 #define MODENA_CLKCTRL	0x1
 
 #define L3_N		19
-#define L3_M		880
+#define L3_M		800	/*880*/
 #define L3_M2		4
 #define L3_CLKCTRL	0x801
 
@@ -54,19 +47,24 @@
 #define DSP_M2		1
 #define DSP_CLKCTRL	0x801
 
+#define DSS_N		19
+#define DSS_M		800	/*666*/
+#define DSS_M2		4
+#define DSS_CLKCTRL	0x801
+
 #define IVA_N		19
-#define IVA_M		640
+#define IVA_M		532	/*850*/
 #define IVA_M2		2
 #define IVA_CLKCTRL	0x801
 
 #define ISS_N		19
 #define ISS_M		800
-#define ISS_M2		2
+#define ISS_M2		4	/*2*/
 #define ISS_CLKCTRL	0x801
 
 #define USB_N		19
 #define USB_M		960
-#define USB_M2		1
+#define USB_M2		5	/*1*/
 #define USB_CLKCTRL	0x200a0801
 #endif	/* endif _CLOCKS_TI814X_H_ */
 

@@ -17,6 +17,9 @@
 #ifndef __CONFIG_TI8148_EVM_H
 #define __CONFIG_TI8148_EVM_H
 
+/* Display CPU info */
+#define CONFIG_DISPLAY_CPUINFO          1
+
 /* In the 1st stage we have just 110K, so cut down wherever possible */
 #ifdef CONFIG_TI814X_MIN_CONFIG
 
@@ -33,7 +36,11 @@
 # define CONFIG_CMD_LOADY	/* loady */
 # define CONFIG_SETUP_PLL
 # define CONFIG_TI814X_CONFIG_DDR
-# define CONFIG_ENV_SIZE			0x400
+# define CONFIG_TI814X_EVM_DDR3
+/*
+ * # define CONFIG_TI814X_EVM_DDR2
+ */ 
+# define CONFIG_ENV_SIZE		0x400
 # define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (8 * 1024))
 # define CONFIG_SYS_PROMPT		"TI-MIN#"
 # define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
