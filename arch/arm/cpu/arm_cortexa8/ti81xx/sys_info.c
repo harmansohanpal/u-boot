@@ -42,7 +42,7 @@ u32 get_cpu_rev(void)
 	u32 rev;
 
 	id = readl(DEVICE_ID);
-	rev = (id >> 28) & 0xf;
+	rev = (id >> 28) & 0xF;
 	return rev;
 }
 
