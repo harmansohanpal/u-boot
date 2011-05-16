@@ -54,5 +54,6 @@ void omap_nand_switch_ecc(int);
 void power_init_r(void);
 void invalidate_dcache(u32);
 u32 pg_val_ti816x(u32, u32);
+u32 pg_val_ti814x(u32, u32);
 #endif
 

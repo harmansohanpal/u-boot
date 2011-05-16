@@ -33,7 +33,7 @@
 #define MODENA_CLKCTRL	0x1
 
 #define L3_N		19
-#define L3_M		800	/*880*/
+#define L3_M		(pg_val_ti814x(880, 800))
 #define L3_M2		4
 #define L3_CLKCTRL	0x801
 
@@ -48,23 +48,23 @@
 #define DSP_CLKCTRL	0x801
 
 #define DSS_N		19
-#define DSS_M		800	/*666*/
+#define DSS_M		(pg_val_ti814x(666, 800))
 #define DSS_M2		4
 #define DSS_CLKCTRL	0x801
 
 #define IVA_N		19
-#define IVA_M		532	/*850*/
+#define IVA_M		(pg_val_ti814x(850, 532))
 #define IVA_M2		2
 #define IVA_CLKCTRL	0x801
 
 #define ISS_N		19
 #define ISS_M		800
-#define ISS_M2		4	/*2*/
+#define ISS_M2		(pg_val_ti814x(2, 4))
 #define ISS_CLKCTRL	0x801
 
 #define USB_N		19
 #define USB_M		960
-#define USB_M2		5	/*1*/
+#define USB_M2		(pg_val_ti814x(1, 5))
 #define USB_CLKCTRL	0x200a0801
 #endif	/* endif _CLOCKS_TI814X_H_ */
 

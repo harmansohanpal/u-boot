@@ -103,6 +103,18 @@ u32 pg_val_ti816x(u32 pg1_val, u32 pg2_val)
 		return pg1_val;
 }
 
+/***************************************************
+ * u32 pg_val_ti814x() - return the PG specifi value
+ ***************************************************/
+u32 pg_val_ti814x(u32 pg1_val, u32 pg2_val)
+{
+	/* PG2.1 devices should read 0x3 as chip rev */
+	if (0x3 == get_cpu_rev())
+		return pg2_val;
+	else
+	return pg1_val;
+}
+
 #ifdef CONFIG_DISPLAY_CPUINFO
 /**
  * Print CPU information

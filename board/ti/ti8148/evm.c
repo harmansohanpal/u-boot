@@ -101,7 +101,6 @@ static void modena_pll_config(void);
 static void l3_pll_config(void);
 static void ddr_pll_config(void);
 static void dsp_pll_config(void);
-static void dss_pll_config(void);
 static void iss_pll_config(void);
 static void iva_pll_config(void);
 static void usb_pll_config(void);
@@ -604,11 +603,10 @@ void prcm_init(u32 in_ddr)
 	modena_pll_config();
 	l3_pll_config();
 	ddr_pll_config();
-#if 0
 	dsp_pll_config();
 	iva_pll_config();
 	iss_pll_config();
-#endif
+
 	usb_pll_config();
 
 	/*  With clk freqs setup to desired values, enable the required peripherals */
