@@ -17,6 +17,10 @@
 #ifndef __CONFIG_TI8148_EVM_H
 #define __CONFIG_TI8148_EVM_H
 
+/*
+ *#define CONFIG_TI814X_NO_RUNTIME_PG_DETECT
+ */
+
 /* Display CPU info */
 #define CONFIG_DISPLAY_CPUINFO          1
 

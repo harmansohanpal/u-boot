@@ -43,6 +43,13 @@ u32 get_cpu_rev(void)
 
 	id = readl(DEVICE_ID);
 	rev = (id >> 28) & 0xF;
+
+#if defined(CONFIG_TI814X)
+	if (0x3 == rev)
+		return PG2_1;
+	else
+		return PG1_0;
+#endif
 	return rev;
 }
 
@@ -109,7 +116,7 @@ u32 pg_val_ti816x(u32 pg1_val, u32 pg2_val)
 u32 pg_val_ti814x(u32 pg1_val, u32 pg2_val)
 {
 	/* PG2.1 devices should read 0x3 as chip rev */
-	if (0x3 == get_cpu_rev())
+	if (PG2_1 == get_cpu_rev())
 		return pg2_val;
 	else
 	return pg1_val;
