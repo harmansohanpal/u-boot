@@ -494,6 +494,14 @@ static void pll_config(u32 base, u32 n, u32 m, u32 m2, u32 clkctrl_val)
 	m2nval = (m2 << 16) | n;
 	mn2val = m;
 
+	/* by-pass pll */
+	read_clkctrl = __raw_readl(base + ADPLLJ_CLKCTRL);
+	__raw_writel((read_clkctrl | 0x00800000), (base + ADPLLJ_CLKCTRL));
+	while ((__raw_readl(base + ADPLLJ_STATUS) & 0x101) != 0x101);
+	read_clkctrl = __raw_readl(base + ADPLLJ_CLKCTRL);
+	__raw_writel((read_clkctrl & 0xfffffffe), (base + ADPLLJ_CLKCTRL));
+
+
 	/*
 	 * ref_clk = 20/(n + 1);
 	 * clkout_dco = ref_clk * m;
@@ -519,10 +527,8 @@ static void pll_config(u32 base, u32 n, u32 m, u32 m2, u32 clkctrl_val)
 	else
 		__raw_writel((read_clkctrl & 0xff7fe3ff) | clkctrl_val,
 			base + ADPLLJ_CLKCTRL);
-
-
 	/* Wait for phase and freq lock */
-	while((__raw_readl(base + ADPLLJ_STATUS) & 0x00000600) != 0x00000600);
+	while ((__raw_readl(base + ADPLLJ_STATUS) & 0x600) != 0x600);
 
 }
 #endif
