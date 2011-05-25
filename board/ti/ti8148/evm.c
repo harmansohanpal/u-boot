@@ -170,7 +170,8 @@ int misc_init_r (void)
 {
 	#ifdef CONFIG_TI814X_MIN_CONFIG
 	printf("The 2nd stage U-Boot will now be auto-loaded\n");
-	printf("Please do not interrupt the countdown till TI8148_EVM prompt if 2nd stage is already flashed\n");
+	printf("Please do not interrupt the countdown till "
+		"TI8148_EVM prompt if 2nd stage is already flashed\n");
 	#endif
 
 	#ifdef CONFIG_TI814X_ASCIIART
@@ -367,7 +368,9 @@ static void pcie_pll_config()
 
 	__raw_writel(0x00000000, PCIE_PLLCFG0);
 
-	/* PCIe(2.5GHz) mode, 100MHz refclk, MDIVINT = 25, disable (50,100,125M) clks */
+	/* PCIe(2.5GHz) mode, 100MHz refclk, MDIVINT = 25,
+	 * disable (50,100,125M) clks
+	 */
 	__raw_writel(0x00640000, PCIE_PLLCFG1);
 
 	/* SSC Mantissa and exponent = 0 */
@@ -380,7 +383,9 @@ static void pcie_pll_config()
 	__raw_writel(0x0000609C, PCIE_PLLCFG4);
 
 	/* pcie_serdes_cfg_misc */
-	/* TODO: verify the address over here (CTRL_BASE + 0x6FC = 0x481406FC ???)*/
+	/* TODO: verify the address over here
+	 * (CTRL_BASE + 0x6FC = 0x481406FC ???)
+	 */
 	//__raw_writel(0x00000E7B, 0x48141318);
 	delay(3);
 
@@ -615,7 +620,9 @@ void prcm_init(u32 in_ddr)
 
 	usb_pll_config();
 
-	/*  With clk freqs setup to desired values, enable the required peripherals */
+	/*  With clk freqs setup to desired values,
+	 *  enable the required peripherals
+	 */
 	per_clocks_enable();
 #endif
 }
