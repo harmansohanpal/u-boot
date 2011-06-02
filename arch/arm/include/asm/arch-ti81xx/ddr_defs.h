@@ -304,7 +304,11 @@
 #define EMIF_TIM3    0x80032F
 #define EMIF_SDREF   0x10000C30
 #define EMIF_SDCFG   0x43801A3A  /* 32 bit ddr2, CL=6, CWL=5, 13 rows, 8 banks, 10 bit column, 2 CS */
-#define EMIF_PHYCFG  0x0000010B  /* local odt = 1, read latency = 11 (max = 12, min=6) */
+/*
+ * TI816x PG1.0 EMIF_PHYCFG 0x0000030B   local odt = 3, read latency = 11
+ * TI816x PG1.1 EMIF_PHYCFG 0x0000010B   local odt = 1, read latency = 11
+ */
+#define EMIF_PHYCFG  (pg_val_ti816x(0x0000030B, 0x0000010B))
 
 #endif	/* CONFIG_TI816X_EVM_DDR2 */
 

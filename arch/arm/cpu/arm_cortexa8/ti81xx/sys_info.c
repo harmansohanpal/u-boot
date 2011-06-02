@@ -42,7 +42,7 @@ u32 get_cpu_rev(void)
 	u32 rev;
 
 	id = readl(DEVICE_ID);
-	rev = (id >> 28) & 0xff;
+	rev = (id >> 28) & 0xf;
 	return rev;
 }
 
@@ -87,6 +87,20 @@ u32 get_sysboot_value(void)
 	int mode;
 	mode = __raw_readl(CONTROL_STATUS) & (SYSBOOT_MASK);
 	return mode;
+}
+
+/******************************************
+ * pg_val_ti816x() - runtime PG ver detect
+ ******************************************/
+u32 pg_val_ti816x(u32 pg1_val, u32 pg2_val)
+{
+	/* TI816X PG1.0 devices should read 0x0 as chip rev
+	 * TI816X PG1.1 devices should read 0x1 as chip rev
+	 */
+	if (0x1 == get_cpu_rev())
+		return pg2_val;
+	else
+		return pg1_val;
 }
 
 #ifdef CONFIG_DISPLAY_CPUINFO
