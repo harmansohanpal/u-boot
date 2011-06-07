@@ -83,11 +83,19 @@ static void data_macro_config(u32 macro_num, u32 phy_num, u32 rd_dqs_cs0,
 
 int is_ddr3(void)
 {
-#if defined(CONFIG_TI814X_EVM_DDR3)
-	return 1;
-#else
-	return 0;
-#endif
+	/*
+	 * PG1.0 by default uses DDR2 &  PG2.1 uses DDR3
+	 * To use PG2.1 and DDR2 enable #define CONFIG_TI814X_EVM_DDR2
+	 * in "include/configs/ti8148_evm.h"
+	 */
+	if (PG2_1 == get_cpu_rev())
+		#ifdef CONFIG_TI814X_EVM_DDR2
+			return 0;
+		#else
+			return 1;
+		#endif
+	else
+		return 0;
 }
 
 #ifdef CONFIG_SETUP_PLL
