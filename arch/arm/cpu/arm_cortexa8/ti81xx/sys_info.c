@@ -45,7 +45,10 @@ u32 get_cpu_rev(void)
 	rev = (id >> 28) & 0xF;
 
 #if defined(CONFIG_TI814X)
-	if (0x3 == rev)
+	/* PG2.1 devices should read 0x3 as chip rev
+	 * Some PG2.1 devices have 0xc as chip rev
+	 */
+	if (0x3 == rev || 0xc == rev)
 		return PG2_1;
 	else
 		return PG1_0;
