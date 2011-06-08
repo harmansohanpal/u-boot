@@ -138,6 +138,9 @@ int print_cpuinfo (void)
 	case TI8168:
 		cpu_s = "8168";
 		break;
+	case TI8148:
+		cpu_s = "8148";
+		break;
 	default:
 		cpu_s = "Unknown cpu type";
 		break;
@@ -186,11 +189,14 @@ int print_cpuinfo (void)
 	arm_freq=arm_freq/((MAIN_INTFREQ2 * 0x1000000 + MAIN_FRACFREQ2)>>8);
 
 	ddr_freq = ((DDR_N * OSC_FREQ)/DDR_MDIV1);
-
+#else
+	/* clk_out  = ((OSC_0/ ( N+1 )) * M) / M2   */
+	arm_freq = ((OSC_0_FREQ / (MODENA_N + 1) * MODENA_M) / MODENA_M2);
+	ddr_freq = ((OSC_0_FREQ / (DDR_N + 1) * DDR_M) / DDR_M2);
+#endif
 	printf("ARM clk: %dMHz\n", arm_freq);
 	printf("DDR clk: %dMHz\n", ddr_freq);
 	printf("\n");
-#endif
 
 	return 0;
 }

@@ -58,6 +58,7 @@
 
 /* cpu-id for TI81XX family */
 #define TI8168				0xb81e
+#define TI8148				0xb8f2
 
 #define DEVICE_ID			(CTRL_BASE + 0x0600)
 /* This gives the status of the boot mode pins on the evm */
