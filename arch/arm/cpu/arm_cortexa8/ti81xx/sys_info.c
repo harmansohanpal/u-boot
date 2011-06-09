@@ -44,7 +44,7 @@ u32 get_cpu_rev(void)
 	id = readl(DEVICE_ID);
 	rev = (id >> 28) & 0xF;
 
-#if defined(CONFIG_TI814X)
+#ifdef CONFIG_TI814X
 	/* PG2.1 devices should read 0x3 as chip rev
 	 * Some PG2.1 devices have 0xc as chip rev
 	 */
@@ -122,7 +122,7 @@ u32 pg_val_ti814x(u32 pg1_val, u32 pg2_val)
 	if (PG2_1 == get_cpu_rev())
 		return pg2_val;
 	else
-	return pg1_val;
+		return pg1_val;
 }
 
 #ifdef CONFIG_DISPLAY_CPUINFO
@@ -132,8 +132,9 @@ u32 pg_val_ti814x(u32 pg1_val, u32 pg2_val)
 int print_cpuinfo (void)
 {
 	char *cpu_s, *sec_s;
-	int arm_freq, ddr_freq;
+	int arm_freq, ddr_freq , rev;
 
+	rev = get_cpu_rev();
 	switch (get_cpu_type()) {
 	case TI8168:
 		cpu_s = "8168";
@@ -163,8 +164,21 @@ int print_cpuinfo (void)
 		sec_s = "?";
 	}
 
+#ifdef CONFIG_TI816X
 	printf("TI%s-%s rev 1.%d\n",
-			cpu_s, sec_s, get_cpu_rev());
+			cpu_s, sec_s, rev);
+#else
+	if (rev < PG_END) {
+		char cpu_rev_str[3][4] = {"1.0", "2.1"}, *cpu_rev;
+
+		cpu_rev = cpu_rev_str[rev];
+		printf("TI%s-%s rev %s\n",
+			cpu_s, sec_s, cpu_rev);
+	} else {
+		printf("TI%s-%s rev ?????[%1x]\n",
+			cpu_s, sec_s, rev);
+	}
+#endif
 	printf("\n");
 
 	/* ARM and DDR frequencies */

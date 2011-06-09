@@ -32,7 +32,8 @@ typedef struct {
 /* CPU Revision for TI814X PG2.1 is 0x3 and PG1.0 is0 */
 enum cpu_rev {
 	PG1_0 = 0,
-	PG2_1 = 3
+	PG2_1,
+	PG_END
 };
 
 void prcm_init(u32);
