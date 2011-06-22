@@ -40,7 +40,7 @@
 #define L3_CLKCTRL	0x801
 
 #define DDR_N		19
-#define DDR_M		666
+#define DDR_M		(pg_val_ti814x(666, 800))
 #define DDR_M2		2
 #define DDR_CLKCTRL	0x801
 
