@@ -50,18 +50,18 @@
 #define DSP_CLKCTRL	0x801
 
 #define DSS_N		19
-#define DSS_M		(pg_val_ti814x(666, 800))
+#define DSS_M		(pg_val_ti814x(800, 800))
 #define DSS_M2		4
 #define DSS_CLKCTRL	0x801
 
 #define IVA_N		19
-#define IVA_M		(pg_val_ti814x(850, 532))
+#define IVA_M		(pg_val_ti814x(612, 612))
 #define IVA_M2		2
 #define IVA_CLKCTRL	0x801
 
 #define ISS_N		19
 #define ISS_M		800
-#define ISS_M2		(pg_val_ti814x(2, 4))
+#define ISS_M2		(pg_val_ti814x(2, 2))
 #define ISS_CLKCTRL	0x801
 
 #define USB_N		19
