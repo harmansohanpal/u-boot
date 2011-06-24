@@ -295,17 +295,35 @@ static void config_ti814x_ddr(void)
 	while ((__raw_readl(VTP0_CTRL_REG) & 0x00000020) != 0x20);
 	while ((__raw_readl(VTP1_CTRL_REG) & 0x00000020) != 0x20);
 
-	/*Program the DMM to Access EMIF0 and EMIF1*/
-	__raw_writel(0x80600100, DMM_LISA_MAP__0);
-	__raw_writel(0x80600100, DMM_LISA_MAP__1);
-	__raw_writel(0xC0600200, DMM_LISA_MAP__2);
-	__raw_writel(0xC0600200, DMM_LISA_MAP__3);
+	if (PG1_0 == get_cpu_rev()) {
+		/*
+		 * Program the PG1.0 DMM to Access EMIF0 and EMIF1
+		 * Two 256MB sections with 128-byte interleaved (hole in b/w)
+		 */
+		__raw_writel(0x0, DMM_LISA_MAP__0);
+		__raw_writel(0x0, DMM_LISA_MAP__1);
+		__raw_writel(0x80440300, DMM_LISA_MAP__2);
+		__raw_writel(0xC0440300, DMM_LISA_MAP__3);
 
-	while (__raw_readl(DMM_LISA_MAP__0) != 0x80600100);
-	while (__raw_readl(DMM_LISA_MAP__1) != 0x80600100);
-	while (__raw_readl(DMM_LISA_MAP__2) != 0xC0600200);
-	while (__raw_readl(DMM_LISA_MAP__3) != 0xC0600200);
+		while (__raw_readl(DMM_LISA_MAP__0) != 0x0);
+		while (__raw_readl(DMM_LISA_MAP__1) != 0x0);
+		while (__raw_readl(DMM_LISA_MAP__2) != 0x80440300);
+		while (__raw_readl(DMM_LISA_MAP__3) != 0xC0440300);
+	} else {
+		/*
+		 * Program the PG2.1 DMM to Access EMIF0 and EMIF1
+		 * 1G contiguous section with 128-byte interleaving
+		 */
+		__raw_writel(0x0, DMM_LISA_MAP__0);
+		__raw_writel(0x0, DMM_LISA_MAP__1);
+		__raw_writel(0x0, DMM_LISA_MAP__2);
+		__raw_writel(0x80640300, DMM_LISA_MAP__3);
 
+		while (__raw_readl(DMM_LISA_MAP__0) != 0x0);
+		while (__raw_readl(DMM_LISA_MAP__1) != 0x0);
+		while (__raw_readl(DMM_LISA_MAP__2) != 0x0);
+		while (__raw_readl(DMM_LISA_MAP__3) != 0x80640300);
+	}
 	__raw_writel(0x80000000, DMM_PAT_BASE_ADDR);
 
 	if (!is_ddr3()) {
