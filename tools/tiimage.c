@@ -111,7 +111,7 @@ static int tiimage_verify_header(uint8_t *ptr, int image_size,
 
 static void ti81xximage_print_header(const void *ptr)
 {
-#if !defined(CONFIG_TI814X_PERIPHERAL_BOOT) && !defined(CONFIG_TI_DUMMY_HEADER)
+#if !defined(CONFIG_TI_DUMMY_HEADER)
 	struct ti_header *ti_hdr = (struct ti_header *) ptr;
 	printf("Image Type:   Texas Instruments ti81xx Boot Image\n");
 	printf("Image Size:   ");
@@ -121,10 +121,17 @@ static void ti81xximage_print_header(const void *ptr)
 #endif
 }
 
-#if defined(CONFIG_TI816X)
-static void ti816ximage_set_header(void *ptr, struct stat *sbuf, int ifd,
+#if defined(CONFIG_TI_DUMMY_HEADER)
+static void ti_dummy_set_header(void *ptr, struct stat *sbuf, int ifd,
 				struct mkimage_params *params)
 {
+	/* Dummy function for set header */
+}
+#else
+static void ti81xximage_set_header(void *ptr, struct stat *sbuf, int ifd,
+				struct mkimage_params *params)
+{
+#if !defined(CONFIG_TI81XX_PERIPHERAL_BOOT)
 	struct ti_header *hdr = (struct ti_header *)ptr;
 	FILE *data_fp = NULL;
 	uint32_t data_size = 0;
@@ -155,57 +162,10 @@ static void ti816ximage_set_header(void *ptr, struct stat *sbuf, int ifd,
 		params->datafile, spi_out_file);
 	free(spi_out_file);
 #endif
-}
-#elif defined(CONFIG_TI814X) && defined(CONFIG_TI814X_MIN_CONFIG)
-static void ti814ximage_set_header(void *ptr, struct stat *sbuf, int ifd,
-				struct mkimage_params *params)
-{
-	struct ti_header *hdr = (struct ti_header *)ptr;
-#if !defined(CONFIG_TI814X_PERIPHERAL_BOOT)
-	FILE *data_fp = NULL;
-	uint32_t data_size = 0;
-
-	/* Set default offset */
-	hdr->load_addr = params->ep;
-
-	if ((data_fp = fopen(params->datafile, "r")) == NULL) {
-		printf("Data FILE [%s] open error.\n", params->datafile);
-		return;
-	}
-
-	/* calculate image size */
-	fseek(data_fp, 0, SEEK_END);
-	data_size = ftell(data_fp);
-	/* image size should include initial jump, jump location and
-	 * stack. (sizeof(unsigned int) * 2) is for excluding, image size
-	 * and load address fields in the header.
-	 */
-	hdr->image_size = data_size + sizeof(struct ti_header) -
-				(sizeof(unsigned int) * 2);
-	fclose(data_fp);
-#endif
-	/* add short jump detals to hdr */
-	hdr->ldrpc	= 0xe51ff004; /* opcode for 'ldr pc, [pc, #-4]' */
-	/* loc will be placed immediate after ldrpc in memroy and
-	 * it will have the location to jump
-	 */
-	hdr->loc	= params->ep + CONFIG_TI814X_STACK;
-
-	/* spi image has to be endian swapped */
-#if defined(CONFIG_TI81XX_SPI_BOOT)
-	if (strstr(params->imagefile, "min.spi") != NULL) {
-		/* generate spi image */
-		ti81xximage_spi(hdr, sizeof(struct ti_header),
-			params->datafile, "u-boot.min.spi");
-	}
 #endif
 }
-#else
-static void ti_dummy_set_header(void *ptr, struct stat *sbuf, int ifd,
-				struct mkimage_params *params)
-{
-	/* Dummy function for set header */
-}
+
+
 #endif
 
 int tiimage_check_params(struct mkimage_params *params)
@@ -232,12 +192,10 @@ static struct image_type_params tiimage_params = {
 	.check_image_type = tiimage_check_image_types,
 	.verify_header	= tiimage_verify_header,
 	.print_header	= ti81xximage_print_header,
-#if defined(CONFIG_TI816X)
-	.set_header		= ti816ximage_set_header,
-#elif defined(CONFIG_TI814X) && defined(CONFIG_TI814X_MIN_CONFIG)
-	.set_header		= ti814ximage_set_header,
-#else
+#if defined(CONFIG_TI_DUMMY_HEADER)
 	.set_header		= ti_dummy_set_header,
+#else
+	.set_header		= ti81xximage_set_header,
 #endif
 	.check_params	= tiimage_check_params,
 };

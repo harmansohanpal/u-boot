@@ -3211,7 +3211,6 @@ ti8148_evm_min_sd:	unconfig
 	@echo "#define CONFIG_TI81XX"	>>$(obj)include/config.h
 	@echo "#define CONFIG_TI814X"	>>$(obj)include/config.h
 	@if [ "$(findstring _min_,$@)" ] ; then \
-		echo "#define CONFIG_TI814X_STACK 0x3000" >>$(obj)include/config.h;\
 		echo "TEXT_BASE = 0x80700000" >> $(obj)board/ti/ti8148/config.tmp; \
 		echo "#define CONFIG_TI814X_MIN_CONFIG"    >>$(obj)include/config.h ; \
 		echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
@@ -3224,11 +3223,11 @@ ti8148_evm_min_sd:	unconfig
 			echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_TI81XX_SPI_BOOT"	>>$(obj)include/config.h ; \
-			echo "TI_IMAGE = u-boot.min.spi.tmp" >> $(obj)board/ti/ti8148/config.tmp;\
+			echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/ti8148/config.tmp;\
 		elif [ "$(findstring uart,$@)" ] ; then \
 			echo "#define CONFIG_NAND_BOOT"	>>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
-			echo "#define CONFIG_TI814X_PERIPHERAL_BOOT"	>>$(obj)include/config.h; \
+			echo "#define CONFIG_TI81XX_PERIPHERAL_BOOT"	>>$(obj)include/config.h; \
 			echo "TI_IMAGE = u-boot.min.uart" >> $(obj)board/ti/ti8148/config.tmp;\
 		elif [ "$(findstring sd,$@)" ] ; then \
 			echo "#define CONFIG_SD_BOOT"    >>$(obj)include/config.h ; \
@@ -3241,8 +3240,8 @@ ti8148_evm_min_sd:	unconfig
 		fi;	\
 	else	\
 		echo "TEXT_BASE = 0x80700000" >> $(obj)board/ti/ti8148/config.tmp;\
-		echo "TI_IMAGE = DUMMY" >> $(obj)board/ti/ti8148/config.tmp;\
 		echo "#define CONFIG_TI_DUMMY_HEADER"	>>$(obj)include/config.h; \
+		echo "TI_IMAGE = DUMMY" >> $(obj)board/ti/ti8148/config.tmp;\
 		if [ "$(findstring _nand,$@)" ] ; then \
 			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
 			echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
