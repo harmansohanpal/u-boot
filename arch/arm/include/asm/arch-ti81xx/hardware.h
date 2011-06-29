@@ -52,7 +52,11 @@
 #define ELM_BASE			0x48080000
 
 /* Watchdog Timer */
+#ifdef CONFIG_TI814X
+#define WDT_BASE			0x481C7000
+#else
 #define WDT_BASE			0x480C2000
+#endif
 
 /* Control Module Base Address */
 #define CTRL_BASE			0x48140000
