@@ -448,9 +448,16 @@ static void config_ti816x_sdram_ddr(void)
 	__raw_writel(0x80500100, DMM_LISA_MAP__2);
 	__raw_writel(0xA0500200, DMM_LISA_MAP__3);
 #else
-	/* Program the DMM to for interleaved configuration */
-	ddr_delay(50000);	/* Some delay needed */
 
+/* In case of NOR boot, we use XIP and this has inherent delay.
+ * Hence, there is no need for explicit delay in NOR boot.
+ * Additional delay will only increase boot time.
+ */
+#ifndef CONFIG_NOR_BOOT
+	ddr_delay(50000);	/* Some delay needed */
+#endif
+
+	/* Program the DMM to for interleaved configuration */
 	__raw_writel(0x0, DMM_LISA_MAP__0);
 	__raw_writel(0x0, DMM_LISA_MAP__1);
 	__raw_writel(0x80640300, DMM_LISA_MAP__2);
@@ -461,7 +468,14 @@ static void config_ti816x_sdram_ddr(void)
 	__raw_writel(0x80000000, DMM_PAT_BASE_ADDR);
 
 	emif4p_init(EMIF_TIM1, EMIF_TIM2, EMIF_TIM3, EMIF_SDREF & 0xFFFFFFF, EMIF_SDCFG, EMIF_PHYCFG);
+
+/* In case of NOR boot, we use XIP and this has inherent delay.
+ * Hence, there is no need for explicit delay in NOR boot.
+ * Additional delay will only increase boot time.
+ */
+#ifndef CONFIG_NOR_BOOT
 	ddr_delay(50000);	/* Some delay needed */
+#endif
 
 #ifdef CONFIG_TI816X_DDR3_PG_1_0
 	if(HACK_EYE_TRAINING) {
@@ -735,9 +749,16 @@ static void config_ti816x_sdram_ddr(void)
 	__raw_writel(0x80500100, DMM_LISA_MAP__2);
 	__raw_writel(0xA0500200, DMM_LISA_MAP__3);
 #else
-	/*Program the DMM for interleave setting */
-	ddr_delay(50000);       /* Some delay needed */
 
+/* In case of NOR boot, we use XIP and this has inherent delay.
+ * Hence, there is no need for explicit delay in NOR boot.
+ * Additional delay will only increase boot time.
+ */
+#ifndef CONFIG_NOR_BOOT
+	ddr_delay(50000);       /* Some delay needed */
+#endif
+
+	/*Program the DMM for interleave setting */
 	__raw_writel(0x0, DMM_LISA_MAP__0);
 	__raw_writel(0x0, DMM_LISA_MAP__1);
 	__raw_writel(0x80640300, DMM_LISA_MAP__2);
@@ -748,7 +769,14 @@ static void config_ti816x_sdram_ddr(void)
 	__raw_writel(0x80000000, DMM_PAT_BASE_ADDR);
 
 	emif4p_init(EMIF_TIM1, EMIF_TIM2, EMIF_TIM3, EMIF_SDREF & 0xFFFFFFF, EMIF_SDCFG, EMIF_PHYCFG);
+
+/* In case of NOR boot, we use XIP and this has inherent delay.
+ * Hence, there is no need for explicit delay in NOR boot.
+ * Additional delay will only increase boot time.
+ */
+#ifndef CONFIG_NOR_BOOT
 	ddr_delay(50000);	/* Some delay needed */
+#endif
 }
 #endif
 
