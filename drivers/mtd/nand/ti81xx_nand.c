@@ -692,12 +692,13 @@ static void ti81xx_enable_ecc(struct mtd_info *mtd, int32_t mode)
  *				2 - bch8
  *				3 - bch16
  *
- *
+ * @return: 0 - success, or error
  */
-void __ti81xx_nand_switch_ecc(struct nand_chip *nand,
+int __ti81xx_nand_switch_ecc(struct nand_chip *nand,
 		nand_ecc_modes_t hardware, int32_t mode)
 {
 	struct nand_bch_priv *bch;
+	int ret = 0;
 
 	bch = nand->priv;
 	nand->options |= NAND_OWN_BUFFERS;
@@ -727,6 +728,7 @@ void __ti81xx_nand_switch_ecc(struct nand_chip *nand,
 					bch->nibbles = ECC_BCH4_NIBBLES;
 					nand->ecc.bytes = 8;
 					printf("4 not supported\n");
+					ret = -EINVAL;
 					goto no_support;
 					break;
 				case ECC_BCH16:
@@ -734,6 +736,7 @@ void __ti81xx_nand_switch_ecc(struct nand_chip *nand,
 					nand->ecc.layout = &hw_bch16_nand_oob;
 					bch->nibbles = ECC_BCH16_NIBBLES;
 					printf("16 not supported\n");
+					ret = -EINVAL;
 					goto no_support;
 					break;
 				case ECC_BCH8:
@@ -772,10 +775,11 @@ void __ti81xx_nand_switch_ecc(struct nand_chip *nand,
 		printf("SW ECC selected\n");
 	} else {
 		printf("ECC Disabled\n");
+		ret = -EINVAL;
 	}
 
 no_support:
-	return;
+	return ret;
 }
 
 
@@ -808,12 +812,12 @@ void ti81xx_nand_switch_ecc(nand_ecc_modes_t hardware, int32_t mode)
 	mtd = &nand_info[nand_curr_device];
 	nand = mtd->priv;
 
-	__ti81xx_nand_switch_ecc(nand, hardware, mode);
-
-	/* Update NAND handling after ECC mode switch */
-	nand_scan_tail(mtd);
-
+	if (0 == __ti81xx_nand_switch_ecc(nand, hardware, mode)) {
+		/* Update NAND handling after successful ECC mode switch */
+		nand_scan_tail(mtd);
+	}
 	nand->options &= ~NAND_OWN_BUFFERS;
+
 	return;
 }
 
