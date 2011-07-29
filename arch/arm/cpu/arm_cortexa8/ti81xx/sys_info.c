@@ -125,6 +125,20 @@ u32 pg_val_ti814x(u32 pg1_val, u32 pg2_val)
 		return pg1_val;
 }
 
+/************************************************************
+ * get_sysboot_bw(void) - return buswidth from CONTROL_STATUS
+ ************************************************************/
+u32 get_sysboot_bw(void)
+{
+	int bw;
+	bw = __raw_readl(CONTROL_STATUS) & (SYSBOOT_BW_MASK);
+	bw >>= SYSBOOT_BW_POS;
+	if (bw == 0)	/* 8-bit nand if BTMODE BW pin on board is ON */
+		return 1;
+	else if (bw == 1)/* 16-bit nand if BTMODE BW pin on board is OFF */
+		return 0;
+}
+
 #ifdef CONFIG_DISPLAY_CPUINFO
 /**
  * Print CPU information

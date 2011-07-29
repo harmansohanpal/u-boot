@@ -64,6 +64,10 @@
 /* This gives the status of the boot mode pins on the evm */
 #define SYSBOOT_MASK			(BIT(0) | BIT(1) | BIT(2) |BIT(3) |BIT(4))
 
+/* This gives the buswidth of the booting device */
+#define SYSBOOT_BW_POS		(16)
+#define SYSBOOT_BW_MASK		(BIT(SYSBOOT_BW_POS))
+
 /* Reset control */
 #define PRM_DEVICE_RSTCTRL		(PRCM_BASE + 0x00A0)
 

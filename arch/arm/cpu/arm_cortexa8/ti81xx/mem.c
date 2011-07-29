@@ -78,6 +78,26 @@ void enable_gpmc_cs_config(const u32 *gpmc_config, struct gpmc_cs *cs, u32 base,
 	sdelay(2000);
 }
 
+/* gpmc_set_cs_buswidth(): Set bus width for the the specified chip select
+ * cs: GPMC chip select
+ * bw: 0=8-bit, 1=16-bit, 2=32-bit
+ */
+void gpmc_set_cs_buswidth(u32 cs, u32 bw)
+{
+	u32 config1;
+	struct gpmc_cs *cfg;
+
+	gpmc_cfg = (struct gpmc *)GPMC_BASE;
+	cfg = (struct gpmc_cs *)(&gpmc_cfg->cs[cs]);
+
+	config1 = readl(&cfg->config1);
+
+	/* clear and set device size bits (13:12) */
+	config1 &= (~0x00003000);
+	config1 |= (bw << 12);
+	writel(config1, &cfg->config1);
+}
+
 /*****************************************************
  * gpmc_init(): init gpmc bus
  * Init GPMC for x16, MuxMode (SDRAM in x32).

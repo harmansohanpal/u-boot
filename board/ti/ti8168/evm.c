@@ -181,6 +181,18 @@ int board_init(void)
 
 	gpmc_init();
 
+	/* GPMC will come up with default buswidth configuration,
+    * we will override it based on BW pin CONFIG_STATUS register.
+    * This is currently required only for NAND/NOR to
+    * support 8/16 bit NAND/NOR part. Also we always use chipselect 0
+    * for NAND/NOR boot.
+    *
+    * NOTE: This code is DM8168 EVM specific, hence we are using CS 0.
+    * Also, even for other boot modes user is expected to
+    * on/off the BW pin on the EVM.
+    */
+	gpmc_set_cs_buswidth(0, get_sysboot_bw());
+
 	return 0;
 }
 

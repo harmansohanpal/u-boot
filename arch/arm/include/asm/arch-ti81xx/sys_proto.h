@@ -41,11 +41,13 @@ enum cpu_rev {
 void prcm_init(u32);
 void per_clocks_enable(void);
 void gpmc_init(void);
+void gpmc_set_cs_buswidth(u32, u32);
 void watchdog_init(void);
 void set_muxconf_regs(void);
 u32 get_cpu_rev(void);
 u32 get_mem_type(void);
 u32 get_sysboot_value(void);
+u32 get_sysboot_bw(void);
 int print_cpuinfo (void);
 u32 is_gpmc_muxed(void);
 u32 get_gpmc0_type(void);
