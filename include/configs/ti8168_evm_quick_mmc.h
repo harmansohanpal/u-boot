@@ -87,7 +87,12 @@
 # define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 # define CONFIG_BOOTDELAY		0	/* set to negative value for no autoboot */
 # define CONFIG_SYS_AUTOLOAD		"no"
+
+/* Don't display messages on console */
+#define CONFIG_SILENT_CONSOLE
+
 # define CONFIG_EXTRA_ENV_SETTINGS \
+	"silent=1\0"	\
 	"verify=no\0" \
 	"bootfile=uImage\0" \
 	"ramdisk_file=ramdisk.gz\0" \
