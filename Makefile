@@ -3297,6 +3297,15 @@ ti8168_evm_min_sd:	unconfig
 	fi;
 	@$(MKCONFIG) -a ti8168_evm arm arm_cortexa8 ti8168 ti ti81xx
 
+ti8168_evm_config_quick_mmc:	unconfig
+	@mkdir -p $(obj)include
+	@echo "#define CONFIG_TI81XX"   >>$(obj)include/config.h
+	@echo "#define CONFIG_TI816X"   >>$(obj)include/config.h
+	@echo "#define TI816X_QUICKBOOT"   >>$(obj)include/config.h
+	@echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h
+#	@echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h	
+	@$(MKCONFIG) -a ti8168_evm_quick_mmc arm arm_cortexa8 ti8168 ti ti81xx 
+
 #########################################################################
 ## XScale Systems
 #########################################################################
