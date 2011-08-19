@@ -21,6 +21,7 @@
 #include <asm/arch/ddr_defs.h>
 #include <asm/arch/hardware.h>
 #include <asm/arch/sys_proto.h>
+#include <asm/arch/mmc_host_def.h>
 #include <asm/arch/mem.h>
 #include <asm/arch/nand.h>
 #include <linux/mtd/nand.h>
@@ -1226,3 +1227,10 @@ U_BOOT_CMD(
 
 #endif /* CONFIG_NAND_TI81XX */
 
+#ifdef CONFIG_GENERIC_MMC
+int board_mmc_init(bd_t *bis)
+{
+	omap_mmc_init(0);
+	return 0;
+}
+#endif
