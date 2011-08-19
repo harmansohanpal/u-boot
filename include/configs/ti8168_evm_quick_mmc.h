@@ -110,12 +110,14 @@
 
 /* Default boot arguments
  * - Don't show messages on the console
+ * - Set loops per jiffy
  * - Set default console
  * - Set memory size
  * - Location of root filesystem
  */
 #define CONFIG_BOOTARGS			\
 	"quiet "			\
+	"lpj=4931584 "			\
 	"console=ttyO2,115200n8 "	\
 	"mem=256M "			\
 	"noinitrd "			\
