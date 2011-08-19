@@ -88,6 +88,13 @@
 # define CONFIG_BOOTDELAY		0	/* set to negative value for no autoboot */
 # define CONFIG_SYS_AUTOLOAD		"no"
 
+/*
+ * Explicitly exlude some portions of the code
+ * This macros is not defined anywhere, but can be used a cue to look for
+ * code being excluded.
+ */
+#undef CONFIG_QUICK_INCLUDE
+
 /* Don't display messages on console */
 #define CONFIG_SILENT_CONSOLE
 

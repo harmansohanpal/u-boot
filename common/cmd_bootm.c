@@ -81,9 +81,11 @@ extern flash_info_t flash_info[]; /* info for FLASH chips */
 static int do_imls (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
 #endif
 
+#ifdef CONFIG_QUICK_INCLUDE
 #ifdef CONFIG_SILENT_CONSOLE
 static void fixup_silent_linux (void);
 #endif
+#endif /* CONFIG_QUICK_INCLUDE */
 
 static image_header_t *image_get_kernel (ulong img_addr, int verify);
 #if defined(CONFIG_FIT)
@@ -681,10 +683,12 @@ int do_bootm (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 	show_boot_progress (8);
 
+#ifdef CONFIG_QUICK_INCLUDE
 #ifdef CONFIG_SILENT_CONSOLE
 	if (images.os.os == IH_OS_LINUX)
 		fixup_silent_linux();
 #endif
+#endif /* CONFIG_QUICK_INCLUDE */
 
 	boot_fn = boot_os[images.os.os];
 
@@ -1208,6 +1212,7 @@ U_BOOT_CMD(
 /*******************************************************************/
 /* helper routines */
 /*******************************************************************/
+#ifdef CONFIG_QUICK_INCLUDE
 #ifdef CONFIG_SILENT_CONSOLE
 static void fixup_silent_linux ()
 {
@@ -1239,7 +1244,7 @@ static void fixup_silent_linux ()
 	debug ("after silent fix-up: %s\n", buf);
 }
 #endif /* CONFIG_SILENT_CONSOLE */
-
+#endif /* CONFIG_QUICK_INCLUDE */
 
 /*******************************************************************/
 /* OS booting routines */
