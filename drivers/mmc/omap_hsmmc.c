@@ -445,6 +445,7 @@ int omap_mmc_init(int dev_index)
 	mmc->set_ios = mmc_set_ios;
 	mmc->init = mmc_init_setup;
 
+#if !defined(CONFIG_TI81XX)
 	switch (dev_index) {
 	case 0:
 		mmc->priv = (hsmmc_t *)OMAP_HSMMC1_BASE;
@@ -459,6 +460,10 @@ int omap_mmc_init(int dev_index)
 		mmc->priv = (hsmmc_t *)OMAP_HSMMC1_BASE;
 		return 1;
 	}
+#else
+	mmc->priv = (hsmmc_t *)OMAP_HSMMC_BASE;
+#endif
+
 	mmc->voltages = MMC_VDD_32_33 | MMC_VDD_33_34 | MMC_VDD_165_195;
 	mmc->host_caps = MMC_MODE_4BIT | MMC_MODE_HS_52MHz | MMC_MODE_HS;
 

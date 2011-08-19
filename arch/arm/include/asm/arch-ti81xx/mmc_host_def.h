@@ -169,7 +169,7 @@ typedef struct {
 	unsigned int RCA;
 } mmc_card_data;
 #define RSP_TYPE_NONE	(RSP_TYPE_NORSP   | CCCE_NOCHECK | CICE_NOCHECK)
-#define MMC_CMD0	INDEX(0)  | RSP_TYPE_NONE | DP_NO_DATA | DDIR_WRITE)
+#define MMC_CMD0	(INDEX(0)  | RSP_TYPE_NONE | DP_NO_DATA | DDIR_WRITE)
 
 /* Clock Configurations and Macros */
 #if defined(CONFIG_TI816X)
