@@ -172,7 +172,11 @@ typedef struct {
 #define MMC_CMD0	INDEX(0)  | RSP_TYPE_NONE | DP_NO_DATA | DDIR_WRITE)
 
 /* Clock Configurations and Macros */
-#define MMC_CLOCK_REFERENCE	96 /* MHz */
+#if defined(CONFIG_TI816X)
+#define MMC_CLOCK_REFERENCE             48
+#elif defined(CONFIG_TI814X)
+#define MMC_CLOCK_REFERENCE             192
+#endif
 
 #define mmc_reg_out(addr, mask, val)\
 	writel((readl(addr) & (~(mask))) | ((val) & (mask)), (addr))

@@ -69,8 +69,8 @@
 #define SD_CMD8_2_7_3_6_V_RANGE	(0x01 << 8)
 
 /* Clock Configurations and Macros */
-
 #define MMC_CLOCK_REFERENCE		96
+
 #define MMC_RELATIVE_CARD_ADDRESS	0x1234
 #define MMC_INIT_SEQ_CLK		(MMC_CLOCK_REFERENCE * 1000 / 80)
 #define MMC_400kHz_CLK			(MMC_CLOCK_REFERENCE * 1000 / 400)
