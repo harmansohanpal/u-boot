@@ -63,6 +63,8 @@
 #endif
 
 
+/* Don't display messages on console */
+#define CONFIG_SILENT_CONSOLE
 
 /* Due to size restrictions in RBL while in SD Boot mode, NAND/NOR support
  * cannot co-exist in the same u-boot image that is loaded by the RBL from
@@ -78,7 +80,8 @@
 # define CONFIG_NO_ETH
 # define CONFIG_BOOTDELAY	0
 # define CONFIG_SYS_AUTOLOAD	"yes"
-# define CONFIG_BOOTCOMMAND	"mmc init;fatload mmc 1 0x80800000 u-boot.bin;go 0x80800000"
+# define CONFIG_EXTRA_ENV_SETTINGS	"silent=1\0"
+# define CONFIG_BOOTCOMMAND	"mmc rescan 0;fatload mmc 0 0x80800000 u-boot.bin;go 0x80800000"
 # define CONFIG_ENV_IS_NOWHERE
 #else
 # undef CONFIG_TI816X_ASCIIART
@@ -94,10 +97,6 @@
  * code being excluded.
  */
 #undef CONFIG_QUICK_INCLUDE
-
-/* Don't display messages on console */
-#define CONFIG_SILENT_CONSOLE
-
 # define CONFIG_EXTRA_ENV_SETTINGS \
 	"silent=1\0"	\
 	"verify=no\0" \

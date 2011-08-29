@@ -3297,13 +3297,20 @@ ti8168_evm_min_sd:	unconfig
 	fi;
 	@$(MKCONFIG) -a ti8168_evm arm arm_cortexa8 ti8168 ti ti81xx
 
-ti8168_evm_config_quick_mmc:	unconfig
+ti8168_evm_config_quick_mmc	\
+ti8168_evm_config_quick_mmc_min:	unconfig
 	@mkdir -p $(obj)include
 	@echo "#define CONFIG_TI81XX"   >>$(obj)include/config.h
 	@echo "#define CONFIG_TI816X"   >>$(obj)include/config.h
 	@echo "#define TI816X_QUICKBOOT"   >>$(obj)include/config.h
 	@echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h
-#	@echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h	
+	@if [ "$(findstring _min,$@)" ] ; then \
+                echo "#define CONFIG_SD_BOOT"    >>$(obj)include/config.h ; \
+                echo "TI_IMAGE = u-boot.min.sd" >>$(obj)board/ti/ti8168/config.tmp; \
+                echo "Setting up TI8168 Quick boot minimal build..." ; \
+	else    \
+		echo "Setting up TI8168 Quick boot build..." ; \
+	fi;
 	@$(MKCONFIG) -a ti8168_evm_quick_mmc arm arm_cortexa8 ti8168 ti ti81xx 
 
 #########################################################################
