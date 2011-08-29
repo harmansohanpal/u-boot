@@ -3258,6 +3258,28 @@ ti8148_evm_min_sd:	unconfig
 	fi;
 	@$(MKCONFIG) -a ti8148_evm arm arm_cortexa8 ti8148 ti ti81xx
 
+ti8148_evm_config_quick_mmc	\
+ti8148_evm_config_quick_mmc_min:	unconfig
+	@mkdir -p $(obj)include
+	@echo "#define CONFIG_TI81XX"	>>$(obj)include/config.h
+	@echo "#define CONFIG_TI814X"	>>$(obj)include/config.h
+	@echo "#define TI814X_QUICKBOOT" >>$(obj)include/config.h
+	@echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h
+	@if [ "$(findstring _min,$@)" ] ; then \
+		echo "TEXT_BASE = 0x80700000" >> $(obj)board/ti/ti8148/config.tmp; \
+		echo "#define CONFIG_TI814X_MIN_CONFIG"    >>$(obj)include/config.h ; \
+		echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
+		echo "#define CONFIG_SD_BOOT"    >>$(obj)include/config.h ; \
+		echo "TI_IMAGE = u-boot.min.sd" >> $(obj)board/ti/ti8148/config.tmp;\
+		echo "Setting up TI8148 quickboot minimal build for 1st stage..." ; \
+	else	\
+		echo "TEXT_BASE = 0x80700000" >> $(obj)board/ti/ti8148/config.tmp;\
+		echo "#define CONFIG_TI_DUMMY_HEADER"   >>$(obj)include/config.h; \
+		echo "TI_IMAGE = DUMMY" >> $(obj)board/ti/ti8148/config.tmp;\
+		echo "Setting up TI8148 2nd stage Quickboot build..." ; \
+	fi;
+	@$(MKCONFIG) -a ti8148_evm_quick_mmc arm arm_cortexa8 ti8148 ti ti81xx
+
 ti8168_evm_config	\
 ti8168_evm_config_nand	\
 ti8168_evm_config_nor	\
