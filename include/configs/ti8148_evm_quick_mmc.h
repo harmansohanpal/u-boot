@@ -24,6 +24,9 @@
 /* Display CPU info */
 #define CONFIG_DISPLAY_CPUINFO          1
 
+/* Don't display messages on console */
+#define CONFIG_SILENT_CONSOLE
+
 /* In the 1st stage we have just 110K, so cut down wherever possible */
 #ifdef CONFIG_TI814X_MIN_CONFIG
 
@@ -47,7 +50,7 @@
 # define CONFIG_ENV_SIZE		0x400
 # define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (8 * 1024))
 # define CONFIG_SYS_PROMPT		"TI-MIN#"
-# define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
+# define CONFIG_BOOTDELAY		0 /* set to negative value for no autoboot */
 # if defined(CONFIG_SPI_BOOT)		/* Autoload the 2nd stage from SPI */
 #  define CONFIG_SPI			1
 #  define CONFIG_EXTRA_ENV_SETTINGS \
@@ -63,13 +66,14 @@
 # elif defined(CONFIG_SD_BOOT)		/* Autoload the 2nd stage from SD */
 #  define CONFIG_MMC			1
 #  define CONFIG_EXTRA_ENV_SETTINGS \
-	"verify=yes\0" \
+	"silent=1\0" \
+	"verify=no\0" \
 	"bootcmd=mmc init; fatload mmc 1 0x80800000 u-boot.bin; go 0x80800000\0" \
 
 # endif
 
 #else
-
+# undef CONFIG_DISPLAY_CPUINFO
 # include <config_cmd_default.h>
 # define CONFIG_SKIP_LOWLEVEL_INIT	/* 1st stage would have done the basic init */
 # define CONFIG_ENV_SIZE			0x2000
@@ -82,13 +86,14 @@
 # define CONFIG_CMDLINE_TAG        	1	/* enable passing of ATAGs  */
 # define CONFIG_SETUP_MEMORY_TAGS  	1
 # define CONFIG_INITRD_TAG	  	1	/* Required for ramdisk support */
-# define CONFIG_BOOTDELAY		3	/* set to negative value for no autoboot */
+# define CONFIG_BOOTDELAY		0	/* set to negative value for no autoboot */
 /* By default, 2nd stage will have MMC, NAND, SPI and I2C support */
 # define CONFIG_MMC			1
 # define CONFIG_NAND			1
 # define CONFIG_SPI			1
 # define CONFIG_I2C			1
 # define CONFIG_EXTRA_ENV_SETTINGS \
+	"silent=1\0"	\
 	"verify=no\0" \
 	"bootfile=uImage\0" \
 	"ramdisk_file=ramdisk.gz\0" \
@@ -132,6 +137,9 @@
 #define CONFIG_SYS_AUTOLOAD		"yes"
 #define CONFIG_CMD_CACHE
 #define CONFIG_CMD_ECHO
+
+/* Dont display asciiart while quickboot*/
+#undef CONFIG_TI814X_ASCIIART
 
 /*
  * Miscellaneous configurable options
