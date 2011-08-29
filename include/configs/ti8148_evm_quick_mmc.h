@@ -92,6 +92,14 @@
 # define CONFIG_NAND			1
 # define CONFIG_SPI			1
 # define CONFIG_I2C			1
+
+/*
+ * Explicitly exlude some portions of the code
+ * This macros is not defined anywhere, but can be used a cue to look for
+ * code being excluded.
+ */
+#undef CONFIG_QUICK_INCLUDE
+
 # define CONFIG_EXTRA_ENV_SETTINGS \
 	"silent=1\0"	\
 	"verify=no\0" \
