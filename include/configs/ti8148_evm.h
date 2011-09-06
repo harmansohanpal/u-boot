@@ -64,7 +64,7 @@
 #  define CONFIG_MMC			1
 #  define CONFIG_EXTRA_ENV_SETTINGS \
 	"verify=yes\0" \
-	"bootcmd=mmc init; fatload mmc 1 0x80800000 u-boot.bin; go 0x80800000\0" \
+	"bootcmd=mmc rescan 0; fatload mmc 0 0x80800000 u-boot.bin; go 0x80800000\0" \
 
 # endif
 
@@ -94,7 +94,7 @@
 	"ramdisk_file=ramdisk.gz\0" \
 	"loadaddr=0x81000000\0" \
 	"script_addr=0x80900000\0" \
-	"loadbootscript=fatload mmc 1 ${script_addr} boot.scr\0" \
+	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 		"source ${script_addr}\0" \
 
@@ -324,8 +324,9 @@ extern unsigned int boot_flash_type;
 
 /* HSMMC support */
 #ifdef CONFIG_MMC
-# define CONFIG_OMAP3_MMC	1
 # define CONFIG_CMD_MMC		1
+#define CONFIG_GENERIC_MMC
+#define CONFIG_OMAP_HSMMC
 # define CONFIG_DOS_PARTITION	1
 # define CONFIG_CMD_FAT		1
 #endif
