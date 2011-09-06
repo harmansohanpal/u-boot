@@ -78,7 +78,7 @@
 # define CONFIG_NO_ETH
 # define CONFIG_BOOTDELAY	0
 # define CONFIG_SYS_AUTOLOAD	"yes"
-# define CONFIG_BOOTCOMMAND	"mmc init;fatload mmc 1 0x80800000 u-boot.bin;go 0x80800000"
+# define CONFIG_BOOTCOMMAND	"mmc rescan 0;fatload mmc 0 0x80800000 u-boot.bin;go 0x80800000"
 # define CONFIG_ENV_IS_NOWHERE
 #else
 # define CONFIG_SYS_HUSH_PARSER		/* Use HUSH parser to allow command parsing */
@@ -91,7 +91,7 @@
 	"ramdisk_file=ramdisk.gz\0" \
 	"loadaddr=0x81000000\0" \
 	"script_addr=0x80900000\0" \
-	"loadbootscript=fatload mmc 1 ${script_addr} boot.scr\0" \
+	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 		"source ${script_addr}\0" \
 
@@ -312,8 +312,9 @@ extern unsigned int boot_flash_type;
 
 /* HSMMC Definitions */
 #ifdef CONFIG_MMC
-# define CONFIG_OMAP3_MMC	1
 # define CONFIG_CMD_MMC		1
+#define CONFIG_GENERIC_MMC
+#define CONFIG_OMAP_HSMMC
 # define CONFIG_DOS_PARTITION	1
 # define CONFIG_CMD_FAT		1
 #endif
