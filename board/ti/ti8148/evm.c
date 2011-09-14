@@ -135,9 +135,10 @@ int board_init(void)
 	/* Do the required pin-muxing before modules are setup */
 	set_muxconf_regs();
 
+	/* setup RMII_REFCLK to be sourced from audio_pll */
+	__raw_writel(0x4, RMII_REFCLK_SRC);
+
 	if (PG2_1 == get_cpu_rev()) {
-		/* setup RMII_REFCLK to be sourced from audio_pll */
-		__raw_writel(0x4,RMII_REFCLK_SRC);
 		/*program GMII_SEL register for RGMII mode */
 		__raw_writel(0x30a,GMII_SEL);
 	}
