@@ -270,7 +270,7 @@ gpio_cfg_val:
 sram_pc_start:
 	.word (SRAM0_START + 0x10000)
 SRAM_STACK_GPMC:
-	.word (SRAM0_START + 0x1000)
+	.word (SRAM0_START + SRAM0_SIZE - 4)
 gpmc_cfg1_addr:
     .word (GPMC_CONFIG_CS0_BASE + GPMC_CONFIG1)
 gpmc_cfg2_addr:
