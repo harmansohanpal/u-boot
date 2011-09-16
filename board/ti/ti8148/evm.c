@@ -274,7 +274,7 @@ static void config_ti814x_ddr(void)
 				data_macro_config(macro, phy_num,
 					DDR3_PHY_RD_DQS_CS0_DEFINE,
 					DDR3_PHY_WR_DQS_CS0_DEFINE,
-					DDR3_PHY_FIFO_WE_CS0_DEFINE,
+					DDR3_PHY_RD_DQS_GATE_CS0_DEFINE,
 					DDR3_PHY_WR_DATA_CS0_DEFINE);
 			}
 		}
@@ -288,7 +288,7 @@ static void config_ti814x_ddr(void)
 				data_macro_config(macro, phy_num,
 					DDR2_PHY_RD_DQS_CS0_DEFINE,
 					DDR2_PHY_WR_DQS_CS0_DEFINE,
-					DDR2_PHY_FIFO_WE_CS0_DEFINE,
+					DDR2_PHY_RD_DQS_GATE_CS0_DEFINE,
 					DDR2_PHY_WR_DATA_CS0_DEFINE);
 			}
 		}
@@ -314,84 +314,84 @@ static void config_ti814x_ddr(void)
 		 * Program the PG1.0 DMM to Access EMIF0 and EMIF1
 		 * Two 256MB sections with 128-byte interleaved (hole in b/w)
 		 */
-		__raw_writel(0x0, DMM_LISA_MAP__0);
-		__raw_writel(0x0, DMM_LISA_MAP__1);
-		__raw_writel(0x80440300, DMM_LISA_MAP__2);
-		__raw_writel(0xC0440300, DMM_LISA_MAP__3);
+		__raw_writel(PG1_0_DMM_LISA_MAP__0, DMM_LISA_MAP__0);
+		__raw_writel(PG1_0_DMM_LISA_MAP__1, DMM_LISA_MAP__1);
+		__raw_writel(PG1_0_DMM_LISA_MAP__2, DMM_LISA_MAP__2);
+		__raw_writel(PG1_0_DMM_LISA_MAP__3, DMM_LISA_MAP__3);
 
-		while (__raw_readl(DMM_LISA_MAP__0) != 0x0);
-		while (__raw_readl(DMM_LISA_MAP__1) != 0x0);
-		while (__raw_readl(DMM_LISA_MAP__2) != 0x80440300);
-		while (__raw_readl(DMM_LISA_MAP__3) != 0xC0440300);
+		while (__raw_readl(DMM_LISA_MAP__0) != PG1_0_DMM_LISA_MAP__0);
+		while (__raw_readl(DMM_LISA_MAP__1) != PG1_0_DMM_LISA_MAP__1);
+		while (__raw_readl(DMM_LISA_MAP__2) != PG1_0_DMM_LISA_MAP__2);
+		while (__raw_readl(DMM_LISA_MAP__3) != PG1_0_DMM_LISA_MAP__3);
 	} else {
 		/*
 		 * Program the PG2.1 DMM to Access EMIF0 and EMIF1
 		 * 1G contiguous section with 128-byte interleaving
 		 */
-		__raw_writel(0x0, DMM_LISA_MAP__0);
-		__raw_writel(0x0, DMM_LISA_MAP__1);
-		__raw_writel(0x0, DMM_LISA_MAP__2);
-		__raw_writel(0x80640300, DMM_LISA_MAP__3);
+		__raw_writel(PG2_1_DMM_LISA_MAP__0, DMM_LISA_MAP__0);
+		__raw_writel(PG2_1_DMM_LISA_MAP__1, DMM_LISA_MAP__1);
+		__raw_writel(PG2_1_DMM_LISA_MAP__2, DMM_LISA_MAP__2);
+		__raw_writel(PG2_1_DMM_LISA_MAP__3, DMM_LISA_MAP__3);
 
-		while (__raw_readl(DMM_LISA_MAP__0) != 0x0);
-		while (__raw_readl(DMM_LISA_MAP__1) != 0x0);
-		while (__raw_readl(DMM_LISA_MAP__2) != 0x0);
-		while (__raw_readl(DMM_LISA_MAP__3) != 0x80640300);
+		while (__raw_readl(DMM_LISA_MAP__0) != PG2_1_DMM_LISA_MAP__0);
+		while (__raw_readl(DMM_LISA_MAP__1) != PG2_1_DMM_LISA_MAP__1);
+		while (__raw_readl(DMM_LISA_MAP__2) != PG2_1_DMM_LISA_MAP__2);
+		while (__raw_readl(DMM_LISA_MAP__3) != PG2_1_DMM_LISA_MAP__3);
 	}
 	__raw_writel(0x80000000, DMM_PAT_BASE_ADDR);
 
 	if (!is_ddr3()) {
 		/*Program EMIF0 CFG Registers*/
-		__raw_writel(0x7, EMIF4_0_DDR_PHY_CTRL_1); /* RL =5 */
-		__raw_writel(0x7, EMIF4_0_DDR_PHY_CTRL_1_SHADOW); /* RL =5 */
-		__raw_writel(0x0AAAF552, EMIF4_0_SDRAM_TIM_1);
-		__raw_writel(0x0AAAF552, EMIF4_0_SDRAM_TIM_1_SHADOW);
-		__raw_writel(0x043631D2, EMIF4_0_SDRAM_TIM_2);
-		__raw_writel(0x043631D2, EMIF4_0_SDRAM_TIM_2_SHADOW);
-		__raw_writel(0x00000327, EMIF4_0_SDRAM_TIM_3);
-		__raw_writel(0x00000327, EMIF4_0_SDRAM_TIM_3_SHADOW);
-		__raw_writel(0x10000C30, EMIF4_0_SDRAM_REF_CTRL);
-		__raw_writel(0x10000C30, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
-		__raw_writel(0x40801AB2, EMIF4_0_SDRAM_CONFIG); /* CL = 6 */
+		__raw_writel(DDR2_EMIF_READ_LATENCY, EMIF4_0_DDR_PHY_CTRL_1);
+		__raw_writel(DDR2_EMIF_READ_LATENCY, EMIF4_0_DDR_PHY_CTRL_1_SHADOW);
+		__raw_writel(DDR2_EMIF_TIM1, EMIF4_0_SDRAM_TIM_1);
+		__raw_writel(DDR2_EMIF_TIM1, EMIF4_0_SDRAM_TIM_1_SHADOW);
+		__raw_writel(DDR2_EMIF_TIM2, EMIF4_0_SDRAM_TIM_2);
+		__raw_writel(DDR2_EMIF_TIM2, EMIF4_0_SDRAM_TIM_2_SHADOW);
+		__raw_writel(DDR2_EMIF_TIM3, EMIF4_0_SDRAM_TIM_3);
+		__raw_writel(DDR2_EMIF_TIM3, EMIF4_0_SDRAM_TIM_3_SHADOW);
+		__raw_writel(DDR2_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL);
+		__raw_writel(DDR2_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
+		__raw_writel(DDR2_EMIF_SDRAM_CONFIG, EMIF4_0_SDRAM_CONFIG);
 
 		/*Program EMIF1 CFG Registers*/
-		__raw_writel(0x7, EMIF4_1_DDR_PHY_CTRL_1);
-		__raw_writel(0x7, EMIF4_1_DDR_PHY_CTRL_1_SHADOW);
-		__raw_writel(0x0AAAF552, EMIF4_1_SDRAM_TIM_1);
-		__raw_writel(0x0AAAF552, EMIF4_1_SDRAM_TIM_1_SHADOW);
-		__raw_writel(0x043631D2, EMIF4_1_SDRAM_TIM_2);
-		__raw_writel(0x043631D2, EMIF4_1_SDRAM_TIM_2_SHADOW);
-		__raw_writel(0x00000327, EMIF4_1_SDRAM_TIM_3);
-		__raw_writel(0x00000327, EMIF4_1_SDRAM_TIM_3_SHADOW);
-		__raw_writel(0x10000C30, EMIF4_1_SDRAM_REF_CTRL);
-		__raw_writel(0x10000C30, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
-		__raw_writel(0x40801AB2, EMIF4_1_SDRAM_CONFIG); /* CL = 6 */
+		__raw_writel(DDR2_EMIF_READ_LATENCY, EMIF4_1_DDR_PHY_CTRL_1);
+		__raw_writel(DDR2_EMIF_READ_LATENCY, EMIF4_1_DDR_PHY_CTRL_1_SHADOW);
+		__raw_writel(DDR2_EMIF_TIM1, EMIF4_1_SDRAM_TIM_1);
+		__raw_writel(DDR2_EMIF_TIM1, EMIF4_1_SDRAM_TIM_1_SHADOW);
+		__raw_writel(DDR2_EMIF_TIM2, EMIF4_1_SDRAM_TIM_2);
+		__raw_writel(DDR2_EMIF_TIM2, EMIF4_1_SDRAM_TIM_2_SHADOW);
+		__raw_writel(DDR2_EMIF_TIM3, EMIF4_1_SDRAM_TIM_3);
+		__raw_writel(DDR2_EMIF_TIM3, EMIF4_1_SDRAM_TIM_3_SHADOW);
+		__raw_writel(DDR2_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL);
+		__raw_writel(DDR2_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
+		__raw_writel(DDR2_EMIF_SDRAM_CONFIG, EMIF4_1_SDRAM_CONFIG);
 	} else {
 		/*Program EMIF0 CFG Registers*/
-		__raw_writel(0xC, EMIF4_0_DDR_PHY_CTRL_1); /* RL =11 */
-		__raw_writel(0xC, EMIF4_0_DDR_PHY_CTRL_1_SHADOW); /* RL =11 */
-		__raw_writel(0x1557B9A5, EMIF4_0_SDRAM_TIM_1);
-		__raw_writel(0x1557B9A5, EMIF4_0_SDRAM_TIM_1_SHADOW);
-		__raw_writel(0x4C5F7FEB, EMIF4_0_SDRAM_TIM_2);
-		__raw_writel(0x4C5F7FEB, EMIF4_0_SDRAM_TIM_2_SHADOW);
-		__raw_writel(0x00000578, EMIF4_0_SDRAM_TIM_3);
-		__raw_writel(0x00000578, EMIF4_0_SDRAM_TIM_3_SHADOW);
-		__raw_writel(0x10001860, EMIF4_0_SDRAM_REF_CTRL);
-		__raw_writel(0x10001860, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
-		__raw_writel(0x62833AB2, EMIF4_0_SDRAM_CONFIG); /* CL = 6 */
+		__raw_writel(DDR3_EMIF_READ_LATENCY, EMIF4_0_DDR_PHY_CTRL_1);
+		__raw_writel(DDR3_EMIF_READ_LATENCY, EMIF4_0_DDR_PHY_CTRL_1_SHADOW);
+		__raw_writel(DDR3_EMIF_TIM1, EMIF4_0_SDRAM_TIM_1);
+		__raw_writel(DDR3_EMIF_TIM1, EMIF4_0_SDRAM_TIM_1_SHADOW);
+		__raw_writel(DDR3_EMIF_TIM2, EMIF4_0_SDRAM_TIM_2);
+		__raw_writel(DDR3_EMIF_TIM2, EMIF4_0_SDRAM_TIM_2_SHADOW);
+		__raw_writel(DDR3_EMIF_TIM3, EMIF4_0_SDRAM_TIM_3);
+		__raw_writel(DDR3_EMIF_TIM3, EMIF4_0_SDRAM_TIM_3_SHADOW);
+		__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL);
+		__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
+		__raw_writel(DDR3_EMIF_SDRAM_CONFIG, EMIF4_0_SDRAM_CONFIG);
 
 		/*Program EMIF1 CFG Registers*/
-		__raw_writel(0xC, EMIF4_1_DDR_PHY_CTRL_1);
-		__raw_writel(0xC, EMIF4_1_DDR_PHY_CTRL_1_SHADOW);
-		__raw_writel(0x1557B9A5, EMIF4_1_SDRAM_TIM_1);
-		__raw_writel(0x1557B9A5, EMIF4_1_SDRAM_TIM_1_SHADOW);
-		__raw_writel(0x4C5F7FEB, EMIF4_1_SDRAM_TIM_2);
-		__raw_writel(0x4C5F7FEB, EMIF4_1_SDRAM_TIM_2_SHADOW);
-		__raw_writel(0x00000578, EMIF4_1_SDRAM_TIM_3);
-		__raw_writel(0x00000578, EMIF4_1_SDRAM_TIM_3_SHADOW);
-		__raw_writel(0x10001860, EMIF4_1_SDRAM_REF_CTRL);
-		__raw_writel(0x10001860, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
-		__raw_writel(0x62833AB2, EMIF4_1_SDRAM_CONFIG); /* CL = 11 */
+		__raw_writel(DDR3_EMIF_READ_LATENCY, EMIF4_1_DDR_PHY_CTRL_1);
+		__raw_writel(DDR3_EMIF_READ_LATENCY, EMIF4_1_DDR_PHY_CTRL_1_SHADOW);
+		__raw_writel(DDR3_EMIF_TIM1, EMIF4_1_SDRAM_TIM_1);
+		__raw_writel(DDR3_EMIF_TIM1, EMIF4_1_SDRAM_TIM_1_SHADOW);
+		__raw_writel(DDR3_EMIF_TIM2, EMIF4_1_SDRAM_TIM_2);
+		__raw_writel(DDR3_EMIF_TIM2, EMIF4_1_SDRAM_TIM_2_SHADOW);
+		__raw_writel(DDR3_EMIF_TIM3, EMIF4_1_SDRAM_TIM_3);
+		__raw_writel(DDR3_EMIF_TIM3, EMIF4_1_SDRAM_TIM_3_SHADOW);
+		__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL);
+		__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
+		__raw_writel(DDR3_EMIF_SDRAM_CONFIG, EMIF4_1_SDRAM_CONFIG);
 	}
 }
 

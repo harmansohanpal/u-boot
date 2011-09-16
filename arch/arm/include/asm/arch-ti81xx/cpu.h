@@ -155,6 +155,9 @@
 #define N_PINS				(271) /* PIN1=800, PIN 271=800+270*4=C38) */
 
 /* ddr control register */
+#define DDR0_PHY_BASE_ADDR		0x47C0C400
+#define DDR1_PHY_BASE_ADDR		0x47C0C800
+
 #define DDR0_CMD_CTRL			(CTRL_BASE + 0x1400)
 #define DDR0_DATA0_CS0_CTRL0		(CTRL_BASE + 0x1440)
 #define DDR0_DATA0_CS0_CTRL1		(CTRL_BASE + 0x1444)
