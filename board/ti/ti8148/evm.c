@@ -127,6 +127,7 @@ static void usb_pll_config(void);
 
 static void unlock_pll_control_mmr(void);
 static void cpsw_pad_config(void);
+static void nor_pad_config_mux(void);
 /*
  * spinning delay to use before udelay works
  */
@@ -145,6 +146,8 @@ int board_init(void)
 
 	/* Do the required pin-muxing before modules are setup */
 	set_muxconf_regs();
+
+	nor_pad_config_mux();
 
 	/* setup RMII_REFCLK to be sourced from audio_pll */
 	__raw_writel(0x4, RMII_REFCLK_SRC);
@@ -981,6 +984,75 @@ static void cpsw_pad_config()
 	}
 }
 
+struct nor_pad_config {
+	unsigned int offset;
+	unsigned int value;
+};
+
+static struct nor_pad_config nor_pad_cfg[] = {
+		{GPMC_D0, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D1, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D2, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D3, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D4, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D5, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D6, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D7, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D8, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D9, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D10, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D11, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D12, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D13, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D14, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_D15, MODE(1) | INPUT_EN | PULL_DIS},
+		{GPMC_A1, MODE(2) | PULL_UP_EN},
+		{GPMC_A2, MODE(2) | PULL_UP_EN},
+		{GPMC_A3, MODE(2) | PULL_UP_EN},
+		{GPMC_A4, MODE(2) | PULL_UP_EN},
+		{GPMC_A5, MODE(5) | PULL_UP_EN},
+		{GPMC_A6, MODE(5)},
+		{GPMC_A7, MODE(5)},
+		{GPMC_A8, MODE(5)},
+		{GPMC_A9, MODE(5)},
+		{GPMC_A10, MODE(5) | PULL_UP_EN},
+		{GPMC_A11, MODE(5)},
+		{GPMC_A12, MODE(5)},
+		{GPMC_A13, MODE(2) | PULL_UP_EN},
+		{GPMC_A14, MODE(2) | PULL_UP_EN},
+		{GPMC_A15, MODE(2)},
+		{GPMC_A16, MODE(1)},
+		{GPMC_A17, MODE(1)},
+		{GPMC_A18, MODE(1)},
+		{GPMC_A19, MODE(1)},
+		{GPMC_A20, MODE(1) | PULL_UP_EN},
+		{GPMC_A21, MODE(1)},
+		{GPMC_A22, MODE(1) | PULL_UP_EN},
+		{GPMC_A23, MODE(1)},
+		{GPMC_A24, MODE(2) | PULL_UP_EN},
+		{GPMC_A25, MODE(2)},
+		{GPMC_A27, MODE(8) | PULL_UP_EN},
+		{GPMC_CS0_REG, MODE(1) | PULL_UP_EN},
+		{GPMC_OEN, MODE(1) | PULL_UP_EN},
+		{GPMC_WEN, MODE(1) | PULL_UP_EN},
+		{0},
+};
+
+/*********************************************************************
+ *
+ * nor_pad_config_mux - configure the pin mux for NOR
+ *
+ *********************************************************************/
+static void nor_pad_config_mux(void)
+{
+	u8 i = 0;
+
+	while (nor_pad_cfg[i].offset != 0x0) {
+		*(volatile u32 *)(nor_pad_cfg[i].offset) =
+			nor_pad_cfg[i].value;
+		i++;
+	}
+}
 
 /*
  * baord specific muxing of pins
