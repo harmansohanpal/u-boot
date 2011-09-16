@@ -497,7 +497,7 @@ SRAM_STACK:
 	.word (SRAM0_START + SRAM0_SIZE - SRAM_GPMC_STACK_SIZE)
 #else
 SRAM_STACK:
-	.word (SRAM0_START + 0x2800)	/* we'll place stack+heap+gd in top 10 KB */
+	.word (SRAM0_START + SRAM0_SIZE - 4)	/* place the stack at the top */
 #endif
 
 _mark1:
