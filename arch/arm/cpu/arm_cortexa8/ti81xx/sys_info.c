@@ -178,12 +178,8 @@ int print_cpuinfo (void)
 		sec_s = "?";
 	}
 
-#ifdef CONFIG_TI816X
-	printf("TI%s-%s rev 1.%d\n",
-			cpu_s, sec_s, rev);
-#else
 	if (rev < PG_END) {
-		char cpu_rev_str[3][4] = {"1.0", "2.1"}, *cpu_rev;
+		char cpu_rev_str[5][4] = {"1.0", "1.1", "2.0", "2.1"}, *cpu_rev;
 
 		cpu_rev = cpu_rev_str[rev];
 		printf("TI%s-%s rev %s\n",
@@ -192,7 +188,6 @@ int print_cpuinfo (void)
 		printf("TI%s-%s rev ?????[%1x]\n",
 			cpu_s, sec_s, rev);
 	}
-#endif
 	printf("\n");
 
 	/* ARM and DDR frequencies */
