@@ -46,9 +46,38 @@ _TEXT_BASE:
 /* default gpmc pad config valaue */
 #define GPMC_PAD_DEF_VAL	(0x00000001)
 
+#ifdef CONFIG_TI814X
+#define CM_ALWON_GPIO_CLKCTRL	CM_ALWON_GPIO_1_CLKCTRL
+#define GPIO_BASE	GPIO1_BASE
+#define GPIO_NO		22
+
+#define GPMC_A12_MUX_VAL	MODE(5)
+#define GPMC_A13_MUX_VAL	(MODE(2) | PULL_UP_EN)
+#define GPMC_A14_MUX_VAL	(MODE(2) | PULL_UP_EN)
+#define GPMC_A15_MUX_VAL	MODE(2)
+#define GPMC_A16_MUX_VAL	MODE(1)
+#define GPMC_A17_MUX_VAL	MODE(1)
+#define GPMC_A18_MUX_VAL	MODE(1)
+#define GPMC_A19_MUX_VAL	MODE(1)
+#define GPMC_A20_MUX_VAL	(MODE(1) | PULL_UP_EN)
+#define GPMC_A21_MUX_VAL	MODE(1)
+#define GPMC_A22_MUX_VAL	(MODE(1) | PULL_UP_EN)
+#define GPMC_A23_MUX_VAL	MODE(1)
+#define GPMC_A24_MUX_VAL	(MODE(2)| PULL_UP_EN)
+#define GPMC_A25_MUX_VAL	MODE(2)
+#define GPMC_A27_MUX_VAL	(MODE(8)| PULL_UP_EN)
+
+#endif
+
+#ifdef CONFIG_TI816X
+#define CM_ALWON_GPIO_CLKCTRL	CM_ALWON_GPIO_0_CLKCTRL
+#define GPIO_BASE	GPIO0_BASE
+#define GPIO_NO		20
+#endif
+
 /* GPIO clk control */
-#define GPIO0_CFG_VAL		0xFFEFFFFF
-#define GPIO0_CLKCTRL_VAL	0x102
+#define GPIO_CFG_VAL		~(1 << GPIO_NO)
+#define GPIO_CLKCTRL_VAL	0x102
 
 #define SRAM1_START		(0x40400000)
 #define RAM_ADDR_MASK		(0xC0000000)
@@ -99,8 +128,8 @@ gpmc_next_wait0:
 	bne gpmc_next_wait0
 
 	/****** GPIO out of reset *******/
-	ldr r5, cm_alwon_gpio0_clkctrl_addr
-	ldr r2, cm_alwon_gpio0_clkctrl_val
+	ldr r5, cm_alwon_gpio_clkctrl_addr
+	ldr r2, cm_alwon_gpio_clkctrl_val
 	str r2, [r5]
 	/* wait for gpio enable to settle */
 gpio_next_wait0:
@@ -109,12 +138,12 @@ gpio_next_wait0:
 	cmp r2, #0x2
 	bne gpio_next_wait0
 
-	/****** Set GPIO-20 to low */
-	ldr r5, gpio0_data_addr
+	/****** Set the corresponding GPIO to low */
+	ldr r5, gpio_data_addr
 	mov r2, #0x0
 	str r2, [r5]
-	ldr r5, gpio0_cfg_addr
-	ldr r2, gpio0_cfg_val
+	ldr r5, gpio_cfg_addr
+	ldr r2, gpio_cfg_val
 	str r2, [r5]
 
 	/***** GPMC CS0 init ******/
@@ -152,6 +181,7 @@ gpmc_next_wait1:
 	ldr r2, gpmc_cfg7_val
 	str r2, [r5]
 
+#ifdef CONFIG_TI816X
 	/* do pin muxing */
 	mov r2, #0x1
 	ldr r5, gpmc_a12_addr
@@ -188,12 +218,29 @@ gpmc_next_wait1:
 	str r2, [r5]
 	ldr r5, gpmc_a27_addr
 	str r2, [r5]
-
+#endif
+#ifdef CONFIG_TI814X
+	/* do pin muxing */
+	adr r2, gpmc_a12_mux_val;
+	adr r5, gpmc_a12_addr;
+	adr r0, gpmc_a27_addr
+loop:	ldr r3, [r2];
+	ldr r4, [r5];
+	str r3, [r4];
+	add r5, r5, #4;
+	add r2, r2, #4;
+	cmp r5, r0;
+	bne loop;
+	ldr r3, [r2];
+	ldr r4, [r5];
+	str r3, [r4];
+#endif
 	/* enable CS0 */
 	ldr r5, gpmc_cfg7_addr
 	ldr r2, gpmc_cfg7_val
 	orr r2, r2, #0x40
 	str r2, [r5]
+
 	/* wait for enable to settle */
 	mov r3, #0x900
 gpmc_next_wait2:
@@ -210,16 +257,16 @@ gpmc_next_wait2:
 /* The Nor has to be in the Flash Base CS0 for this condition to happen */
 cm_alwon_gpmc_clkctrl_addr:
 	.word CM_ALWON_GPMC_CLKCTRL
-cm_alwon_gpio0_clkctrl_addr:
-	.word CM_ALWON_GPIO_0_CLKCTRL
-cm_alwon_gpio0_clkctrl_val:
-	.word GPIO0_CLKCTRL_VAL
-gpio0_cfg_addr:
-	.word (GPIO0_BASE + 0x134)
-gpio0_data_addr:
-	.word (GPIO0_BASE + 0x13C)
-gpio0_cfg_val:
-	.word GPIO0_CFG_VAL
+cm_alwon_gpio_clkctrl_addr:
+	.word CM_ALWON_GPIO_CLKCTRL
+cm_alwon_gpio_clkctrl_val:
+	.word GPIO_CLKCTRL_VAL
+gpio_cfg_addr:
+	.word (GPIO_BASE + 0x134)
+gpio_data_addr:
+	.word (GPIO_BASE + 0x13C)
+gpio_cfg_val:
+	.word GPIO_CFG_VAL
 sram_pc_start:
 	.word (SRAM0_START + 0x10000)
 SRAM_STACK_GPMC:
@@ -285,8 +332,45 @@ gpmc_a25_addr:
 	.word GPMC_A25
 gpmc_a27_addr:
 	.word GPMC_A27
+
+#ifdef CONFIG_TI816X
 sc1_rst_addr:
 	.word  SC1_RST
+#endif
+
+#ifdef CONFIG_TI814X
+gpmc_a12_mux_val:
+	.word GPMC_A12_MUX_VAL
+gpmc_a13_mux_val:
+	.word GPMC_A13_MUX_VAL
+gpmc_a14_mux_val:
+	.word GPMC_A14_MUX_VAL
+gpmc_a15_mux_val:
+	.word GPMC_A15_MUX_VAL
+gpmc_a16_mux_val:
+	.word GPMC_A16_MUX_VAL
+gpmc_a17_mux_val:
+	.word GPMC_A17_MUX_VAL
+gpmc_a18_mux_val:
+	.word GPMC_A18_MUX_VAL
+gpmc_a19_mux_val:
+	.word GPMC_A19_MUX_VAL
+gpmc_a20_mux_val:
+	.word GPMC_A20_MUX_VAL
+gpmc_a21_mux_val:
+	.word GPMC_A21_MUX_VAL
+gpmc_a22_mux_val:
+	.word GPMC_A22_MUX_VAL
+gpmc_a23_mux_val:
+	.word GPMC_A23_MUX_VAL
+gpmc_a24_mux_val:
+	.word GPMC_A24_MUX_VAL
+gpmc_a25_mux_val:
+	.word GPMC_A25_MUX_VAL
+gpmc_a27_mux_val:
+	.word GPMC_A27_MUX_VAL
+#endif
+
 ram_addr_mask:
 	.word RAM_ADDR_MASK
 #endif
@@ -354,6 +438,7 @@ ocmc0_wait1:
 	cmp r2, #0
 	bne ocmc0_wait1
 
+#ifdef CONFIG_TI816X
 	/**** enable ocmc 1 ****/
 	/* CLKSTCTRL */
 	ldr r5, cm_alwon_ocmc_1_clkstctrl_addr
@@ -375,6 +460,7 @@ ocmc1_wait1:
 	ands r2, r2, #0x00030000
 	cmp r2, #0
 	bne ocmc1_wait1
+#endif
 
 nor_init_start:
 	/* gpmc init */
@@ -399,10 +485,14 @@ cm_alwon_ocmc_0_clkstctrl_addr:
 	.word CM_ALWON_OCMC_0_CLKSTCTRL
 cm_alwon_ocmc_0_clkctrl_addr:
 	.word CM_ALWON_OCMC_0_CLKCTRL
+
+#ifdef CONFIG_TI816X
 cm_alwon_ocmc_1_clkstctrl_addr:
 	.word CM_ALWON_OCMC_1_CLKSTCTRL
 cm_alwon_ocmc_1_clkctrl_addr:
 	.word CM_ALWON_OCMC_1_CLKCTRL
+#endif
+
 SRAM_STACK:
 	.word (SRAM0_START + SRAM0_SIZE - SRAM_GPMC_STACK_SIZE)
 #else

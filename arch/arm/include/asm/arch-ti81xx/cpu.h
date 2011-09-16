@@ -287,6 +287,7 @@
 #define CM_ALWON_GPIO_0_CLKCTRL		(PRCM_BASE + 0x155c)
 #define CM_ALWON_GPIO_0_OPTFCLKEN_DBCLK (PRCM_BASE + 0x155c)
 
+#define CM_ALWON_GPIO_1_CLKCTRL		(PRCM_BASE + 0x1560)
 /* Ethernet */
 #define CM_ETHERNET_CLKSTCTRL		(PRCM_BASE + 0x1404)
 #define CM_ALWON_ETHERNET_0_CLKCTRL	(PRCM_BASE + 0x15D4)
@@ -477,6 +478,61 @@
 #define GPMC_A24			TIM6_OUT
 #define GPMC_A25			SC0_DATA
 
+#endif
+
+#ifdef CONFIG_TI814X
+#define INPUT_EN	(0x1 << 18)
+#define PULL_UP_EN	(0x1 << 17)
+#define PULL_DIS	(0x1 << 16)
+#define MODE(x)		(0x1 << (x - 1))
+
+#define GPMC_D0			(CTRL_BASE + 0x0960)
+#define GPMC_D1			(CTRL_BASE + 0x0964)
+#define GPMC_D2			(CTRL_BASE + 0x0968)
+#define GPMC_D3			(CTRL_BASE + 0x096C)
+#define GPMC_D4			(CTRL_BASE + 0x0970)
+#define GPMC_D5			(CTRL_BASE + 0x0974)
+#define GPMC_D6			(CTRL_BASE + 0x0978)
+#define GPMC_D7			(CTRL_BASE + 0x097C)
+#define GPMC_D8			(CTRL_BASE + 0x0980)
+#define GPMC_D9			(CTRL_BASE + 0x0984)
+#define GPMC_D10		(CTRL_BASE + 0x0988)
+#define GPMC_D11		(CTRL_BASE + 0x098C)
+#define GPMC_D12		(CTRL_BASE + 0x0990)
+#define GPMC_D13		(CTRL_BASE + 0x0994)
+#define GPMC_D14		(CTRL_BASE + 0x0998)
+#define GPMC_D15		(CTRL_BASE + 0x099C)
+
+#define GPMC_A1			(CTRL_BASE + 0x09D0)
+#define GPMC_A2			(CTRL_BASE + 0x09D4)
+#define GPMC_A3			(CTRL_BASE + 0x09D8)
+#define GPMC_A4			(CTRL_BASE + 0x09DC)
+#define GPMC_A5			(CTRL_BASE + 0x0A9C)
+#define GPMC_A6			(CTRL_BASE + 0x0AA0)
+#define GPMC_A7			(CTRL_BASE + 0x0AA4)
+#define GPMC_A8			(CTRL_BASE + 0x0AA8)
+#define GPMC_A9			(CTRL_BASE + 0x0AAC)
+#define GPMC_A10		(CTRL_BASE + 0x0AB0)
+#define GPMC_A11		(CTRL_BASE + 0x0AB4)
+#define GPMC_A12		(CTRL_BASE + 0x0AB8)
+#define GPMC_A12		(CTRL_BASE + 0x0AB8)
+#define GPMC_A13		(CTRL_BASE + 0x0B8C)
+#define GPMC_A14		(CTRL_BASE + 0x0B90)
+#define GPMC_A15		(CTRL_BASE + 0x0B94)
+#define GPMC_A16		(CTRL_BASE + 0x09A0)
+#define GPMC_A17		(CTRL_BASE + 0x09A4)
+#define GPMC_A18		(CTRL_BASE + 0x09A8)
+#define GPMC_A19		(CTRL_BASE + 0x09AC)
+#define GPMC_A20		(CTRL_BASE + 0x09B0)
+#define GPMC_A21		(CTRL_BASE + 0x09B4)
+#define GPMC_A22		(CTRL_BASE + 0x09B8)
+#define GPMC_A23		(CTRL_BASE + 0x09BC)
+#define GPMC_A24		(CTRL_BASE + 0x09EC)
+#define GPMC_A25		(CTRL_BASE + 0x09E8)
+#define GPMC_A27		(CTRL_BASE + 0x09CC)
+#define GPMC_CS0_REG		(CTRL_BASE + 0x09E4)
+#define GPMC_OEN		(CTRL_BASE + 0x0A00)
+#define GPMC_WEN		(CTRL_BASE + 0x0A04)
 #endif
 
 #ifndef __KERNEL_STRICT_NAMES
