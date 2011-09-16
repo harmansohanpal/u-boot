@@ -421,6 +421,11 @@
 #define SRAM_GPMC_STACK_SIZE		(0x40)
 #endif
 
+#ifdef CONFIG_TI814X
+#define SRAM0_SIZE			(0x1B800)
+#define SRAM_GPMC_STACK_SIZE		(0x40)
+#endif
+
 /* GPMC related */
 #define GPMC_CONFIG_CS0			(0x60)
 #define GPMC_CONFIG_CS0_BASE		(GPMC_BASE + GPMC_CONFIG_CS0)
