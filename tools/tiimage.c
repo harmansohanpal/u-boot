@@ -111,7 +111,7 @@ static int tiimage_verify_header(uint8_t *ptr, int image_size,
 
 static void ti81xximage_print_header(const void *ptr)
 {
-#if !defined(CONFIG_TI_DUMMY_HEADER)
+#if !defined(CONFIG_TI_DUMMY_HEADER) && !defined(CONFIG_TI81XX_PERIPHERAL_BOOT)
 	struct ti_header *ti_hdr = (struct ti_header *) ptr;
 	printf("Image Type:   Texas Instruments ti81xx Boot Image\n");
 	printf("Image Size:   ");

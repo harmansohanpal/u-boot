@@ -26,8 +26,10 @@
 #define _TIIMAGE_H_
 
 struct ti_header {
+#ifndef CONFIG_TI81XX_PERIPHERAL_BOOT
 	uint32_t image_size;
 	uint32_t load_addr;
+#endif
 };
 
 #endif /* _TIIMAGE_H_ */
