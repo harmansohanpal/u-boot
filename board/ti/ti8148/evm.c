@@ -186,7 +186,7 @@ int board_init(void)
     * Also, even for other boot modes user is expected to
     * on/off the BW pin on the EVM.
     */
-	gpmc_set_cs_buswidth(0, get_sysboot_bw());
+	//gpmc_set_cs_buswidth(0, get_sysboot_bw());
 
 	return 0;
 }
