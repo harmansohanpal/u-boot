@@ -694,6 +694,16 @@ void per_clocks_enable(void)
 	__raw_writel(0x2, CM_ALWON_HSMMC_CLKCTRL);
 	while(__raw_readl(CM_ALWON_HSMMC_CLKCTRL) != 0x2);
 
+	/*
+	 * McASP2
+	 * select mcasp2 clk from sys_clk_22 (OSC 0)
+	 * so that audio clk (sys_clk_20) can be used for RMII
+	 * ToDo :
+	 * This can be removed once kernel exports set_parent()
+	 */
+	__raw_writel(0x2, CM_ALWON_MCASP2_CLKCTRL);
+	while (__raw_readl(CM_ALWON_MCASP2_CLKCTRL) != 0x2);
+
 	/* WDT */
 	/* For WDT to be functional, it needs to be first stopped by writing
 	 * the pattern 0xAAAA followed by 0x5555 in the WDT start/stop register.

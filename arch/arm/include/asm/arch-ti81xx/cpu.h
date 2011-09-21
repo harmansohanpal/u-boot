@@ -310,6 +310,10 @@
 #define CM_ALWON_HSMMC_CLKCTRL		(PRCM_BASE + 0x1620)
 #endif
 
+#ifdef CONFIG_TI814X
+#define CM_ALWON_MCASP2_CLKCTRL		(PRCM_BASE + 0x0384)
+#endif
+
 /* UART2 registers */
 #ifdef CONFIG_TI816X
 #define DEFAULT_UART_BASE		UART2_BASE
