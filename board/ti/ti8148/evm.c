@@ -38,21 +38,32 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static void cmd_macro_config(u32 inv_clk_out, u32 ctrl_slave_ratio_cs0,
-	u32 cmd_dll_lock_diff)
+static void cmd_macro_config(u32 ddr_phy, u32 inv_clk_out,
+			 u32 ctrl_slave_ratio_cs0, u32 cmd_dll_lock_diff)
 {
-	__raw_writel(inv_clk_out, CMD0_REG_PHY0_INVERT_CLKOUT_0);
-	__raw_writel(inv_clk_out, CMD1_REG_PHY0_INVERT_CLKOUT_0);
-	__raw_writel(inv_clk_out, CMD2_REG_PHY0_INVERT_CLKOUT_0);
+	u32 ddr_phy_base = (DDR_PHY0 == ddr_phy) ?
+			 DDR0_PHY_BASE_ADDR : DDR1_PHY_BASE_ADDR;
+
+	__raw_writel(inv_clk_out,
+		 ddr_phy_base + CMD1_REG_PHY_INVERT_CLKOUT_0);
+	__raw_writel(inv_clk_out,
+		 ddr_phy_base + CMD0_REG_PHY_INVERT_CLKOUT_0);
+	__raw_writel(inv_clk_out,
+		 ddr_phy_base + CMD2_REG_PHY_INVERT_CLKOUT_0);
+
 	__raw_writel(((ctrl_slave_ratio_cs0 << 10) | ctrl_slave_ratio_cs0),
-		CMD0_REG_PHY0_CTRL_SLAVE_RATIO_0);
+		ddr_phy_base + CMD0_REG_PHY_CTRL_SLAVE_RATIO_0);
 	__raw_writel(((ctrl_slave_ratio_cs0 << 10) | ctrl_slave_ratio_cs0),
-		CMD1_REG_PHY0_CTRL_SLAVE_RATIO_0);
+		ddr_phy_base + CMD1_REG_PHY_CTRL_SLAVE_RATIO_0);
 	__raw_writel(((ctrl_slave_ratio_cs0 << 10) | ctrl_slave_ratio_cs0),
-		 CMD2_REG_PHY0_CTRL_SLAVE_RATIO_0);
-	__raw_writel(cmd_dll_lock_diff, CMD0_REG_PHY0_DLL_LOCK_DIFF_0);
-	__raw_writel(cmd_dll_lock_diff, CMD1_REG_PHY0_DLL_LOCK_DIFF_0);
-	__raw_writel(cmd_dll_lock_diff, CMD2_REG_PHY0_DLL_LOCK_DIFF_0);
+		 ddr_phy_base + CMD2_REG_PHY_CTRL_SLAVE_RATIO_0);
+
+	__raw_writel(cmd_dll_lock_diff,
+		 ddr_phy_base + CMD0_REG_PHY_DLL_LOCK_DIFF_0);
+	__raw_writel(cmd_dll_lock_diff,
+		 ddr_phy_base + CMD1_REG_PHY_DLL_LOCK_DIFF_0);
+	__raw_writel(cmd_dll_lock_diff,
+		 ddr_phy_base + CMD2_REG_PHY_DLL_LOCK_DIFF_0);
 }
 
 static void data_macro_config(u32 macro_num, u32 phy_num, u32 rd_dqs_cs0,
@@ -265,7 +276,10 @@ static void config_ti814x_ddr(void)
 	while ((__raw_readl(CM_DEFAULT_DMM_CLKCTRL)) != 0x2);
 
 	if (is_ddr3()) {
-		cmd_macro_config(DDR3_PHY_INVERT_CLKOUT_DEFINE,
+		cmd_macro_config(DDR_PHY0, DDR3_PHY_INVERT_CLKOUT_OFF,
+				DDR3_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE,
+				PHY_CMD0_DLL_LOCK_DIFF_DEFINE);
+		cmd_macro_config(DDR_PHY1, DDR3_PHY_INVERT_CLKOUT_OFF,
 				DDR3_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE,
 				PHY_CMD0_DLL_LOCK_DIFF_DEFINE);
 
@@ -279,7 +293,10 @@ static void config_ti814x_ddr(void)
 			}
 		}
 	} else {
-		cmd_macro_config(PHY_INVERT_CLKOUT_DEFINE,
+		cmd_macro_config(DDR_PHY0, PHY_INVERT_CLKOUT_DEFINE,
+				DDR2_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE,
+				PHY_CMD0_DLL_LOCK_DIFF_DEFINE);
+		cmd_macro_config(DDR_PHY1, PHY_INVERT_CLKOUT_DEFINE,
 				DDR2_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE,
 				PHY_CMD0_DLL_LOCK_DIFF_DEFINE);
 
@@ -293,6 +310,10 @@ static void config_ti814x_ddr(void)
 			}
 		}
 	}
+
+	/* DDR IO CTRL config */
+	__raw_writel(DDR0_IO_CTRL_DEFINE, DDR0_IO_CTRL);
+	__raw_writel(DDR1_IO_CTRL_DEFINE, DDR1_IO_CTRL);
 
 	__raw_writel(__raw_readl(VTP0_CTRL_REG) | 0x00000040 , VTP0_CTRL_REG);
 	__raw_writel(__raw_readl(VTP1_CTRL_REG) | 0x00000040 , VTP1_CTRL_REG);
@@ -350,9 +371,17 @@ static void config_ti814x_ddr(void)
 		__raw_writel(DDR2_EMIF_TIM2, EMIF4_0_SDRAM_TIM_2_SHADOW);
 		__raw_writel(DDR2_EMIF_TIM3, EMIF4_0_SDRAM_TIM_3);
 		__raw_writel(DDR2_EMIF_TIM3, EMIF4_0_SDRAM_TIM_3_SHADOW);
+		__raw_writel(DDR2_EMIF_SDRAM_CONFIG, EMIF4_0_SDRAM_CONFIG);
+
+		__raw_writel(DDR_EMIF_REF_CTRL | DDR_EMIF_REF_TRIGGER,
+						 EMIF4_0_SDRAM_REF_CTRL);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
+		__raw_writel(DDR2_EMIF_SDRAM_ZQCR, EMIF4_0_SDRAM_ZQCR);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
+
 		__raw_writel(DDR2_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL);
 		__raw_writel(DDR2_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
-		__raw_writel(DDR2_EMIF_SDRAM_CONFIG, EMIF4_0_SDRAM_CONFIG);
 
 		/*Program EMIF1 CFG Registers*/
 		__raw_writel(DDR2_EMIF_READ_LATENCY, EMIF4_1_DDR_PHY_CTRL_1);
@@ -363,9 +392,18 @@ static void config_ti814x_ddr(void)
 		__raw_writel(DDR2_EMIF_TIM2, EMIF4_1_SDRAM_TIM_2_SHADOW);
 		__raw_writel(DDR2_EMIF_TIM3, EMIF4_1_SDRAM_TIM_3);
 		__raw_writel(DDR2_EMIF_TIM3, EMIF4_1_SDRAM_TIM_3_SHADOW);
+		__raw_writel(DDR2_EMIF_SDRAM_CONFIG, EMIF4_1_SDRAM_CONFIG);
+
+		__raw_writel(DDR_EMIF_REF_CTRL | DDR_EMIF_REF_TRIGGER,
+						 EMIF4_1_SDRAM_REF_CTRL);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
+		__raw_writel(DDR2_EMIF_SDRAM_ZQCR, EMIF4_1_SDRAM_ZQCR);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
+
 		__raw_writel(DDR2_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL);
 		__raw_writel(DDR2_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
-		__raw_writel(DDR2_EMIF_SDRAM_CONFIG, EMIF4_1_SDRAM_CONFIG);
+
 	} else {
 		/*Program EMIF0 CFG Registers*/
 		__raw_writel(DDR3_EMIF_READ_LATENCY, EMIF4_0_DDR_PHY_CTRL_1);
@@ -376,9 +414,17 @@ static void config_ti814x_ddr(void)
 		__raw_writel(DDR3_EMIF_TIM2, EMIF4_0_SDRAM_TIM_2_SHADOW);
 		__raw_writel(DDR3_EMIF_TIM3, EMIF4_0_SDRAM_TIM_3);
 		__raw_writel(DDR3_EMIF_TIM3, EMIF4_0_SDRAM_TIM_3_SHADOW);
+		__raw_writel(DDR3_EMIF_SDRAM_CONFIG, EMIF4_0_SDRAM_CONFIG);
+
+		__raw_writel(DDR_EMIF_REF_CTRL | DDR_EMIF_REF_TRIGGER,
+						 EMIF4_0_SDRAM_REF_CTRL);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
+		__raw_writel(DDR3_EMIF_SDRAM_ZQCR, EMIF4_0_SDRAM_ZQCR);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
+
 		__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL);
 		__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
-		__raw_writel(DDR3_EMIF_SDRAM_CONFIG, EMIF4_0_SDRAM_CONFIG);
 
 		/*Program EMIF1 CFG Registers*/
 		__raw_writel(DDR3_EMIF_READ_LATENCY, EMIF4_1_DDR_PHY_CTRL_1);
@@ -389,9 +435,17 @@ static void config_ti814x_ddr(void)
 		__raw_writel(DDR3_EMIF_TIM2, EMIF4_1_SDRAM_TIM_2_SHADOW);
 		__raw_writel(DDR3_EMIF_TIM3, EMIF4_1_SDRAM_TIM_3);
 		__raw_writel(DDR3_EMIF_TIM3, EMIF4_1_SDRAM_TIM_3_SHADOW);
+		__raw_writel(DDR3_EMIF_SDRAM_CONFIG, EMIF4_1_SDRAM_CONFIG);
+
+		__raw_writel(DDR_EMIF_REF_CTRL | DDR_EMIF_REF_TRIGGER,
+						 EMIF4_1_SDRAM_REF_CTRL);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
+		__raw_writel(DDR3_EMIF_SDRAM_ZQCR, EMIF4_1_SDRAM_ZQCR);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL);
+		__raw_writel(DDR_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
+
 		__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL);
 		__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_1_SDRAM_REF_CTRL_SHADOW);
-		__raw_writel(DDR3_EMIF_SDRAM_CONFIG, EMIF4_1_SDRAM_CONFIG);
 	}
 }
 
