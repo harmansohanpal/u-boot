@@ -3207,7 +3207,6 @@ ti8148_evm_config_spi	\
 ti8148_evm_min_spi	\
 ti8148_evm_min_uart	\
 ti8148_evm_min_nand	\
-ti8148_evm_min_nor	\
 ti8148_evm_min_sd:	unconfig
 	@mkdir -p $(obj)include
 	@echo "#define CONFIG_TI81XX"	>>$(obj)include/config.h
@@ -3221,10 +3220,6 @@ ti8148_evm_min_sd:	unconfig
 			echo "#define CONFIG_NAND_BOOT"	>>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "TI_IMAGE = u-boot.min.nand" >> $(obj)board/ti/ti8148/config.tmp;\
-		elif [ "$(findstring _nor,$@)" ] ; then \
-			echo "#define CONFIG_NOR_BOOT"	>>$(obj)include/config.h ; \
-			echo "#define CONFIG_TI81XX_PERIPHERAL_BOOT"	>>$(obj)include/config.h; \
-			echo "TI_IMAGE = u-boot.min.nor" >> $(obj)board/ti/ti8148/config.tmp;	\
 		elif [ "$(findstring spi,$@)" ] ; then \
 			echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
@@ -3253,6 +3248,7 @@ ti8148_evm_min_sd:	unconfig
 			echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
 			echo "Setting up TI8148 default build with ENV in NAND..." ; \
 		elif [ "$(findstring _nor,$@)" ] ; then \
+			echo "#define CONFIG_NOR"	>>$(obj)include/config.h ; \
 			echo "#define CONFIG_NOR_BOOT"	>>$(obj)include/config.h ; \
 			echo "Setting up TI8148 default build with ENV in NOR..." ; \
 		elif [ "$(findstring spi,$@)" ] ; then \

@@ -283,9 +283,13 @@ extern unsigned int boot_flash_type;
 #endif /* SPI support */
 
 /* NOR support */
-#if defined(CONFIG_NOR_BOOT)
+#if defined(CONFIG_NOR)
 # undef CONFIG_CMD_NAND			/* Remove NAND support */
 # undef CONFIG_NAND_TI81XX
+# undef CONFIG_SKIP_LOWLEVEL_INIT
+# define CONFIG_TI814X_CONFIG_DDR
+# define CONFIG_SETUP_PLL
+# define CONFIG_TI814X_EVM_DDR3
 # undef CONFIG_ENV_IS_NOWHERE
 # ifdef CONFIG_SYS_MALLOC_LEN
 #  undef CONFIG_SYS_MALLOC_LEN
