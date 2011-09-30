@@ -67,6 +67,10 @@
 	"verify=yes\0" \
 	"bootcmd=mmc rescan 0; fatload mmc 0 0x80800000 u-boot.bin; go 0x80800000\0" \
 
+#elif defined(CONFIG_UART_BOOT)                /* stop in the min prompt */
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	"verify=yes\0" \
+	"bootcmd=\0" \
 # endif
 
 #else
