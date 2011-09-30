@@ -21,6 +21,7 @@
 .global invalidate_dcache
 .global l2_cache_enable
 .global l2_cache_disable
+.global l2_disable_wa
 
 /*
  *	invalidate_dcache()
@@ -111,3 +112,19 @@ l2_cache_disable:
 	mcr	15, 0, r3, cr1, cr0, 1
 	pop	{r1, r2, r3, pc}
 
+/*
+ * l2_disable_wa()
+ * Invoke secure monitor to disable write allocate on miss by setting L2
+ * Auxiliary Cache Control Register.
+ *
+ * Note: Save r0-r12 as the secure monitor may modify them
+ */
+l2_disable_wa:
+	stmfd   sp!, {r0 - r12, lr}
+	mrc     p15, 1, r0, c9, c0, 2
+	orr     r0, r0, #(1 << 22)		@ disable WA on miss
+	mov     r12, #0
+	orr     r12, r12, #(1 << 8)
+	add     r12, r12, #2
+	.word   0xe1600070			@ opcode of SMC instruction
+	ldmfd	sp!, {r0 - r12, pc}

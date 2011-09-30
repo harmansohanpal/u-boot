@@ -1164,6 +1164,14 @@ void set_muxconf_regs(void)
  **********************************************************/
 void s_init(u32 in_ddr)
 {
+	/*
+	 * Disable Write Allocate on miss to avoid starvation of other masters
+	 * (than A8).
+	 *
+	 * Ref DM816x Erratum: TODO
+	 */
+	l2_disable_wa();
+
 	l2_cache_enable();		/* Can be removed as A8 comes up with L2 enabled */
 #ifdef CONFIG_SETUP_1V
 	__raw_writel(0x102, 0x4818155c);

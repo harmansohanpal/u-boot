@@ -1097,6 +1097,15 @@ void s_init(u32 in_ddr)
 	icache_enable();
 	dcache_enable();
 #endif
+
+	/*
+	 * Disable Write Allocate on miss to avoid starvation of other masters
+	 * (than A8).
+	 *
+	 * Ref DM814x Erratum: TODO
+	 */
+	l2_disable_wa();
+
 	/* Can be removed as A8 comes up with L2 enabled */
 	l2_cache_enable();
 	unlock_pll_control_mmr();
