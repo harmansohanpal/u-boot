@@ -181,6 +181,7 @@ int board_init(void)
 
 	gpmc_init();
 
+#ifndef CONFIG_NOR
 	/* GPMC will come up with default buswidth configuration,
     * we will override it based on BW pin CONFIG_STATUS register.
     * This is currently required only for NAND/NOR to
@@ -192,7 +193,7 @@ int board_init(void)
     * on/off the BW pin on the EVM.
     */
 	gpmc_set_cs_buswidth(0, get_sysboot_bw());
-
+#endif
 	return 0;
 }
 
