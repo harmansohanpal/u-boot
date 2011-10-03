@@ -71,6 +71,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"verify=yes\0" \
 	"bootcmd=\0" \
+
 # endif
 
 #else
