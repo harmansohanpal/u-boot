@@ -183,9 +183,9 @@
 
 #if defined(CONFIG_TI816X_DDR3_SW_LEVELING)
 /* These values are obtained from the CCS app */
-#define RD_DQS_GATE	0x12A
-#define RD_DQS		0x3B
-#define WR_DQS		0xA6
+#define RD_DQS_GATE	((emif == 0) ? 0x12A : 0x12A)
+#define RD_DQS		((emif == 0) ? 0x3B : 0x3B)
+#define WR_DQS		((emif == 0) ? 0xA6 : 0xA6)
 #endif
 
 #endif	/* CONFIG_TI816X_DDR3_400 */
@@ -201,9 +201,9 @@
 
 #if defined(CONFIG_TI816X_DDR3_SW_LEVELING)
 /* These values are obtained from the CCS app */
-#define RD_DQS_GATE	0x13D
-#define RD_DQS		0x39
-#define WR_DQS		0xB4
+#define RD_DQS_GATE	((emif == 0) ? 0x13D : 0x13D)
+#define RD_DQS		((emif == 0) ? 0x39 : 0x39)
+#define WR_DQS		((emif == 0) ? 0xB4 : 0xB4)
 #endif
 
 #endif /* CONFIG_TI816X_DDR_531 */
@@ -219,9 +219,9 @@
 
 #if defined(CONFIG_TI816X_DDR3_SW_LEVELING)
 /* These values are obtained from the CCS app */
-#define RD_DQS_GATE	0x196
-#define RD_DQS		0x39
-#define WR_DQS		0x91
+#define RD_DQS_GATE	((emif == 0) ? 0x196 : 0x196)
+#define RD_DQS		((emif == 0) ? 0x39 : 0x39)
+#define WR_DQS		((emif == 0) ? 0x91 : 0x91)
 
 #endif
 
@@ -238,9 +238,9 @@
 
 #if defined(CONFIG_TI816X_DDR3_SW_LEVELING)
 /* These values are obtained from the CCS app */
-#define RD_DQS_GATE	0x1B3
-#define RD_DQS		0x35
-#define WR_DQS		0x93
+#define RD_DQS_GATE	((emif == 0) ? 0x1B3 : 0x1B3)
+#define RD_DQS		((emif == 0) ? 0x35 : 0x35)
+#define WR_DQS		((emif == 0) ? 0x93 : 0x93)
 
 #endif
 
