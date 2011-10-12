@@ -96,7 +96,7 @@
 		"source ${script_addr}\0" \
 
 #define CONFIG_BOOTCOMMAND \
-	"if mmc init; then " \
+	"if mmc rescan 0; then " \
 		"if run loadbootscript; then " \
 			"run bootscript; " \
 		"else " \
