@@ -66,13 +66,13 @@ static void cmd_macro_config(u32 ddr_phy, u32 inv_clk_out,
 		 ddr_phy_base + CMD2_REG_PHY_DLL_LOCK_DIFF_0);
 }
 
-static void data_macro_config(u32 macro_num, u32 phy_num, u32 rd_dqs_cs0,
+static void data_macro_config(u32 macro_num, u32 emif, u32 rd_dqs_cs0,
 		u32 wr_dqs_cs0, u32 fifo_we_cs0, u32 wr_data_cs0)
 {
 	/* 0xA4 is size of each data macro mmr region.
 	 * phy1 is at offset 0x400 from phy0
 	 */
-	u32 base = (macro_num * 0xA4) + (phy_num * 0x400);
+	u32 base = (macro_num * 0xA4) + (emif * 0x400);
 
 	__raw_writel(((rd_dqs_cs0 << 10) | rd_dqs_cs0),
 		(DATA0_REG_PHY0_RD_DQS_SLAVE_RATIO_0 + base));
@@ -262,7 +262,7 @@ int misc_init_r (void)
 #ifdef CONFIG_TI814X_CONFIG_DDR
 static void config_ti814x_ddr(void)
 {
-	int macro, phy_num;
+	int macro, emif;
 
 	/*Enable the Power Domain Transition of L3 Fast Domain Peripheral*/
 	__raw_writel(0x2, CM_DEFAULT_FW_CLKCTRL);
@@ -287,9 +287,9 @@ static void config_ti814x_ddr(void)
 				DDR3_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE,
 				PHY_CMD0_DLL_LOCK_DIFF_DEFINE);
 
-		for (phy_num = 0; phy_num <= DDR_PHY1; phy_num++) {
+		for (emif = 0; emif <= DDR_PHY1; emif++) {
 			for (macro = 0; macro <= DATA_MACRO_3; macro++) {
-				data_macro_config(macro, phy_num,
+				data_macro_config(macro, emif,
 					DDR3_PHY_RD_DQS_CS0_DEFINE,
 					DDR3_PHY_WR_DQS_CS0_DEFINE,
 					DDR3_PHY_RD_DQS_GATE_CS0_DEFINE,
@@ -304,9 +304,9 @@ static void config_ti814x_ddr(void)
 				DDR2_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE,
 				PHY_CMD0_DLL_LOCK_DIFF_DEFINE);
 
-		for (phy_num = 0; phy_num <= DDR_PHY1; phy_num++) {
+		for (emif = 0; emif <= DDR_PHY1; emif++) {
 			for (macro = 0; macro <= DATA_MACRO_3; macro++) {
-				data_macro_config(macro, phy_num,
+				data_macro_config(macro, emif,
 					DDR2_PHY_RD_DQS_CS0_DEFINE,
 					DDR2_PHY_WR_DQS_CS0_DEFINE,
 					DDR2_PHY_RD_DQS_GATE_CS0_DEFINE,

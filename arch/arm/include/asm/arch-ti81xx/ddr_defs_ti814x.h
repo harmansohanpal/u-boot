@@ -167,18 +167,18 @@
 #define	PHY_WRLVL_INIT_CS1_DEFINE		0x0
 #define	PHY_CTRL_SLAVE_RATIO_CS1_DEFINE		0x80
 
-/* TI814X DDR2 PHY CFG parameters */
-#define	DDR2_PHY_RD_DQS_CS0_DEFINE		0x35
-#define	DDR2_PHY_WR_DQS_CS0_DEFINE		0x20
-#define	DDR2_PHY_RD_DQS_GATE_CS0_DEFINE		0x90
-#define	DDR2_PHY_WR_DATA_CS0_DEFINE		0x50
+/* TI814X DDR2 PHY CFG parameters  <emif0 : emif1> */
+#define	DDR2_PHY_RD_DQS_CS0_DEFINE		((emif == 0) ? 0x35 : 0x35)
+#define	DDR2_PHY_WR_DQS_CS0_DEFINE		((emif == 0) ? 0x20 : 0x20)
+#define	DDR2_PHY_RD_DQS_GATE_CS0_DEFINE		((emif == 0) ? 0x90 : 0x90)
+#define	DDR2_PHY_WR_DATA_CS0_DEFINE		((emif == 0) ? 0x50 : 0x50)
 #define	DDR2_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE	0x80
 
-/* TI814X DDR3 PHY CFG parameters */
-#define DDR3_PHY_RD_DQS_CS0_DEFINE		0x30
-#define DDR3_PHY_WR_DQS_CS0_DEFINE		0x21
-#define DDR3_PHY_RD_DQS_GATE_CS0_DEFINE		0xC0
-#define DDR3_PHY_WR_DATA_CS0_DEFINE		0x44
+/* TI814X DDR3 PHY CFG parameters   <emif0 : emif 1> */
+#define DDR3_PHY_RD_DQS_CS0_DEFINE		((emif == 0) ? 0x30 : 0x30)
+#define DDR3_PHY_WR_DQS_CS0_DEFINE		((emif == 0) ? 0x21 : 0x21)
+#define DDR3_PHY_RD_DQS_GATE_CS0_DEFINE		((emif == 0) ? 0xC0 : 0xC0)
+#define DDR3_PHY_WR_DATA_CS0_DEFINE		((emif == 0) ? 0x44 : 0x44)
 #define DDR3_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE	0x80
 
 /* DDR0/1 IO CTRL parameters */
