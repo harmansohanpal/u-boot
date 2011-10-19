@@ -63,6 +63,7 @@ static int ti81xximage_spi(void *hdr, int hdr_size,
 	uint32_t *rd;
 	uint8_t rds[4];
 	uint32_t wr = 0;
+	uint32_t count;
 
 	in_fp = fopen(in_file, "r");
 	out_fp = fopen(out_file, "w");
@@ -82,7 +83,7 @@ static int ti81xximage_spi(void *hdr, int hdr_size,
 
 	rd = (uint32_t*)(rds);
 	while (!feof(in_fp)) {
-		fread(rds, sizeof(uint32_t), 1, in_fp);
+		count = fread(rds, sizeof(uint32_t), 1, in_fp);
 		if (feof(in_fp))
 			break;
 		wr = tiimage_swap32(*rd);

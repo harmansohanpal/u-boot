@@ -20,6 +20,7 @@
 #include <asm/arch/ddr_defs.h>
 #include <asm/arch/hardware.h>
 #include <asm/arch/sys_proto.h>
+#include <asm/arch/mmc_host_def.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/mem.h>
 #include <asm/arch/nand.h>
@@ -38,6 +39,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+#ifdef CONFIG_TI814X_CONFIG_DDR
 static void cmd_macro_config(u32 ddr_phy, u32 inv_clk_out,
 			 u32 ctrl_slave_ratio_cs0, u32 cmd_dll_lock_diff)
 {
@@ -91,6 +93,7 @@ static void data_macro_config(u32 macro_num, u32 emif, u32 rd_dqs_cs0,
 	__raw_writel(PHY_DLL_LOCK_DIFF_DEFINE,
 		(DATA0_REG_PHY0_DLL_LOCK_DIFF_0 + base));
 }
+#endif
 
 int is_ddr3(void)
 {
@@ -126,7 +129,9 @@ static void usb_pll_config(void);
 #endif
 
 static void unlock_pll_control_mmr(void);
+#ifdef CONFIG_DRIVER_TI_CPSW
 static void cpsw_pad_config(void);
+#endif
 static void nor_pad_config_mux(void);
 /*
  * spinning delay to use before udelay works
@@ -810,7 +815,7 @@ void prcm_init(u32 in_ddr)
 #define PAD257_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0C00))
 #define PAD258_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0C04))
 
-
+#ifdef CONFIG_DRIVER_TI_CPSW
 static void cpsw_pad_config()
 {
 	volatile u32 val = 0;
@@ -984,6 +989,7 @@ static void cpsw_pad_config()
 		PAD258_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
 	}
 }
+#endif /* CONFIG_DRIVER_TI_CPSW */
 
 struct nor_pad_config {
 	unsigned int offset;

@@ -550,7 +550,7 @@ static void cpsw_slave_update_link(struct cpsw_slave *slave,
 {
 	char *name = priv->dev->name;
 	int phy_id = slave->data->phy_id;
-	int speed, duplex;
+	int speed = 0, duplex = 0;
 	unsigned short reg;
 	u32 mac_control = 0;
 

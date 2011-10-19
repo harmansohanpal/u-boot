@@ -137,6 +137,9 @@ u32 get_sysboot_bw(void)
 		return 1;
 	else if (bw == 1)/* 16-bit nand if BTMODE BW pin on board is OFF */
 		return 0;
+
+	/* Failed to detect */
+	return -1;
 }
 
 #ifdef CONFIG_DISPLAY_CPUINFO

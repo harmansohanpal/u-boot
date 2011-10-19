@@ -38,6 +38,7 @@ enum cpu_rev {
 	PG_END
 };
 
+void l2_disable_wa(void);
 void prcm_init(u32);
 void per_clocks_enable(void);
 void gpmc_init(void);

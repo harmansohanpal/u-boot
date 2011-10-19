@@ -29,10 +29,6 @@
 #include <net.h>
 #include <netdev.h>
 
-#define __raw_readl(a)		(*(volatile unsigned int *)(a))
-#define __raw_writel(v, a)	(*(volatile unsigned int *)(a) = (v))
-#define __raw_readw(a)		(*(volatile unsigned short *)(a))
-#define __raw_writew(v, a)	(*(volatile unsigned short *)(a) = (v))
 #define __raw_readc(a)		(*(volatile char *)(a))
 #define __raw_writec(v, a)	(*(volatile char *)(a) = (v))
 
