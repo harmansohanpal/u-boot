@@ -3294,6 +3294,7 @@ ti8168_evm_config	\
 ti8168_evm_config_nand	\
 ti8168_evm_config_nor	\
 ti8168_evm_config_spi	\
+ti8168_evm_config_sd	\
 ti8168_evm_min_ocmc	\
 ti8168_evm_min_sd:	unconfig
 	@mkdir -p $(obj)include
@@ -3312,11 +3313,15 @@ ti8168_evm_min_sd:	unconfig
 		echo "#define CONFIG_SPI_ENV"    >>$(obj)include/config.h ; \
 		echo "#define CONFIG_TI81XX_SPI_BOOT"	>>$(obj)include/config.h ; \
 		echo "Setting up TI8168 SPI build with ENV in SPI..." ; \
-	elif [ "$(findstring _sd,$@)" ] ; then \
+	elif [ "$(findstring _min_sd,$@)" ] ; then \
 		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 		echo "#define CONFIG_SD_BOOT"    >>$(obj)include/config.h ; \
 		echo "TI_IMAGE = u-boot.min.sd" >>$(obj)board/ti/ti8168/config.tmp; \
 		echo "Setting up TI8168 SD boot minimal build..." ; \
+	elif [ "$(findstring _sd,$@)" ] ; then \
+		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+		echo "#define CONFIG_MMC_ENV"    >>$(obj)include/config.h ; \
+		echo "Setting up TI8168 SD build with ENV in MMC..." ; \
 	elif [ "$(findstring _ocmc,$@)" ] ; then \
 		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 		echo "#define CONFIG_MINIMAL"    >>$(obj)include/config.h ; \
