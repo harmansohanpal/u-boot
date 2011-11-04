@@ -3204,6 +3204,7 @@ ti8148_evm_config	\
 ti8148_evm_config_nand	\
 ti8148_evm_config_nor	\
 ti8148_evm_config_spi	\
+ti8148_evm_config_sd	\
 ti8148_evm_min_spi	\
 ti8148_evm_min_uart	\
 ti8148_evm_min_nand	\
@@ -3255,6 +3256,10 @@ ti8148_evm_min_sd:	unconfig
 			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
 			echo "#define CONFIG_SPI_ENV"    >>$(obj)include/config.h ; \
 			echo "Setting up TI8148 default build with ENV in SPI..." ; \
+		elif [ "$(findstring sd,$@)" ] ; then \
+			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
+			echo "#define CONFIG_MMC_ENV"    >>$(obj)include/config.h ; \
+			echo "Setting up TI8148 default build with ENV in MMC..." ; \
 		else	\
 			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
 			echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \

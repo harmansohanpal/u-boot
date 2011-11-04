@@ -284,6 +284,17 @@ extern unsigned int boot_flash_type;
 # endif
 #endif /* SPI support */
 
+/* ENV in MMC */
+#if defined(CONFIG_MMC_ENV)
+#undef CONFIG_ENV_IS_NOWHERE
+#define CONFIG_ENV_IS_IN_MMC		1
+#define CONFIG_SYS_MMC_ENV_DEV		0
+#undef CONFIG_ENV_SIZE
+#undef CONFIG_ENV_OFFSET
+#define CONFIG_ENV_OFFSET		(6 * 64 * 1024)
+#define CONFIG_ENV_SIZE			(8 * 1024)
+#endif /* MMC support */
+
 /* NOR support */
 #if defined(CONFIG_NOR)
 # undef CONFIG_CMD_NAND			/* Remove NAND support */
