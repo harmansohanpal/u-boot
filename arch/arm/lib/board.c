@@ -342,19 +342,14 @@ void start_armboot (void)
 	onenand_init();
 #endif
 
+#ifdef CONFIG_GENERIC_MMC
+	puts ("MMC:   ");
+	mmc_initialize (gd->bd);
+#endif
+
 #ifdef CONFIG_HAS_DATAFLASH
 	AT91F_DataflashInit();
 	dataflash_print_info();
-#endif
-
-#ifdef CONFIG_GENERIC_MMC
-/*
- * MMC initialization is called before relocating env.
- * Thus It is required that operations like pin multiplexer
- * be put in board_init.
- */
-	puts ("MMC:   ");
-	mmc_initialize (gd->bd);
 #endif
 
 	/* initialize environment */
