@@ -211,6 +211,8 @@
 # define CONFIG_NET_RETRY_COUNT 	10
 # define CONFIG_NET_MULTI
 # define CONFIG_PHY_GIGE
+/* increase network receive packet buffer count for reliable TFTP */
+# define CONFIG_SYS_RX_ETH_BUFFER      16
 #endif
 
 #if defined(CONFIG_SYS_NO_FLASH)
