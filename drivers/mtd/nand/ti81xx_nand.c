@@ -317,7 +317,7 @@ static void ti81xx_fix_errors_bch(struct mtd_info *mtd, uint8_t *data,
 			/* Remove the ECC spare bits from correction. */
 			error_loc[count] -= (last_bit + 1);
 			/* Offset bit in data region */
-			error_byte_pos = (512 * 8) - (error_loc[count] / 8) - 1;
+			error_byte_pos = ((512 * 8) - (error_loc[count]) - 1) /8;
 			/* Error Bit mask */
 			error_bit_mask = 0x1 << (error_loc[count] % 8);
 			/* Toggle the error bit to make the correction. */
@@ -586,9 +586,9 @@ static int ti81xx_read_page_bch(struct mtd_info *mtd, struct nand_chip *chip,
 	oob_pos = (eccsize * eccsteps) + chip->ecc.layout->eccpos[0];
 	//oob_pos = (eccsize * eccsteps) + 2;
 
-	chip->ecc.hwctl(mtd, NAND_ECC_READ);
 	for (i = 0; eccsteps; eccsteps--, i += eccbytes, p += eccsize,
 				oob += eccbytes) {
+		chip->ecc.hwctl(mtd, NAND_ECC_READ);
 		/* read data */
 		chip->cmdfunc(mtd, NAND_CMD_RNDOUT, data_pos, page);
 		chip->read_buf(mtd, p, eccsize);

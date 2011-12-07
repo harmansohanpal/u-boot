@@ -98,7 +98,7 @@ static void elm_load_syndromes(u8 *syndrome, u32 nibbles, u8 poly)
 		writel(val, ptr);
 	}
 
-#ifndef CONFIG_TI816X
+#if (!defined(CONFIG_TI816X) && !defined(CONFIG_TI814X))
 	/* BCH 4-bit with 13 nibbles (2*8 = 16) */
 	writel(syndrome[0],
 		&elm_cfg->syndrome_fragments[poly].syndrome_fragment_x[0]);
