@@ -59,6 +59,7 @@
 /* cpu-id for TI81XX family */
 #define TI8168				0xb81e
 #define TI8148				0xb8f2
+#define DM385				0xb96b
 
 #define DEVICE_ID			(CTRL_BASE + 0x0600)
 /* This gives the status of the boot mode pins on the evm */
@@ -128,9 +129,7 @@
 #endif
 
 #ifdef CONFIG_TI814X
-
 #define GMII_SEL			(CTRL_BASE + 0x650)
-
 #define PCIE_PLLCFG0			(CTRL_BASE + 0x6D8)
 #define PCIE_PLLCFG1			(CTRL_BASE + 0x6DC)
 #define PCIE_PLLCFG2			(CTRL_BASE + 0x6E0)
@@ -183,6 +182,7 @@
 #define DDR0_DATA2_CTRL			(CTRL_BASE + 0x1428)
 #define DDR0_DATA3_CTRL			(CTRL_BASE + 0x142C)
 
+#ifndef CONFIG_DM385
 #define DDR1_CMD_CTRL			(CTRL_BASE + 0x1500)
 #define DDR1_DATA0_CS0_CTRL0		(CTRL_BASE + 0x1540)
 #define DDR1_DATA0_CS0_CTRL1		(CTRL_BASE + 0x1544)
@@ -207,6 +207,7 @@
 #define DDR1_DATA1_CTRL			(CTRL_BASE + 0x1524)
 #define DDR1_DATA2_CTRL			(CTRL_BASE + 0x1528)
 #define DDR1_DATA3_CTRL			(CTRL_BASE + 0x152C)
+#endif
 
 #define DDR0_IO_CTRL			(CTRL_BASE + 0x0E04)
 #define DDR1_IO_CTRL			(CTRL_BASE + 0x0E08)
@@ -227,8 +228,12 @@
 #define ADPLLJ_CLKCTRL_CLKDCO		0x200A0000 /* Enable CLKDCOEN, CLKLDOEN, CLKDCOPWDNZ */
 
 #define MODENA_PLL_BASE			(PLL_SUBSYS_BASE + 0x048)
+
+#ifndef CONFIG_DM385
 #define DSP_PLL_BASE			(PLL_SUBSYS_BASE + 0x080)
 #define SGX_PLL_BASE			(PLL_SUBSYS_BASE + 0x0B0)
+#endif
+
 #define IVA_PLL_BASE			(PLL_SUBSYS_BASE + 0x0E0)
 #define L3_PLL_BASE			(PLL_SUBSYS_BASE + 0x110)
 #define ISS_PLL_BASE			(PLL_SUBSYS_BASE + 0x140)
@@ -361,6 +366,7 @@
 #define EMIF4_0_DDR_PHY_CTRL_1_SHADOW	(EMIF4_0_CFG_BASE + 0xE8)
 #define EMIF4_0_IODFT_TLGC		(EMIF4_0_CFG_BASE + 0x60)
 
+#ifndef CONFIG_DM385
 #define EMIF4_1_SDRAM_ZQCR		(EMIF4_1_CFG_BASE + 0xC8)
 #define EMIF4_1_SDRAM_CONFIG		(EMIF4_1_CFG_BASE + 0x08)
 #define EMIF4_1_SDRAM_CONFIG2		(EMIF4_1_CFG_BASE + 0x0C)
@@ -375,6 +381,7 @@
 #define EMIF4_1_DDR_PHY_CTRL_1		(EMIF4_1_CFG_BASE + 0xE4)
 #define EMIF4_1_DDR_PHY_CTRL_1_SHADOW	(EMIF4_1_CFG_BASE + 0xE8)
 #define EMIF4_1_IODFT_TLGC		(EMIF4_1_CFG_BASE + 0x60)
+#endif
 
 #define EMIF4_REGION_SIZE		(EMIF4_1_CFG_BASE - EMIF4_0_CFG_BASE)
 #define EMIF4_SDRAM_CONFIG		(0x08)
@@ -422,7 +429,11 @@
 #endif
 
 #ifdef CONFIG_TI814X
+#ifdef CONFIG_DM385
+#define SRAM0_SIZE			(0x40000)
+#else
 #define SRAM0_SIZE			(0x1B800)
+#endif
 #define SRAM_GPMC_STACK_SIZE		(0x40)
 #endif
 

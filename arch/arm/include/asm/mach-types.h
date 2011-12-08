@@ -3040,6 +3040,7 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_MSM8X60_QRDC         3060
 #define MACH_TYPE_SPEAR900             3061
 #define MACH_TYPE_PCONTROL_G20         3062
+#define MACH_TYPE_DM385EVM             3900
 
 #ifdef CONFIG_ARCH_EBSA110
 # ifdef machine_arch_type
@@ -39375,6 +39376,18 @@ extern unsigned int __machine_arch_type;
 # define machine_is_pcontrol_g20()	(machine_arch_type == MACH_TYPE_PCONTROL_G20)
 #else
 # define machine_is_pcontrol_g20()	(0)
+#endif
+
+#ifdef CONFIG_MACH_DM385EVM
+# ifdef machine_arch_type
+#  undef machine_arch_type
+#  define machine_arch_type	__machine_arch_type
+# else
+#  define machine_arch_type	MACH_TYPE_DM385EVM
+# endif
+# define machine_is_dm385evm()	(machine_arch_type == MACH_TYPE_DM385EVM)
+#else
+# define machine_is_dm385evm()	(0)
 #endif
 
 /*
