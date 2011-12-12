@@ -30,17 +30,29 @@
 #define AUDIO_CLKCTRL	0x801
 
 #define MODENA_N	0x1
+#ifdef CONFIG_DM385
+#define MODENA_M	(opp_val_dm385(0x3C, 0x48))
+#else
 #define MODENA_M	0x3C
+#endif
 #define MODENA_M2	1
 #define MODENA_CLKCTRL	0x1
 
 #define L3_N		19
+#ifdef CONFIG_DM385
+#define L3_M		(opp_val_dm385(800, 800))
+#else
 #define L3_M		(pg_val_ti814x(880, 800))
+#endif
 #define L3_M2		4
 #define L3_CLKCTRL	0x801
 
 #define DDR_N		19
+#ifdef CONFIG_DM385
+#define DDR_M		(opp_val_dm385(800, 800))
+#else
 #define DDR_M		(pg_val_ti814x(666, 800))
+#endif
 #define DDR_M2		2
 #define DDR_CLKCTRL	0x801
 
@@ -50,23 +62,38 @@
 #define DSP_CLKCTRL	0x801
 
 #define DSS_N		19
+#ifdef CONFIG_DM385
+#define DSS_M		(opp_val_dm385(800, 800))
+#else
 #define DSS_M		(pg_val_ti814x(800, 800))
+#endif
 #define DSS_M2		4
 #define DSS_CLKCTRL	0x801
 
 #define IVA_N		19
+#ifdef CONFIG_DM385
+#define IVA_M		(opp_val_dm385(612, 640))
+#else
 #define IVA_M		(pg_val_ti814x(612, 612))
+#endif
 #define IVA_M2		2
 #define IVA_CLKCTRL	0x801
 
 #define ISS_N		19
 #define ISS_M		800
+#ifdef CONFIG_DM385
+#define ISS_M2		(opp_val_dm385(4, 4))
+#else
 #define ISS_M2		(pg_val_ti814x(2, 2))
+#endif
 #define ISS_CLKCTRL	0x801
 
 #define USB_N		19
 #define USB_M		960
+#ifdef CONFIG_DM385
+#define USB_M2		(opp_val_dm385(5, 5))
+#else
 #define USB_M2		(pg_val_ti814x(1, 5))
+#endif
 #define USB_CLKCTRL	0x200a0801
 #endif	/* endif _CLOCKS_TI814X_H_ */
-

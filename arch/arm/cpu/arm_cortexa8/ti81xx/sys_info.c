@@ -31,6 +31,8 @@
 #include <asm/arch/cpu.h>
 #include <asm/arch/clock.h>
 
+#define OPP_CONFIG		100
+
 extern omap3_sysinfo sysinfo;
 
 /******************************************
@@ -142,6 +144,18 @@ u32 get_sysboot_bw(void)
 	return -1;
 }
 
+/***************************************************
+ * u32 opp_val_dm385() - return the opp specifi value
+ ***************************************************/
+u32 opp_val_dm385(u32 opp100_val, u32 opp120_val)
+{
+	/* Get OPP usage */
+	if (OPP_CONFIG == 100)
+		return opp100_val;
+	else
+		return opp120_val;
+}
+
 #ifdef CONFIG_DISPLAY_CPUINFO
 /**
  * Print CPU information
@@ -150,14 +164,20 @@ int print_cpuinfo (void)
 {
 	char *cpu_s, *sec_s;
 	int arm_freq, ddr_freq , rev;
+#ifdef CONFIG_DM385
+	int l3_freq, dss_freq, iva_freq, iss_freq;
+#endif
 
 	rev = get_cpu_rev();
 	switch (get_cpu_type()) {
 	case TI8168:
-		cpu_s = "8168";
+		cpu_s = "TI8168";
 		break;
 	case TI8148:
-		cpu_s = "8148";
+		cpu_s = "TI8148";
+		break;
+	case DM385:
+		cpu_s = "DM385";
 		break;
 	default:
 		cpu_s = "Unknown cpu type";
@@ -185,10 +205,10 @@ int print_cpuinfo (void)
 		char cpu_rev_str[5][4] = {"1.0", "1.1", "2.0", "2.1"}, *cpu_rev;
 
 		cpu_rev = cpu_rev_str[rev];
-		printf("TI%s-%s rev %s\n",
+		printf("%s-%s rev %s\n",
 			cpu_s, sec_s, cpu_rev);
 	} else {
-		printf("TI%s-%s rev ?????[%1x]\n",
+		printf("%s-%s rev ?????[%1x]\n",
 			cpu_s, sec_s, rev);
 	}
 	printf("\n");
@@ -219,9 +239,21 @@ int print_cpuinfo (void)
 	/* clk_out  = ((OSC_0/ ( N+1 )) * M) / M2   */
 	arm_freq = ((OSC_0_FREQ / (MODENA_N + 1) * MODENA_M) / MODENA_M2);
 	ddr_freq = ((OSC_0_FREQ / (DDR_N + 1) * DDR_M) / DDR_M2);
+#ifdef CONFIG_DM385
+	l3_freq = ((OSC_0_FREQ / (L3_N + 1) * L3_M) / L3_M2);
+	dss_freq = ((OSC_0_FREQ / (DSS_N + 1) * DSS_M) / DSS_M2);
+	iva_freq = ((OSC_0_FREQ / (IVA_N + 1) * IVA_M) / IVA_M2);
+	iss_freq = ((OSC_0_FREQ / (ISS_N + 1) * ISS_M) / ISS_M2);
+#endif
 #endif
 	printf("ARM clk: %dMHz\n", arm_freq);
 	printf("DDR clk: %dMHz\n", ddr_freq);
+#ifdef CONFIG_DM385
+	printf("L3 clk: %dMHz\n", l3_freq);
+	printf("DSS clk: %dMHz\n", dss_freq);
+	printf("IVA clk: %dMHz\n", iva_freq);
+	printf("ISS clk: %dMHz\n", iss_freq);
+#endif
 	printf("\n");
 
 	return 0;
