@@ -17,6 +17,9 @@
 #ifndef __CONFIG_DM385_EVM_H
 #define __CONFIG_DM385_EVM_H
 
+/* U-Boot default commands */
+#include <config_cmd_default.h>
+
 /*
  *#define CONFIG_DM385_NO_RUNTIME_PG_DETECT
  */

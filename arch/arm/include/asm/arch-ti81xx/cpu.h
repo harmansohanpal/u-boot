@@ -149,6 +149,8 @@
 #define SATA_RXSTATUS			(CTRL_BASE + 0x738)
 #define SATA_TXSTATUS			(CTRL_BASE + 0x73C)
 
+#define SMA1				(CTRL_BASE + 0x131c)
+
 /* pin muxing registers */
 #define PIN_CTRL_BASE			(CTRL_BASE + 0x800)
 #define N_PINS				(271) /* PIN1=800, PIN 271=800+270*4=C38) */
