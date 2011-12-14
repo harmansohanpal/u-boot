@@ -49,6 +49,15 @@
 # define CONFIG_SPI			1
 # define CONFIG_I2C			1
 
+/* Minimal image which runs out of internal memory */
+#ifdef CONFIG_MINIMAL
+# undef CONFIG_MMC
+# undef CONFIG_NAND
+# undef CONFIG_SPI
+# undef CONFIG_I2C
+# define CONFIG_NO_ETH
+#endif
+
 #ifdef CONFIG_SD_BOOT
 # undef CONFIG_DM385_ASCIIART
 # undef CONFIG_DISPLAY_CPUINFO
@@ -62,6 +71,7 @@
 # define CONFIG_BOOTCOMMAND	"mmc rescan 0;fatload mmc 0 0x80800000 u-boot.bin;go 0x80800000"
 # define CONFIG_ENV_IS_NOWHERE
 #else
+# define CONFIG_SKIP_LOWLEVEL_INIT
 # define CONFIG_SYS_HUSH_PARSER
 # define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 # define CONFIG_BOOTDELAY	3

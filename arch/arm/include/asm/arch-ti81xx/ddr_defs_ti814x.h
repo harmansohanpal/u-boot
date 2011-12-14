@@ -233,7 +233,7 @@
 #define DDR3_DMM_LISA_MAP__0		0x0
 #define DDR3_DMM_LISA_MAP__1		0x0
 #define DDR3_DMM_LISA_MAP__2		0x0
-#define DDR3_DMM_LISA_MAP__3		0x80600200
+#define DDR3_DMM_LISA_MAP__3		0x80600100
 
 #endif  /* _DDR_DEFS_TI814X_H */
 
