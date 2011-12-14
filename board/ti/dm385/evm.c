@@ -608,6 +608,8 @@ void prcm_init(u32 in_ddr)
 	per_clocks_enable();
 }
 
+#ifdef CONFIG_DRIVER_TI_CPSW
+
 #define PADCTRL_BASE 0x48140000
 
 #define PAD204_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B2c))
@@ -663,8 +665,6 @@ void prcm_init(u32 in_ddr)
 #define PAD257_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0C00))
 #define PAD258_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0C04))
 
-
-#ifdef CONFIG_DRIVER_TI_CPSW
 static void cpsw_pad_config()
 {
 	volatile u32 val = 0;
@@ -998,7 +998,9 @@ int board_eth_init(bd_t *bis)
 	u_int32_t mac_hi,mac_lo;
 	u_int32_t eth_clock_config;
 
+#ifdef CONFIG_DRIVER_TI_CPSW
 	cpsw_pad_config();
+#endif
 
 	eth_clock_config = __raw_readl(SMA1);
 	eth_clock_config &= SMA1_CPSW_CLOCK_MASK;
