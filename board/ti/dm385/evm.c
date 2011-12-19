@@ -1003,11 +1003,15 @@ int board_eth_init(bd_t *bis)
 #endif
 
 	eth_clock_config = __raw_readl(SMA1);
+	printf("Ethernet clocking: 0x%x", eth_clock_config);
+
+#ifdef ETHERNET_SATA_1_CLOCK_SRC
 	eth_clock_config &= SMA1_CPSW_CLOCK_MASK;
 	/* By default sata0 is selected in SMA1 REG
 	Changing it to Sata 1 for power optimization */
 	eth_clock_config |= SMA1_CPSW_SEL_SATA1_SRC;
 	__raw_writel(eth_clock_config, SMA1);
+#endif
 
 	if (!eth_getenv_enetaddr("ethaddr", mac_addr)) {
 		char mac_addr_env[20];
