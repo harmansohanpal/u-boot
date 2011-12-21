@@ -3351,6 +3351,7 @@ ti8168_evm_config_quick_mmc_min:	unconfig
 	@$(MKCONFIG) -a ti8168_evm_quick_mmc arm arm_cortexa8 ti8168 ti ti81xx 
 
 dm385_evm_config	\
+dm385_evm_config_uart	\
 dm385_evm_config_nand	\
 dm385_evm_config_nor	\
 dm385_evm_config_spi	\
@@ -3365,6 +3366,10 @@ dm385_evm_min_sd:	unconfig
 		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 		echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
 		echo "Setting up DM385 NAND build with ENV in NAND..." ; \
+	elif [ "$(findstring _uart,$@)" ] ; then \
+		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+		echo "#define CONFIG_TI81XX_PERIPHERAL_BOOT"	>>$(obj)include/config.h; \
+		echo "Setting up DM385 single stage UART build..." ; \
 	elif [ "$(findstring _nor,$@)" ] ; then \
 		echo "#define CONFIG_NOR"    >>$(obj)include/config.h ; \
 		echo "#define CONFIG_NOR_BOOT"	>>$(obj)include/config.h ; \
