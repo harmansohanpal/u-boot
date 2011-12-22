@@ -32,11 +32,11 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+#ifdef CONFIG_DM385_CONFIG_DDR
 static void cmd_macro_config(u32 ddr_phy, u32 inv_clk_out,
 			 u32 ctrl_slave_ratio_cs0, u32 cmd_dll_lock_diff)
 {
-	u32 ddr_phy_base = (DDR_PHY0 == ddr_phy) ?
-			 DDR0_PHY_BASE_ADDR : DDR1_PHY_BASE_ADDR;
+	u32 ddr_phy_base = DDR0_PHY_BASE_ADDR;
 
 	__raw_writel(inv_clk_out,
 		 ddr_phy_base + CMD1_REG_PHY_INVERT_CLKOUT_0);
@@ -85,6 +85,7 @@ static void data_macro_config(u32 macro_num, u32 emif, u32 rd_dqs_cs0,
 	__raw_writel(PHY_DLL_LOCK_DIFF_DEFINE,
 		(DATA0_REG_PHY0_DLL_LOCK_DIFF_0 + base));
 }
+#endif
 
 static void pll_config(u32, u32, u32, u32, u32);
 #if 0
@@ -176,9 +177,6 @@ int dram_init(void)
 	gd->bd->bi_dram[0].start = PHYS_DRAM_1;
 	gd->bd->bi_dram[0].size = PHYS_DRAM_1_SIZE;
 
-	gd->bd->bi_dram[1].start = PHYS_DRAM_2;
-	gd->bd->bi_dram[1].size = PHYS_DRAM_2_SIZE;
-
 	return 0;
 }
 
@@ -222,7 +220,7 @@ int misc_init_r(void)
 #endif
 	return 0;
 }
-
+#ifdef CONFIG_DM385_CONFIG_DDR
 static void config_dm385_ddr(void)
 {
 	int macro, emif = 0;
@@ -232,7 +230,6 @@ static void config_dm385_ddr(void)
 	/* Enable the Power Domain Transition of L3 Fast Domain Peripheral */
 	__raw_writel(0x2, CM_DEFAULT_L3_FAST_CLKSTCTRL);
 	__raw_writel(0x2, CM_DEFAULT_EMIF_0_CLKCTRL); /* Enable EMIF0 Clock */
-	__raw_writel(0x2, CM_DEFAULT_EMIF_1_CLKCTRL); /* Enable EMIF1 Clock */
 	__raw_writel(0x2, CM_DEFAULT_DMM_CLKCTRL);
 
 	/* Poll for L3_FAST_GCLK  & DDR_GCLK  are active */
@@ -241,15 +238,10 @@ static void config_dm385_ddr(void)
 	/* Poll for Module is functional */
 	while ((__raw_readl(CM_DEFAULT_EMIF_0_CLKCTRL)) != 0x2)
 		;
-	while ((__raw_readl(CM_DEFAULT_EMIF_1_CLKCTRL)) != 0x2)
-		;
 	while ((__raw_readl(CM_DEFAULT_DMM_CLKCTRL)) != 0x2)
 		;
 
 	cmd_macro_config(DDR_PHY0, DDR3_PHY_INVERT_CLKOUT_OFF,
-			DDR3_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE,
-			PHY_CMD0_DLL_LOCK_DIFF_DEFINE);
-	cmd_macro_config(DDR_PHY1, DDR3_PHY_INVERT_CLKOUT_OFF,
 			DDR3_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE,
 			PHY_CMD0_DLL_LOCK_DIFF_DEFINE);
 
@@ -263,23 +255,17 @@ static void config_dm385_ddr(void)
 
 	/* DDR IO CTRL config */
 	__raw_writel(DDR0_IO_CTRL_DEFINE, DDR0_IO_CTRL);
-	__raw_writel(DDR1_IO_CTRL_DEFINE, DDR1_IO_CTRL);
 
 	__raw_writel(__raw_readl(VTP0_CTRL_REG) | 0x00000040 , VTP0_CTRL_REG);
-	__raw_writel(__raw_readl(VTP1_CTRL_REG) | 0x00000040 , VTP1_CTRL_REG);
 
 	/* Write 0 to CLRZ bit */
 	__raw_writel(__raw_readl(VTP0_CTRL_REG) & 0xfffffffe , VTP0_CTRL_REG);
-	__raw_writel(__raw_readl(VTP1_CTRL_REG) & 0xfffffffe , VTP1_CTRL_REG);
 
 	/* Write 1 to CLRZ bit */
 	__raw_writel(__raw_readl(VTP0_CTRL_REG) | 0x00000001 , VTP0_CTRL_REG);
-	__raw_writel(__raw_readl(VTP1_CTRL_REG) | 0x00000001 , VTP1_CTRL_REG);
 
 	/* Read VTP control registers & check READY bits */
 	while ((__raw_readl(VTP0_CTRL_REG) & 0x00000020) != 0x20)
-		;
-	while ((__raw_readl(VTP1_CTRL_REG) & 0x00000020) != 0x20)
 		;
 
 	/*
@@ -323,7 +309,7 @@ static void config_dm385_ddr(void)
 	__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL);
 	__raw_writel(DDR3_EMIF_REF_CTRL, EMIF4_0_SDRAM_REF_CTRL_SHADOW);
 }
-
+#endif
 static void audio_pll_config()
 {
 	pll_config(AUDIO_PLL_BASE,
@@ -880,9 +866,10 @@ void s_init(u32 in_ddr)
 	unlock_pll_control_mmr();
 	/* Setup the PLLs and the clocks for the peripherals */
 	prcm_init(in_ddr);
-
+#ifdef CONFIG_DM385_CONFIG_DDR
 	if (!in_ddr)
 		config_dm385_ddr();	/* Do DDR settings */
+#endif
 }
 
 /*

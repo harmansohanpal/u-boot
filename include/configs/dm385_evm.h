@@ -24,6 +24,8 @@
  *#define CONFIG_DM385_NO_RUNTIME_PG_DETECT
  */
 
+# define CONFIG_DM385_CONFIG_DDR
+
 /* Display CPU info */
 #define CONFIG_DISPLAY_CPUINFO          1
 
@@ -71,7 +73,6 @@
 # define CONFIG_BOOTCOMMAND	"mmc rescan 0;fatload mmc 0 0x80800000 u-boot.bin;go 0x80800000"
 # define CONFIG_ENV_IS_NOWHERE
 #else
-# define CONFIG_SKIP_LOWLEVEL_INIT
 # define CONFIG_SYS_HUSH_PARSER
 # define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 # define CONFIG_BOOTDELAY	3
@@ -132,12 +133,10 @@
 /**
  * Physical Memory Map
  */
-/* we have 2 banks of DRAM */
-#define CONFIG_NR_DRAM_BANKS		2
+/* we have 1 bank of DRAM */
+#define CONFIG_NR_DRAM_BANKS		1
 #define PHYS_DRAM_1			0x80000000	/* DRAM Bank #1 */
 #define PHYS_DRAM_1_SIZE		0x40000000	/* 1 GB */
-#define PHYS_DRAM_2			0xC0000000	/* DRAM Bank #2 */
-#define PHYS_DRAM_2_SIZE		0x40000000	/* 1 GB */
 
 
 /**
