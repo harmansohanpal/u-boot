@@ -17,66 +17,79 @@
 #ifndef __CONFIG_DM385_EVM_H
 #define __CONFIG_DM385_EVM_H
 
-/* U-Boot default commands */
-#include <config_cmd_default.h>
-
 /*
  *#define CONFIG_DM385_NO_RUNTIME_PG_DETECT
  */
 
-# define CONFIG_DM385_CONFIG_DDR
-
 /* Display CPU info */
 #define CONFIG_DISPLAY_CPUINFO          1
+/* In the 1st stage we have just 110K, so cut down wherever possible */
+#ifdef CONFIG_DM385_MIN_CONFIG
 
+# define CONFIG_CMD_MEMORY      /* for mtest */
+# undef CONFIG_GZIP
+# undef CONFIG_ZLIB
+# undef CONFIG_SYS_HUSH_PARSER
+# define CONFIG_CMD_LOADB       /* loadb                        */
+# define CONFIG_CMD_LOADY       /* loady */
+# define CONFIG_SETUP_PLL
+# define CONFIG_DM385_CONFIG_DDR
+# define CONFIG_DM385_EVM_DDR3
+# define CONFIG_ENV_SIZE                0x400
+# define CONFIG_SYS_MALLOC_LEN          (CONFIG_ENV_SIZE + (8 * 1024))
+# define CONFIG_SYS_PROMPT              "TI-MIN#"
+/* set to negative value for no autoboot */
+# define CONFIG_BOOTDELAY               0
+# if defined(CONFIG_SPI_BOOT)           /* Autoload the 2nd stage from SPI */
+#  define CONFIG_SPI                    1
+#  define CONFIG_EXTRA_ENV_SETTINGS \
+        "verify=yes\0" \
+        "bootcmd=sf probe 0; sf read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
+
+# elif defined(CONFIG_NAND_BOOT)                /* Autoload the 2nd stage from NAND */
+#  define CONFIG_NAND                   1
+#  define CONFIG_EXTRA_ENV_SETTINGS \
+        "verify=yes\0" \
+        "bootcmd=nand read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
+
+# elif defined(CONFIG_SD_BOOT)          /* Autoload the 2nd stage from SD */
+#  define CONFIG_MMC                    1
+#  define CONFIG_EXTRA_ENV_SETTINGS \
+        "verify=yes\0" \
+        "bootcmd=mmc rescan 0; fatload mmc 0 0x80800000 u-boot.bin; go 0x80800000\0" \
+
+#elif defined(CONFIG_UART_BOOT)                /* stop in the min prompt */
+#define CONFIG_EXTRA_ENV_SETTINGS \
+        "verify=yes\0" \
+        "bootcmd=\0" \
+
+# endif
+
+#else /*2nd stage configs*/
+
+# include <config_cmd_default.h>
 # define CONFIG_ENV_SIZE		0x2000
 # define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
 /* size in bytes reserved for initial data */
-# define CONFIG_SYS_GBL_DATA_SIZE	128
 # define CONFIG_ENV_OVERWRITE
 # define CONFIG_SYS_LONGHELP
 # define CONFIG_SYS_PROMPT		"DM385_EVM#"
+/* Use HUSH parser to allow command parsing */
+# define CONFIG_SYS_HUSH_PARSER
+# define CONFIG_SYS_PROMPT_HUSH_PS2     "> "
 /* enable passing of ATAGs  */
 # define CONFIG_CMDLINE_TAG		1
 # define CONFIG_SETUP_MEMORY_TAGS	1
 /* Required for ramdisk support */
 # define CONFIG_INITRD_TAG		1
-# define CONFIG_MISC_INIT_R		1
-# define CONFIG_DM385_ASCIIART		1
-# define CONFIG_CMD_CACHE
-# define CONFIG_CMD_ECHO
+/* set to negative value for no autoboot */
+# define CONFIG_BOOTDELAY		3
 
 # define CONFIG_MMC			1
 # define CONFIG_NAND			1
 # define CONFIG_SPI			1
 # define CONFIG_I2C			1
 
-/* Minimal image which runs out of internal memory */
-#ifdef CONFIG_MINIMAL
-# undef CONFIG_MMC
-# undef CONFIG_NAND
-# undef CONFIG_SPI
-# undef CONFIG_I2C
-# define CONFIG_NO_ETH
-#endif
-
-#ifdef CONFIG_SD_BOOT
-# undef CONFIG_DM385_ASCIIART
-# undef CONFIG_DISPLAY_CPUINFO
-# undef CONFIG_NAND
-# undef CONFIG_SPI
-# undef CONFIG_I2C
-# undef CONFIG_SYS_HUSH_PARSER
-# define CONFIG_NO_ETH
-# define CONFIG_BOOTDELAY	0
-# define CONFIG_SYS_AUTOLOAD	"yes"
-# define CONFIG_BOOTCOMMAND	"mmc rescan 0;fatload mmc 0 0x80800000 u-boot.bin;go 0x80800000"
-# define CONFIG_ENV_IS_NOWHERE
-#else
-# define CONFIG_SYS_HUSH_PARSER
-# define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
-# define CONFIG_BOOTDELAY	3
-# define CONFIG_SYS_AUTOLOAD	"no"
 # define CONFIG_EXTRA_ENV_SETTINGS \
 	"verify=yes\0" \
 	"bootfile=uImage\0" \
@@ -101,6 +114,14 @@
 		"echo If that has already been done please ignore this message; "\
 	"fi"
 #endif
+
+# define CONFIG_SYS_GBL_DATA_SIZE	128
+# define CONFIG_MISC_INIT_R		1
+#ifndef CONFIG_DM385_MIN_CONFIG
+# define CONFIG_DM385_ASCIIART		1
+#endif
+# define CONFIG_CMD_CACHE
+# define CONFIG_CMD_ECHO
 
 /*
  * Miscellaneous configurable options
@@ -280,6 +301,7 @@ extern unsigned int boot_flash_type;
 /* Remove NAND support */
 # undef CONFIG_CMD_NAND
 # undef CONFIG_NAND_TI81XX
+# undef CONFIG_SKIP_LOWLEVEL_INIT
 # define CONFIG_DM385_CONFIG_DDR
 # define CONFIG_SETUP_PLL
 # define CONFIG_DM385_EVM_DDR3

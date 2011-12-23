@@ -3351,52 +3351,75 @@ ti8168_evm_config_quick_mmc_min:	unconfig
 	@$(MKCONFIG) -a ti8168_evm_quick_mmc arm arm_cortexa8 ti8168 ti ti81xx 
 
 dm385_evm_config	\
-dm385_evm_config_uart	\
 dm385_evm_config_nand	\
 dm385_evm_config_nor	\
 dm385_evm_config_spi	\
 dm385_evm_config_sd	\
 dm385_evm_min_ocmc	\
+dm385_evm_min_uart	\
+dm385_evm_min_spi	\
+dm385_evm_min_nand	\
 dm385_evm_min_sd:	unconfig
 	@mkdir -p $(obj)include
 	@echo "#define CONFIG_TI81XX"	>>$(obj)include/config.h
 	@echo "#define CONFIG_TI814X"	>>$(obj)include/config.h
 	@echo "#define CONFIG_DM385"	>>$(obj)include/config.h
-	@if [ "$(findstring _nand,$@)" ] ; then \
-		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
-		echo "Setting up DM385 NAND build with ENV in NAND..." ; \
-	elif [ "$(findstring _uart,$@)" ] ; then \
-		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_TI81XX_PERIPHERAL_BOOT"	>>$(obj)include/config.h; \
-		echo "Setting up DM385 single stage UART build..." ; \
-	elif [ "$(findstring _nor,$@)" ] ; then \
-		echo "#define CONFIG_NOR"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_NOR_BOOT"	>>$(obj)include/config.h ; \
-		echo "Setting up DM385 NOR build with ENV in NOR..." ; \
-	elif [ "$(findstring _spi,$@)" ] ; then \
-		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_SPI_ENV"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_TI81XX_SPI_BOOT"	>>$(obj)include/config.h ; \
-		echo "Setting up DM385 SPI build with ENV in SPI..." ; \
-	elif [ "$(findstring _min_sd,$@)" ] ; then \
-		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_SD_BOOT"    >>$(obj)include/config.h ; \
-		echo "TI_IMAGE = u-boot.min.sd" >>$(obj)board/ti/dm385/config.tmp; \
-		echo "Setting up DM385 SD boot minimal build..." ; \
-	elif [ "$(findstring _sd,$@)" ] ; then \
-		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_MMC_ENV"    >>$(obj)include/config.h ; \
-		echo "Setting up DM385 SD build with ENV in MMC..." ; \
-	elif [ "$(findstring _ocmc,$@)" ] ; then \
-		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_MINIMAL"    >>$(obj)include/config.h ; \
-		echo "TEXT_BASE = 0x40310000" >>$(obj)board/ti/dm385/config.tmp; \
-		echo "Setting up DM385 minimal build..." ; \
+	@if [ "$(findstring _min_,$@)" ] ; then \
+		echo "#define CONFIG_DM385_MIN_CONFIG"    >>$(obj)include/config.h ; \
+		echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
+		echo "Setting up DM385 minimal build for 1st stage..." ; \
+		if [ "$(findstring nand,$@)" ] ; then \
+			echo "#define CONFIG_NAND_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+			echo "TI_IMAGE = u-boot.min.nand" >> $(obj)board/ti/dm385/config.tmp;\
+		elif [ "$(findstring spi,$@)" ] ; then \
+			echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
+			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+			echo "#define CONFIG_TI81XX_SPI_BOOT"	>>$(obj)include/config.h ; \
+			echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/dm385/config.tmp;\
+		elif [ "$(findstring ocmc,$@)" ] ; then \
+			echo "#define CONFIG_UART_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+			echo "TEXT_BASE = 0x40310000" >>$(obj)board/ti/dm385/config.tmp; \
+		elif [ "$(findstring uart,$@)" ] ; then \
+			echo "#define CONFIG_UART_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+			echo "#define CONFIG_TI81XX_PERIPHERAL_BOOT"	>>$(obj)include/config.h; \
+			echo "TI_IMAGE = u-boot.min.uart" >> $(obj)board/ti/dm385/config.tmp;\
+		elif [ "$(findstring sd,$@)" ] ; then \
+			echo "#define CONFIG_SD_BOOT"    >>$(obj)include/config.h ; \
+			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+			echo "TI_IMAGE = u-boot.min.sd" >> $(obj)board/ti/dm385/config.tmp;\
+		else	\
+			echo "#define CONFIG_NAND_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+			echo "TI_IMAGE = u-boot.min.nand" >> $(obj)board/ti/dm385/config.tmp;\
+		fi;	\
 	else	\
-		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
-		echo "Setting up DM385 default build with NAND..." ; \
+		echo "#define CONFIG_TI_DUMMY_HEADER"	>>$(obj)include/config.h; \
+		echo "#define CONFIG_SKIP_LOWLEVEL_INIT"	>>$(obj)include/config.h; \
+		echo "TI_IMAGE = DUMMY" >> $(obj)board/ti/dm385/config.tmp; \
+		if [ "$(findstring _nand,$@)" ] ; then \
+			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
+			echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
+			echo "Setting up DM385 default build with ENV in NAND..." ; \
+		elif [ "$(findstring _nor,$@)" ] ; then \
+			echo "#define CONFIG_NOR"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_NOR_BOOT"	>>$(obj)include/config.h ; \
+			echo "Setting up DM385 default build with ENV in NOR..." ; \
+		elif [ "$(findstring spi,$@)" ] ; then \
+			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
+			echo "#define CONFIG_SPI_ENV"    >>$(obj)include/config.h ; \
+			echo "Setting up DM385 default build with ENV in SPI..." ; \
+		elif [ "$(findstring sd,$@)" ] ; then \
+			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
+			echo "#define CONFIG_MMC_ENV"    >>$(obj)include/config.h ; \
+			echo "Setting up DM385 default build with ENV in MMC..." ; \
+		else	\
+			echo "#define CONFIG_SYS_NO_FLASH" >> $(obj)include/config.h ; \
+			echo "#define CONFIG_NAND_ENV"    >>$(obj)include/config.h ; \
+			echo "Setting up DM385 default build with ENV in NAND..." ; \
+		fi; \
 	fi;
 	@$(MKCONFIG) -a dm385_evm arm arm_cortexa8 dm385 ti ti81xx
 
