@@ -380,6 +380,7 @@ static void pcie_pll_config()
 
 static void sata_pll_config()
 {
+	/* setup sata0 pll*/
 	__raw_writel(0xC12C003C, SATA_PLLCFG1);
 	__raw_writel(0x004008E0, SATA_PLLCFG3);
 	delay(0xFFFF);
@@ -402,6 +403,28 @@ static void sata_pll_config()
 	while (((__raw_readl(SATA_PLLSTATUS) & 0x01) == 0x0))
 		;
 
+	/* setup sata1 pll*/
+	__raw_writel(0xC12C003C, SATA1_PLLCFG1);
+	__raw_writel(0x004008E0, SATA1_PLLCFG3);
+	delay(0xFFFF);
+
+	__raw_writel(0x80000004, SATA1_PLLCFG0);
+	delay(0xFFFF);
+
+	/* Enable PLL LDO */
+	__raw_writel(0x80000014, SATA1_PLLCFG0);
+	delay(0xFFFF);
+
+	/* Enable DIG LDO, ENBGSC_REF, PLL LDO */
+	__raw_writel(0x80000016, SATA1_PLLCFG0);
+	delay(0xFFFF);
+
+	__raw_writel(0xC0000017, SATA1_PLLCFG0);
+	delay(0xFFFF);
+
+	/* wait for ADPLL lock */
+	while (((__raw_readl(SATA1_PLLSTATUS) & 0x01) == 0x0))
+		;
 }
 
 static void usb_pll_config()

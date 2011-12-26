@@ -150,6 +150,15 @@
 #define SATA_RXSTATUS			(CTRL_BASE + 0x738)
 #define SATA_TXSTATUS			(CTRL_BASE + 0x73C)
 
+#define SATA1_PLLCFG0			(CTRL_BASE + 0x74C)
+#define SATA1_PLLCFG1			(CTRL_BASE + 0x750)
+#define SATA1_PLLCFG2			(CTRL_BASE + 0x754)
+#define SATA1_PLLCFG3			(CTRL_BASE + 0x758)
+#define SATA1_PLLCFG4			(CTRL_BASE + 0x75C)
+#define SATA1_PLLSTATUS			(CTRL_BASE + 0x760)
+#define SATA1_RXSTATUS			(CTRL_BASE + 0x764)
+#define SATA1_TXSTATUS			(CTRL_BASE + 0x768)
+
 #define SMA1				(CTRL_BASE + 0x131c)
 
 /* pin muxing registers */
