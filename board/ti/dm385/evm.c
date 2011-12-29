@@ -1044,8 +1044,6 @@ int board_eth_init(bd_t *bis)
 #endif
 
 	if (!eth_getenv_enetaddr("ethaddr", mac_addr)) {
-		char mac_addr_env[20];
-
 		printf("<ethaddr> not set. Reading from E-fuse\n");
 		/* try reading mac address from efuse */
 		mac_lo = __raw_readl(MAC_ID0_LO);
@@ -1056,11 +1054,7 @@ int board_eth_init(bd_t *bis)
 		mac_addr[3] = (mac_hi & 0xFF000000) >> 24;
 		mac_addr[4] = mac_lo & 0xFF;
 		mac_addr[5] = (mac_lo & 0xFF00) >> 8;
-		/* set the ethaddr variable with MACID detected */
-		sprintf(mac_addr_env, "%02x:%02x:%02x:%02x:%02x:%02x",
-			mac_addr[0], mac_addr[1], mac_addr[2],
-			mac_addr[3], mac_addr[4], mac_addr[5]);
-		eth_setenv_enetaddr("ethaddr", mac_addr_env);
+		eth_setenv_enetaddr("ethaddr", mac_addr);
 	}
 
 	if(is_valid_ether_addr(mac_addr)) {
