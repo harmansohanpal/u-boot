@@ -21,6 +21,8 @@
 #ifndef _CLOCKS_TI814X_H_
 #define _CLOCKS_TI814X_H_
 
+#define DDR_PLL_400     /* Values supported 400,533 */
+
 #define OSC_0_FREQ	20
 
 /* Put the pll config values over here */
@@ -49,7 +51,18 @@
 
 #define DDR_N		19
 #ifdef CONFIG_DM385
+
+/* DDR PLL */
+/* For 400 MHz */
+#if defined(DDR_PLL_400)
 #define DDR_M		(opp_val_dm385(800, 800))
+#endif
+
+/* For 533 MHz */
+#if defined(DDR_PLL_533)
+#define DDR_M		(opp_val_dm385(1066, 1066))
+#endif
+
 #else
 #define DDR_M		(pg_val_ti814x(666, 800))
 #endif
