@@ -345,15 +345,6 @@ static int ti81xx_correct_data_bch(struct mtd_info *mtd, uint8_t *dat,
 	uint8_t syndrome[28];
 	uint32_t error_count = 0;
 	uint32_t error_loc[8];
-	uint32_t i, ecc_flag;
-
-	ecc_flag = 0;
-	for (i = 0; i < (chip->ecc.bytes - 1); i++)
-		if (read_ecc[i] != 0xff)
-			ecc_flag = 1;
-
-	if (!ecc_flag)
-		return 0;
 
 	elm_reset();
 	elm_config((enum bch_level)(bch->type));
