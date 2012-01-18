@@ -346,6 +346,18 @@ static int ti81xx_correct_data_bch(struct mtd_info *mtd, uint8_t *dat,
 	uint32_t error_count = 0;
 	uint32_t error_loc[8];
 
+	/* erased page detection.  An erased page
+	 * has the following syndromes and all
+	 * OOB bytes are 0xFF */
+	uint8_t erased_syndromes[13] = {
+		0x7B, 0x99, 0xFF, 0x6B,
+		0xAC, 0xCC, 0xBE, 0xD2,
+		0x8B, 0x16, 0x14, 0xDB,
+		0xF3
+	};
+	unsigned int erased;
+	uint8_t i;
+
 	elm_reset();
 	elm_config((enum bch_level)(bch->type));
 
@@ -356,7 +368,6 @@ static int ti81xx_correct_data_bch(struct mtd_info *mtd, uint8_t *dat,
 
 #ifdef NAND_DEBUG
 	{
-		uint8_t i = 0;
 		printf("----\necc\n---\n");
 		for (i = 0; i < 13; i++)
 			printf("  0x%2x", syndrome[i]);
@@ -367,8 +378,21 @@ static int ti81xx_correct_data_bch(struct mtd_info *mtd, uint8_t *dat,
 
 	/* use elm module to check for errors */
 	if (elm_check_error(syndrome, bch->nibbles, &error_count, error_loc) != 0) {
-		printf("ECC: uncorrectable.\n");
-		return -1;
+		/* was this an erased page?
+		 * Check syndromes and OOB bytes */
+		erased = 1;
+		for (i = 0; i < 13; i++) {
+			if ((chip->oob_poi[i] != 0xFF) ||
+					(syndrome[i] != erased_syndromes[i])) {
+				erased = 0;
+				break;
+			}
+		}
+		if (!erased) {
+			printf("ECC: uncorrectable.\n");
+			return -1;
+		}
+		error_count = 0;
 	}
 
 	/* correct bch error */
@@ -630,6 +654,77 @@ static int ti81xx_read_page_bch(struct mtd_info *mtd, struct nand_chip *chip,
 	return 0;
 }
 
+/**
+ * ti81xx_nand_write_page_raw_bch - write raw page according to bch layout
+ * @mtd:	mtd info structure
+ * @chip:	nand chip info structure
+ * @buf:	data buffer
+ *
+ * Not for syndrome calculating ecc controllers, which use a special oob layout
+ */
+static void ti81xx_nand_write_page_raw_bch(struct mtd_info *mtd,
+		struct nand_chip *chip, const uint8_t *buf)
+{
+	chip->write_buf(mtd, buf, mtd->writesize);
+	chip->write_buf(mtd, chip->oob_poi, mtd->oobsize);
+}
+
+
+/**
+ * ti81xx_nand_read_page_raw - read raw page according to bch layout
+ * @mtd:	mtd info structure
+ * @chip:	nand chip info structure
+ * @buf:	buffer to store read data
+ * @page:	page number to read
+ *
+ */
+static int ti81xx_nand_read_page_raw_bch(struct mtd_info *mtd,
+		struct nand_chip *chip, uint8_t *buf, int page)
+{
+	chip->read_buf(mtd, buf, mtd->writesize);
+	chip->read_buf(mtd, chip->oob_poi, mtd->oobsize);
+
+	return 0;
+}
+
+
+/**
+ * ti81xx_nand_write_oob_bch - write oob according to bch layout
+ * @mtd:	mtd info structure
+ * @chip:	nand chip info structure
+ * @page:	page number to write
+ */
+static int ti81xx_nand_write_oob_bch(struct mtd_info *mtd,
+		struct nand_chip *chip, int page)
+{
+	int status = 0;
+
+	chip->cmdfunc(mtd, NAND_CMD_SEQIN, mtd->writesize, page);
+	chip->write_buf(mtd, chip->oob_poi, mtd->oobsize);
+
+	/* Send command to program the OOB data */
+	chip->cmdfunc(mtd, NAND_CMD_PAGEPROG, -1, -1);
+
+	status = chip->waitfunc(mtd, chip);
+
+	return status & NAND_STATUS_FAIL ? -EIO : 0;
+}
+
+/**
+ * ti81xx_nand_read_oob_bch - bch hardware ecc based OOB data read function
+ * @mtd:	mtd info structure
+ * @chip:	nand chip info structure
+ * @page:	page number to read
+ * @sndcmd:	flag whether to issue read command or not
+ */
+static int ti81xx_nand_read_oob_bch(struct mtd_info *mtd,
+		struct nand_chip *chip, int page, int sndcmd)
+{
+	chip->cmdfunc(mtd, NAND_CMD_READ0, mtd->writesize, page);
+	chip->read_buf(mtd, chip->oob_poi, mtd->oobsize);
+
+	return 1;
+}
 
 /*
  * ti81xx_enable_ecc_bch- This function enables the bch h/w ecc functionality
@@ -743,6 +838,14 @@ int __ti81xx_nand_switch_ecc(struct nand_chip *nand,
 				default:
 					nand->ecc.bytes = 14;
 					nand->ecc.layout = &hw_bch8_nand_oob;
+					nand->ecc.read_page_raw =
+						ti81xx_nand_read_page_raw_bch;
+					nand->ecc.write_page_raw =
+						ti81xx_nand_write_page_raw_bch;
+					nand->ecc.read_oob =
+						ti81xx_nand_read_oob_bch;
+					nand->ecc.write_oob =
+						ti81xx_nand_write_oob_bch;
 					bch->nibbles = ECC_BCH8_NIBBLES;
 					printf("8 Selected\n");
 					break;
@@ -887,7 +990,7 @@ int board_nand_init(struct nand_chip *nand)
 	elm_init();
 
 	nand_curr_device = 0;
-	ti81xx_nand_switch_ecc(NAND_ECC_HW, 0);
+	ti81xx_nand_switch_ecc(NAND_ECC_HW, 2);
 
 	return 0;
 }
