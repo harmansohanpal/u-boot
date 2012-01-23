@@ -1137,24 +1137,34 @@ void reset_cpu (ulong addr)
 
 #ifdef CONFIG_DRIVER_TI_CPSW
 
-#define PHY_CONF_REG           22
-#define PHY_CONF_TXCLKEN       (1 << 5)
+#define LSI_PHY_ID		0x0282F014
+#define PHY_CONF_REG		22
+#define PHY_CONF_TXCLKEN	(1 << 5)
 
 /* TODO : Check for the board specific PHY */
 static void phy_init(char *name, int addr)
 {
 	unsigned short val;
 	unsigned int   cntr = 0;
+	unsigned int   phy_id = 0;
 
 	miiphy_reset(name, addr);
 
 	udelay(100000);
 
-	/* Enable PHY to clock out TX_CLK */
-	miiphy_read(name, addr, PHY_CONF_REG, &val);
-	val |= PHY_CONF_TXCLKEN;
-	miiphy_write(name, addr, PHY_CONF_REG, val);
-	miiphy_read(name, addr, PHY_CONF_REG, &val);
+	miiphy_read(name, addr, PHY_PHYIDR1, &val);
+	phy_id = (val << 16)  & 0xffff0000;
+	miiphy_read(name, addr, PHY_PHYIDR2, &val);
+	phy_id |= val & 0x0000ffff;
+
+	if (phy_id == LSI_PHY_ID) {
+		printf("Configuring LSI Phy\n\n");
+		/* Enable PHY to clock out TX_CLK */
+		miiphy_read(name, addr, PHY_CONF_REG, &val);
+		val |= PHY_CONF_TXCLKEN;
+		miiphy_write(name, addr, PHY_CONF_REG, val);
+		miiphy_read(name, addr, PHY_CONF_REG, &val);
+	}
 
 	/* Enable Autonegotiation */
 	if (miiphy_read(name, addr, PHY_BMCR, &val) != 0) {
