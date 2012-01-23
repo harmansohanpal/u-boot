@@ -72,6 +72,11 @@
 	"verify=yes\0" \
 	"bootcmd=\0" \
 
+#elif defined(CONFIG_ETH_BOOT)		/* Auto load 2nd stage from server */
+#  define CONFIG_EXTRA_ENV_SETTINGS \
+	"verify=yes\0" \
+	"bootcmd=setenv autoload no;dhcp; tftp 0x81000000 u-boot.bin; go 0x81000000\0"
+
 # endif
 
 #else
@@ -195,6 +200,7 @@
 #if defined(CONFIG_NO_ETH)
 # undef CONFIG_CMD_NET
 #else
+# define CONFIG_CMD_NET
 # define CONFIG_CMD_DHCP
 # define CONFIG_CMD_PING
 #endif
