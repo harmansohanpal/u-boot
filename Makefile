@@ -3369,6 +3369,7 @@ dm385_evm_min_ocmc	\
 dm385_evm_min_uart	\
 dm385_evm_min_spi	\
 dm385_evm_min_nand	\
+dm385_evm_min_eth	\
 dm385_evm_min_sd:	unconfig
 	@mkdir -p $(obj)include
 	@echo "#define CONFIG_TI81XX"	>>$(obj)include/config.h
@@ -3376,32 +3377,42 @@ dm385_evm_min_sd:	unconfig
 	@echo "#define CONFIG_DM385"	>>$(obj)include/config.h
 	@if [ "$(findstring _min_,$@)" ] ; then \
 		echo "#define CONFIG_DM385_MIN_CONFIG"    >>$(obj)include/config.h ; \
-		echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
 		echo "Setting up DM385 minimal build for 1st stage..." ; \
 		if [ "$(findstring nand,$@)" ] ; then \
 			echo "#define CONFIG_NAND_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "TI_IMAGE = u-boot.min.nand" >> $(obj)board/ti/dm385/config.tmp;\
 		elif [ "$(findstring spi,$@)" ] ; then \
 			echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
+			echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_TI81XX_SPI_BOOT"	>>$(obj)include/config.h ; \
 			echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/dm385/config.tmp;\
 		elif [ "$(findstring ocmc,$@)" ] ; then \
 			echo "#define CONFIG_UART_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "TEXT_BASE = 0x40310000" >>$(obj)board/ti/dm385/config.tmp; \
 		elif [ "$(findstring uart,$@)" ] ; then \
 			echo "#define CONFIG_UART_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_TI81XX_PERIPHERAL_BOOT"	>>$(obj)include/config.h; \
 			echo "TI_IMAGE = u-boot.min.uart" >> $(obj)board/ti/dm385/config.tmp;\
+		elif [ "$(findstring eth,$@)" ] ; then \
+			echo "#define CONFIG_ETH_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+			echo "#define CONFIG_TI81XX_PERIPHERAL_BOOT"	>>$(obj)include/config.h; \
+			echo "TI_IMAGE = u-boot.min.eth" >> $(obj)board/ti/dm385/config.tmp;\
 		elif [ "$(findstring sd,$@)" ] ; then \
 			echo "#define CONFIG_SD_BOOT"    >>$(obj)include/config.h ; \
+			echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "TI_IMAGE = u-boot.min.sd" >> $(obj)board/ti/dm385/config.tmp;\
 		else	\
 			echo "#define CONFIG_NAND_BOOT"	>>$(obj)include/config.h ; \
+			echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "TI_IMAGE = u-boot.min.nand" >> $(obj)board/ti/dm385/config.tmp;\
 		fi;	\
