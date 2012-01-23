@@ -890,8 +890,6 @@ void reset_cpu(ulong addr)
 
 #ifdef CONFIG_DRIVER_TI_CPSW
 
-#define PHY_CONF_REG			22
-#define PHY_CONF_TXCLKEN		(1 << 5)
 #define SMA1_CPSW_CLOCK_MASK		0xfffffd0f
 #define SMA1_CPSW_SEL_SATA1_SRC		(1 << 10)
 #define SMA1_CPSW_SEL_CPTS_GMII_SRC	(1 << 6)
@@ -906,12 +904,6 @@ static void phy_init(char *name, int addr)
 	miiphy_reset(name, addr);
 
 	udelay(100000);
-
-	/* Enable PHY to clock out TX_CLK */
-	miiphy_read(name, addr, PHY_CONF_REG, &val);
-	val |= PHY_CONF_TXCLKEN;
-	miiphy_write(name, addr, PHY_CONF_REG, val);
-	miiphy_read(name, addr, PHY_CONF_REG, &val);
 
 	/* Enable Autonegotiation */
 	if (miiphy_read(name, addr, PHY_BMCR, &val) != 0) {
@@ -1017,7 +1009,7 @@ int board_eth_init(bd_t *bis)
 #endif
 
 	eth_clock_config = __raw_readl(SMA1);
-	printf("Ethernet clocking: 0x%x", eth_clock_config);
+	printf("Ethernet clocking: 0x%x\n", eth_clock_config);
 
 #ifdef ETHERNET_SATA_1_CLOCK_SRC
 	eth_clock_config &= SMA1_CPSW_CLOCK_MASK;
