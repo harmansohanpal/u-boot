@@ -710,8 +710,8 @@ void per_clocks_enable(void)
 	 * ToDo :
 	 * This can be removed once kernel exports set_parent()
 	 */
-	__raw_writel(0x2, CM_ALWON_MCASP2_CLKCTRL);
-	while (__raw_readl(CM_ALWON_MCASP2_CLKCTRL) != 0x2);
+	__raw_writel(0x2, CM_AUDIOCLK_MCASP2_CLKSEL);
+	while (__raw_readl(CM_AUDIOCLK_MCASP2_CLKSEL) != 0x2);
 
 	/* WDT */
 	/* For WDT to be functional, it needs to be first stopped by writing
