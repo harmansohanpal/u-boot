@@ -464,7 +464,7 @@ static void config_ti816x_sdram_ddr(void)
  * Additional delay will only increase boot time.
  */
 #ifndef CONFIG_NOR_BOOT
-	ddr_delay(50000);	/* Some delay needed */
+	udelay(20000);	/* Some delay needed */
 #endif
 
 	/* Program the DMM to for interleaved configuration */
@@ -484,7 +484,7 @@ static void config_ti816x_sdram_ddr(void)
  * Additional delay will only increase boot time.
  */
 #ifndef CONFIG_NOR_BOOT
-	ddr_delay(50000);	/* Some delay needed */
+	udelay(20000);	/* Some delay needed */
 #endif
 
 #ifdef CONFIG_TI816X_DDR3_PG_1_0
@@ -765,7 +765,7 @@ static void config_ti816x_sdram_ddr(void)
  * Additional delay will only increase boot time.
  */
 #ifndef CONFIG_NOR_BOOT
-	ddr_delay(50000);       /* Some delay needed */
+	udelay(10000);       /* Some delay needed */
 #endif
 
 	/*Program the DMM for interleave setting */
@@ -785,7 +785,7 @@ static void config_ti816x_sdram_ddr(void)
  * Additional delay will only increase boot time.
  */
 #ifndef CONFIG_NOR_BOOT
-	ddr_delay(50000);	/* Some delay needed */
+	udelay(10000);	/* Some delay needed */
 #endif
 }
 #endif
