@@ -136,9 +136,9 @@ u32 get_sysboot_bw(void)
 	bw = __raw_readl(CONTROL_STATUS) & (SYSBOOT_BW_MASK);
 	bw >>= SYSBOOT_BW_POS;
 	if (bw == 0)	/* 8-bit nand if BTMODE BW pin on board is ON */
-		return 1;
-	else if (bw == 1)/* 16-bit nand if BTMODE BW pin on board is OFF */
 		return 0;
+	else if (bw == 1)/* 16-bit nand if BTMODE BW pin on board is OFF */
+		return 1;
 
 	/* Failed to detect */
 	return -1;
