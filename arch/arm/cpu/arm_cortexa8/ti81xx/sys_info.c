@@ -121,7 +121,7 @@ u32 pg_val_ti816x(u32 pg1_val, u32 pg2_val)
 u32 pg_val_ti814x(u32 pg1_val, u32 pg2_val)
 {
 	/* PG2.1 devices should read 0x3 as chip rev */
-	if (PG2_1 == get_cpu_rev())
+	if (PG2_1 == get_cpu_rev() || TI811X == get_cpu_type())
 		return pg2_val;
 	else
 		return pg1_val;
@@ -178,6 +178,9 @@ int print_cpuinfo (void)
 		break;
 	case DM385:
 		cpu_s = "DM385";
+		break;
+	case TI811X:
+		cpu_s = "TI811X";
 		break;
 	default:
 		cpu_s = "Unknown cpu type";

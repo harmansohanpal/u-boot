@@ -60,6 +60,7 @@
 #define TI8168				0xb81e
 #define TI8148				0xb8f2
 #define DM385				0xb96b
+#define TI811X				0xb968
 
 #define DEVICE_ID			(CTRL_BASE + 0x0600)
 /* This gives the status of the boot mode pins on the evm */
@@ -184,7 +185,7 @@
 #define DDR0_DATA2_CTRL			(CTRL_BASE + 0x1428)
 #define DDR0_DATA3_CTRL			(CTRL_BASE + 0x142C)
 
-#ifndef CONFIG_DM385
+#if !(defined(CONFIG_DM385) || defined(CONFIG_TI811X))
 #define DDR1_CMD_CTRL			(CTRL_BASE + 0x1500)
 #define DDR1_DATA0_CS0_CTRL0		(CTRL_BASE + 0x1540)
 #define DDR1_DATA0_CS0_CTRL1		(CTRL_BASE + 0x1544)
@@ -236,13 +237,20 @@
 #define SGX_PLL_BASE			(PLL_SUBSYS_BASE + 0x0B0)
 #endif
 
+#ifndef CONFIG_TI811X
 #define IVA_PLL_BASE			(PLL_SUBSYS_BASE + 0x0E0)
+#endif
+
 #define L3_PLL_BASE			(PLL_SUBSYS_BASE + 0x110)
 #define ISS_PLL_BASE			(PLL_SUBSYS_BASE + 0x140)
 #define DSS_PLL_BASE			(PLL_SUBSYS_BASE + 0x170)
 #define VIDEO0_PLL_BASE			(PLL_SUBSYS_BASE + 0x1A0)
 #define VIDEO1_PLL_BASE			(PLL_SUBSYS_BASE + 0x1D0)
+
+#ifndef CONFIG_TI811X
 #define HDMI_PLL_BASE			(PLL_SUBSYS_BASE + 0x200)
+#endif
+
 #define AUDIO_PLL_BASE			(PLL_SUBSYS_BASE + 0x230)
 #define USB_PLL_BASE			(PLL_SUBSYS_BASE + 0x260)
 #define DDR_PLL_BASE			(PLL_SUBSYS_BASE + 0x290)
@@ -348,11 +356,13 @@
 
 /*DMM & EMIF4 MMR Declaration*/
 /*TODO: Move to a new file */
+#ifndef CONFIG_TI811X
 #define DMM_LISA_MAP__0			(DMM_BASE + 0x40)
 #define DMM_LISA_MAP__1			(DMM_BASE + 0x44)
 #define DMM_LISA_MAP__2			(DMM_BASE + 0x48)
 #define DMM_LISA_MAP__3			(DMM_BASE + 0x4C)
 #define DMM_PAT_BASE_ADDR		(DMM_BASE + 0x460)
+#endif
 
 #define EMIF4_0_SDRAM_ZQCR		(EMIF4_0_CFG_BASE + 0xC8)
 #define EMIF4_0_SDRAM_CONFIG		(EMIF4_0_CFG_BASE + 0x08)
@@ -369,7 +379,7 @@
 #define EMIF4_0_DDR_PHY_CTRL_1_SHADOW	(EMIF4_0_CFG_BASE + 0xE8)
 #define EMIF4_0_IODFT_TLGC		(EMIF4_0_CFG_BASE + 0x60)
 
-#ifndef CONFIG_DM385
+#if !(defined(CONFIG_DM385) || defined(CONFIG_TI811X))
 #define EMIF4_1_SDRAM_ZQCR		(EMIF4_1_CFG_BASE + 0xC8)
 #define EMIF4_1_SDRAM_CONFIG		(EMIF4_1_CFG_BASE + 0x08)
 #define EMIF4_1_SDRAM_CONFIG2		(EMIF4_1_CFG_BASE + 0x0C)
@@ -432,7 +442,7 @@
 #endif
 
 #ifdef CONFIG_TI814X
-#ifdef CONFIG_DM385
+#if defined(CONFIG_DM385) || defined(CONFIG_TI811X)
 #define SRAM0_SIZE			(0x40000)
 #else
 #define SRAM0_SIZE			(0x1B800)
