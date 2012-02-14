@@ -42,10 +42,10 @@
 #define CPDMA_RXCONTROL		0x014
 #define CPDMA_SOFTRESET		0x01c
 #define CPDMA_RXFREE		0x0e0
-#define CPDMA_TXHDP		0x100
-#define CPDMA_RXHDP		0x120
-#define CPDMA_TXCP		0x140
-#define CPDMA_RXCP		0x160
+#define CPDMA_TXHDP		0x000
+#define CPDMA_RXHDP		0x020
+#define CPDMA_TXCP		0x040
+#define CPDMA_RXCP		0x060
 
 /* Descriptor mode bits */
 #define CPDMA_DESC_SOP		BIT(31)
@@ -202,6 +202,7 @@ struct cpsw_priv {
 
 	struct cpsw_regs		*regs;
 	void				*dma_regs;
+	void				*dma_sram_regs;
 	struct cpsw_host_regs		*host_port_regs;
 	void				*ale_regs;
 
@@ -756,23 +757,23 @@ static int cpsw_init(struct eth_device *dev, bd_t *bis)
 
 	/* initialize channels */
 	memset(&priv->rx_chan, 0, sizeof(struct cpdma_chan));
-	priv->rx_chan.hdp	= priv->dma_regs + CPDMA_RXHDP;
-	priv->rx_chan.cp	= priv->dma_regs + CPDMA_RXCP;
+	priv->rx_chan.hdp	= priv->dma_sram_regs + CPDMA_RXHDP;
+	priv->rx_chan.cp	= priv->dma_sram_regs + CPDMA_RXCP;
 	priv->rx_chan.rxfree	= priv->dma_regs + CPDMA_RXFREE;
 
 	memset(&priv->tx_chan, 0, sizeof(struct cpdma_chan));
-	priv->tx_chan.hdp	= priv->dma_regs + CPDMA_TXHDP;
-	priv->tx_chan.cp	= priv->dma_regs + CPDMA_TXCP;
+	priv->tx_chan.hdp	= priv->dma_sram_regs + CPDMA_TXHDP;
+	priv->tx_chan.cp	= priv->dma_sram_regs + CPDMA_TXCP;
 
 	/* clear dma state */
 	soft_reset(priv->dma_regs + CPDMA_SOFTRESET);
 
 	for (i = 0; i < priv->data.channels; i++) {
-		__raw_writel(0, priv->dma_regs + CPDMA_RXHDP + 4 * i);
+		__raw_writel(0, priv->dma_sram_regs + CPDMA_RXHDP + 4 * i);
 		__raw_writel(0, priv->dma_regs + CPDMA_RXFREE + 4 * i);
-		__raw_writel(0, priv->dma_regs + CPDMA_RXCP + 4 * i);
-		__raw_writel(0, priv->dma_regs + CPDMA_TXHDP + 4 * i);
-		__raw_writel(0, priv->dma_regs + CPDMA_TXCP + 4 * i);
+		__raw_writel(0, priv->dma_sram_regs + CPDMA_RXCP + 4 * i);
+		__raw_writel(0, priv->dma_sram_regs + CPDMA_TXHDP + 4 * i);
+		__raw_writel(0, priv->dma_sram_regs + CPDMA_TXCP + 4 * i);
 	}
 	__raw_writel(1, priv->dma_regs + CPDMA_TXCONTROL);
 	__raw_writel(1, priv->dma_regs + CPDMA_RXCONTROL);
@@ -870,6 +871,7 @@ int cpsw_register(struct cpsw_platform_data *data)
 	priv->regs		= regs;
 	priv->host_port_regs	= regs + data->host_port_reg_ofs;
 	priv->dma_regs		= regs + data->cpdma_reg_ofs;
+	priv->dma_sram_regs	= regs + data->cpdma_sram_ofs;
 	priv->ale_regs		= regs + data->ale_reg_ofs;
 
 	for_each_slave(priv, cpsw_slave_setup, idx, priv);

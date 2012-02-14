@@ -192,6 +192,7 @@ struct cpsw_platform_data {
 	int	mdio_div;
 	int	channels;       /* number of cpdma channels (symmetric)	*/
 	u32     cpdma_reg_ofs;  /* cpdma register offset		*/
+	u32     cpdma_sram_ofs;  /* cpdma sram offset		*/
 	int     slaves;         /* number of slave cpgmac ports		*/
 	u32     ale_reg_ofs;    /* address lookup engine reg offset	*/
 	int     ale_entries;	/* ale table size			*/

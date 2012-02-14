@@ -1245,6 +1245,7 @@ static struct cpsw_platform_data cpsw_data = {
 	.mdio_div		= 0xff,
 	.channels		= 8,
 	.cpdma_reg_ofs		= 0x100,
+	.cpdma_sram_ofs		= 0x200,
 	.slaves			= 1,
 	.slave_data		= cpsw_slaves,
 	.ale_reg_ofs		= 0x600,
