@@ -93,6 +93,7 @@
 /* CPSW Config space */
 #define TI814X_CPSW_BASE               0x4A100000
 #define TI814X_CPSW_MDIO_BASE          0x4A100800
+#define TI811X_CPSW_MDIO_BASE          0x4A101000
 
 #endif /* __TI81XX_HARDWARE_H */
 

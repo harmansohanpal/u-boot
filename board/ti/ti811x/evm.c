@@ -103,6 +103,9 @@ static void iva_pll_config(void);
 static void usb_pll_config(void);
 
 static void unlock_pll_control_mmr(void);
+#ifdef CONFIG_DRIVER_TI_CPSW
+static void cpsw_pad_config(void);
+#endif
 static void nor_pad_config_mux(void);
 /*
  * spinning delay to use before udelay works
@@ -124,6 +127,12 @@ int board_init(void)
 	set_muxconf_regs();
 
 	nor_pad_config_mux();
+
+	/* setup RMII_REFCLK to be sourced from audio_pll */
+	__raw_writel(0x4, RMII_REFCLK_SRC);
+
+	/*program GMII_SEL register for RGMII mode */
+	__raw_writel(0x30a, GMII_SEL);
 
 	/* Get Timer and UART out of reset */
 	/* UART softreset */
@@ -619,6 +628,130 @@ void prcm_init(u32 in_ddr)
 	per_clocks_enable();
 }
 
+#ifdef CONFIG_DRIVER_TI_CPSW
+
+#define PADCTRL_BASE 0x48140000
+
+#define PAD204_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B2c))
+#define PAD205_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B30))
+#define PAD206_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B34))
+#define PAD207_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B38))
+#define PAD208_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B3c))
+#define PAD209_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B40))
+#define PAD210_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B44))
+#define PAD211_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B48))
+#define PAD212_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B4c))
+#define PAD213_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B50))
+#define PAD214_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B54))
+#define PAD215_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B58))
+#define PAD216_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B5c))
+#define PAD217_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B60))
+#define PAD218_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B64))
+#define PAD219_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B68))
+#define PAD220_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B6c))
+#define PAD221_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B70))
+#define PAD222_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B74))
+#define PAD223_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B78))
+#define PAD224_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B7c))
+#define PAD225_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B80))
+#define PAD226_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B84))
+#define PAD227_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B88))
+
+#define PAD232_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0B9C))
+#define PAD233_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BA0))
+#define PAD234_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BA4))
+#define PAD235_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BA8))
+#define PAD236_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BAC))
+#define PAD237_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BB0))
+#define PAD238_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BB4))
+#define PAD239_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BB8))
+#define PAD240_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BBC))
+#define PAD241_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BC0))
+#define PAD242_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BC4))
+#define PAD243_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BC8))
+#define PAD244_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BCC))
+#define PAD245_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BD0))
+#define PAD246_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BD4))
+#define PAD247_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BD8))
+#define PAD248_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BDC))
+#define PAD249_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BE0))
+#define PAD250_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BE4))
+#define PAD251_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BE8))
+#define PAD252_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BEC))
+#define PAD253_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BF0))
+#define PAD254_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BF4))
+#define PAD255_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BF8))
+#define PAD256_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0BFC))
+#define PAD257_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0C00))
+#define PAD258_CNTRL  (*(volatile unsigned int *)(PADCTRL_BASE + 0x0C04))
+
+static void cpsw_pad_config()
+{
+	volatile u32 val = 0;
+
+	/*configure pin mux for rmii_refclk,mdio_clk,mdio_d */
+	val = PAD232_CNTRL;
+	PAD232_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD233_CNTRL;
+	PAD233_CNTRL = (volatile unsigned int) (BIT(19) | BIT(17) | BIT(0));
+	val = PAD234_CNTRL;
+	PAD234_CNTRL = (volatile unsigned int) (BIT(19) | BIT(18) | BIT(17) |
+			BIT(0));
+
+	/*setup rgmii0/rgmii1 pins here*/
+	/* In this case we enable rgmii_en bit in GMII_SEL register and
+	 * still program the pins in gmii mode: gmii0 pins in mode 1*/
+	val = PAD235_CNTRL; /*rgmii0_rxc*/
+	PAD235_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD236_CNTRL; /*rgmii0_rxctl*/
+	PAD236_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD237_CNTRL; /*rgmii0_rxd[2]*/
+	PAD237_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD238_CNTRL; /*rgmii0_txctl*/
+	PAD238_CNTRL = (volatile unsigned int) BIT(0);
+	val = PAD239_CNTRL; /*rgmii0_txc*/
+	PAD239_CNTRL = (volatile unsigned int) BIT(0);
+	val = PAD240_CNTRL; /*rgmii0_txd[0]*/
+	PAD240_CNTRL = (volatile unsigned int) BIT(0);
+	val = PAD241_CNTRL; /*rgmii0_rxd[0]*/
+	PAD241_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD242_CNTRL; /*rgmii0_rxd[1]*/
+	PAD242_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD243_CNTRL; /*rgmii1_rxctl*/
+	PAD243_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD244_CNTRL; /*rgmii0_rxd[3]*/
+	PAD244_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD245_CNTRL; /*rgmii0_txd[3]*/
+	PAD245_CNTRL = (volatile unsigned int) BIT(0);
+	val = PAD246_CNTRL; /*rgmii0_txd[2]*/
+	PAD246_CNTRL = (volatile unsigned int) BIT(0);
+	val = PAD247_CNTRL; /*rgmii0_txd[1]*/
+	PAD247_CNTRL = (volatile unsigned int) BIT(0);
+	val = PAD248_CNTRL; /*rgmii1_rxd[1]*/
+	PAD248_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD249_CNTRL; /*rgmii1_rxc*/
+	PAD249_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD250_CNTRL; /*rgmii1_rxd[3]*/
+	PAD250_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD251_CNTRL; /*rgmii1_txd[1]*/
+	PAD251_CNTRL = (volatile unsigned int) (BIT(0));
+	val = PAD252_CNTRL; /*rgmii1_txctl*/
+	PAD252_CNTRL = (volatile unsigned int) (BIT(0));
+	val = PAD253_CNTRL; /*rgmii1_txd[0]*/
+	PAD253_CNTRL = (volatile unsigned int) (BIT(0));
+	val = PAD254_CNTRL; /*rgmii1_txd[2]*/
+	PAD254_CNTRL = (volatile unsigned int) (BIT(0));
+	val = PAD255_CNTRL; /*rgmii1_txc*/
+	PAD255_CNTRL = (volatile unsigned int) (BIT(0));
+	val = PAD256_CNTRL; /*rgmii1_rxd[0]*/
+	PAD256_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+	val = PAD257_CNTRL; /*rgmii1_txd[3]*/
+	PAD257_CNTRL = (volatile unsigned int) (BIT(0));
+	val = PAD258_CNTRL; /*rgmii1_rxd[2]*/
+	PAD258_CNTRL = (volatile unsigned int) (BIT(18) | BIT(0));
+}
+#endif /* CONFIG_DRIVER_TI_CPSW */
+
 struct nor_pad_config {
 	unsigned int offset;
 	unsigned int value;
@@ -762,6 +895,158 @@ void reset_cpu(ulong addr)
 	__raw_writel(addr, PRM_DEVICE_RSTCTRL);
 }
 
+#ifdef CONFIG_DRIVER_TI_CPSW
+
+/* TODO : Check for the board specific PHY */
+static void phy_init(char *name, int addr)
+{
+	unsigned short val;
+	unsigned int   cntr = 0;
+
+	miiphy_reset(name, addr);
+
+	udelay(100000);
+
+	/* Enable Autonegotiation */
+	if (miiphy_read(name, addr, PHY_BMCR, &val) != 0) {
+		printf("failed to read bmcr\n");
+		return;
+	}
+	val |= PHY_BMCR_DPLX | PHY_BMCR_AUTON | PHY_BMCR_100_MBPS;
+	if (miiphy_write(name, addr, PHY_BMCR, val) != 0) {
+		printf("failed to write bmcr\n");
+		return;
+	}
+	miiphy_read(name, addr, PHY_BMCR, &val);
+
+	/* Setup GIG advertisement */
+	miiphy_read(name, addr, PHY_1000BTCR, &val);
+	val |= PHY_1000BTCR_1000FD;
+	val &= ~PHY_1000BTCR_1000HD;
+	miiphy_write(name, addr, PHY_1000BTCR, val);
+	miiphy_read(name, addr, PHY_1000BTCR, &val);
+
+	/* Setup general advertisement */
+	if (miiphy_read(name, addr, PHY_ANAR, &val) != 0) {
+		printf("failed to read anar\n");
+		return;
+	}
+	val |= (PHY_ANLPAR_10 | PHY_ANLPAR_10FD | PHY_ANLPAR_TX |
+		PHY_ANLPAR_TXFD);
+	if (miiphy_write(name, addr, PHY_ANAR, val) != 0) {
+		printf("failed to write anar\n");
+		return;
+	}
+	miiphy_read(name, addr, PHY_ANAR, &val);
+
+	/* Restart auto negotiation*/
+	miiphy_read(name, addr, PHY_BMCR, &val);
+	val |= PHY_BMCR_RST_NEG;
+	miiphy_write(name, addr, PHY_BMCR, val);
+
+	/*check AutoNegotiate complete - it can take upto 3 secs*/
+	do {
+		udelay(40000);
+		cntr++;
+
+		if (!miiphy_read(name, addr, PHY_BMSR, &val)) {
+			if (val & PHY_BMSR_AUTN_COMP)
+				break;
+		}
+	} while (cntr < 250);
+
+	if (!miiphy_read(name, addr, PHY_BMSR, &val)) {
+		if (!(val & PHY_BMSR_AUTN_COMP))
+			printf("Auto negotitation failed\n");
+	}
+}
+
+static void cpsw_control(int enabled)
+{
+	/* nothing for now */
+	/* TODO : VTP was here before */
+}
+
+static struct cpsw_slave_data cpsw_slaves[] = {
+	{
+		.slave_reg_ofs	= 0x208,
+		.sliver_reg_ofs	= 0xd80,
+		.phy_id		= 0,
+	},
+	{
+		.slave_reg_ofs	= 0x308,
+		.sliver_reg_ofs	= 0xdc0,
+		.phy_id		= 1,
+	},
+};
+
+static struct cpsw_platform_data cpsw_data = {
+	.mdio_base		= TI811X_CPSW_MDIO_BASE,
+	.cpsw_base		= TI814X_CPSW_BASE,
+	.mdio_div		= 0xff,
+	.channels		= 8,
+	.cpdma_reg_ofs		= 0x800,
+	.cpdma_sram_ofs		= 0xa00,
+	.slaves			= 1,
+	.slave_data		= cpsw_slaves,
+	.ale_reg_ofs		= 0xd00,
+	.ale_entries		= 1024,
+	.host_port_reg_ofs	= 0x108,
+	.hw_stats_reg_ofs	= 0x900,
+	.mac_control		= (1 << 5) /* MIIEN */,
+	.control		= cpsw_control,
+	.phy_init		= phy_init,
+	.host_port_num		= 0,
+};
+
+extern void cpsw_eth_set_mac_addr(const u_int8_t *addr);
+
+int board_eth_init(bd_t *bis)
+{
+	u_int8_t mac_addr[6];
+	u_int32_t mac_hi, mac_lo;
+	u_int32_t eth_clock_config;
+
+#ifdef CONFIG_DRIVER_TI_CPSW
+	cpsw_pad_config();
+#endif
+
+	eth_clock_config = __raw_readl(SMA1);
+	printf("Ethernet clocking: 0x%x\n", eth_clock_config);
+
+	if (!eth_getenv_enetaddr("ethaddr", mac_addr)) {
+		char mac_addr_env[20];
+
+		printf("<ethaddr> not set. Reading from E-fuse\n");
+		/* try reading mac address from efuse */
+		mac_lo = __raw_readl(MAC_ID0_LO);
+		mac_hi = __raw_readl(MAC_ID0_HI);
+		mac_addr[0] = mac_hi & 0xFF;
+		mac_addr[1] = (mac_hi & 0xFF00) >> 8;
+		mac_addr[2] = (mac_hi & 0xFF0000) >> 16;
+		mac_addr[3] = (mac_hi & 0xFF000000) >> 24;
+		mac_addr[4] = mac_lo & 0xFF;
+		mac_addr[5] = (mac_lo & 0xFF00) >> 8;
+		/* set the ethaddr variable with MACID detected */
+		sprintf(mac_addr_env, "%02x:%02x:%02x:%02x:%02x:%02x",
+			mac_addr[0], mac_addr[1], mac_addr[2],
+			mac_addr[3], mac_addr[4], mac_addr[5]);
+		eth_setenv_enetaddr("ethaddr", (unsigned char *)mac_addr_env);
+	}
+
+	if (is_valid_ether_addr(mac_addr)) {
+		printf("Detected MACID:%x:%x:%x:%x:%x:%x\n", mac_addr[0],
+			mac_addr[1], mac_addr[2], mac_addr[3],
+			mac_addr[4], mac_addr[5]);
+		cpsw_eth_set_mac_addr(mac_addr);
+	} else {
+		printf("Caution:using static MACID!! Set <ethaddr> variable\n");
+	}
+
+	return cpsw_register(&cpsw_data);
+}
+#endif
+
 #ifdef CONFIG_NAND_TI81XX
 /******************************************************************************
  * Command to switch between NAND HW and SW ecc
@@ -809,4 +1094,3 @@ int board_mmc_init(bd_t *bis)
 	return 0;
 }
 #endif
-
