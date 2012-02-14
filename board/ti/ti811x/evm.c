@@ -100,6 +100,7 @@ static void iss_pll_config(void);
 #if 0
 static void iva_pll_config(void);
 #endif
+static void dsp_pll_config(void);
 static void usb_pll_config(void);
 
 static void unlock_pll_control_mmr(void);
@@ -436,7 +437,12 @@ static void ddr_pll_config()
 			DDR_N, DDR_M,
 			DDR_M2, DDR_CLKCTRL);
 }
-
+static void dsp_pll_config()
+{
+	pll_config(DSP_PLL_BASE,
+			DSP_N, DSP_M, DSP_M2,
+			DSP_CLKCTRL);
+}
 static void iss_pll_config()
 {
 	pll_config(ISS_PLL_BASE,
@@ -516,8 +522,8 @@ void per_clocks_enable(void)
 #endif
 	/* Selects OSC0 (20MHz) for DMTIMER1 */
 	temp = __raw_readl(DMTIMER_CLKSRC);
-	temp &= ~(0x7 << 3);
-	temp |= (0x4 << 3);
+	temp &= ~(0x7 << 4);
+	temp |= (0x4 << 4);
 	__raw_writel(temp, DMTIMER_CLKSRC);
 
 #if 0
@@ -608,13 +614,16 @@ void prcm_init(u32 in_ddr)
 
 	/* Setup the various plls */
 	audio_pll_config();
-	sata_pll_config();
 #if 0
+	sata_pll_config();
 	pcie_pll_config();
 #endif
 	modena_pll_config();
+#if 0
 	l3_pll_config();
+#endif
 	ddr_pll_config();
+	dsp_pll_config();
 #if 0
 	iva_pll_config();
 #endif
