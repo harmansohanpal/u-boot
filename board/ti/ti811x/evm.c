@@ -585,6 +585,14 @@ void per_clocks_enable(void)
 	__raw_writel(0x2, CM_AUDIOCLK_MCASP2_CLKSEL);
 	while (__raw_readl(CM_AUDIOCLK_MCASP2_CLKSEL) != 0x2)
 		;
+	/* McASP2 AHCLKX source from OSC1*/
+	__raw_writel(0x00030000, McASP_AHCLK_CLKSRC);
+	while (__raw_readl(McASP_AHCLK_CLKSRC) != 0x00030000)
+		;
+	/* select OSC1 as clock out*/
+	__raw_writel(0x00070000, CLKOUT_MUX);
+	while (__raw_readl(CLKOUT_MUX) != 0x00070000)
+		;
 
 	/* WDT */
 	/* For WDT to be functional, it needs to be first stopped by writing
