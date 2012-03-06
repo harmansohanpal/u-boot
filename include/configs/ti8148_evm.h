@@ -51,10 +51,22 @@
 # define CONFIG_BOOTDELAY		0
 # if defined(CONFIG_SPI_BOOT)		/* Autoload the 2nd stage from SPI */
 #  define CONFIG_SPI			1
-#  define CONFIG_EXTRA_ENV_SETTINGS \
+# if defined(CONFIG_TI81XX_PCIE_BOOT)
+# define CONFIG_CMDLINE_TAG		1	/* enable passing of ATAGs  */
+# define CONFIG_SETUP_MEMORY_TAGS	1
+# define CONFIG_INITRD_TAG		1	/* Required for ramdisk support */
+# define CONFIG_CMD_SOURCE
+# define CONFIG_EXTRA_ENV_SETTINGS \
+	"verify=yes\0" \
+	"bootcmd=source 0x80400000\0" \
+	""
+
+# else
+# define CONFIG_EXTRA_ENV_SETTINGS \
 	"verify=yes\0" \
 	"bootcmd=sf probe 0; sf read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
 
+# endif
 # elif defined(CONFIG_NAND_BOOT)		/* Autoload the 2nd stage from NAND */
 #  define CONFIG_NAND			1
 #  define CONFIG_EXTRA_ENV_SETTINGS \

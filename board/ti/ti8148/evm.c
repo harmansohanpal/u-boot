@@ -215,6 +215,13 @@ int dram_init(void)
 
 int misc_init_r (void)
 {
+#if defined(CONFIG_TI81XX_PCIE_BOOT) && defined(CONFIG_TI814X_MIN_CONFIG)
+	extern int pcie_init(void);
+	printf("\nSetting up for pcie boot...\n");
+	pcie_init();
+	return 0;
+#endif
+
 	#ifdef CONFIG_TI814X_MIN_CONFIG
 	printf("The 2nd stage U-Boot will now be auto-loaded\n");
 	printf("Please do not interrupt the countdown till "
@@ -1356,4 +1363,3 @@ int board_mmc_init(bd_t *bis)
         return 0;
 }
 #endif
-
