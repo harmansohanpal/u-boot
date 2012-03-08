@@ -760,9 +760,6 @@ void prcm_init(u32 in_ddr)
 
 	usb_pll_config();
 
-	/*reset the  sysclk10 div to 1 for 96 MHz*/
-	__raw_writel(0x1, CM_SYSCLK10_CLKSEL);
-
 	/*  With clk freqs setup to desired values,
 	 *  enable the required peripherals
 	 */
