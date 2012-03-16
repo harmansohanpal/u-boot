@@ -31,7 +31,7 @@
 /* -56 */	BIT(0), BIT(0), BIT(0), BIT(0),
 /* -60 */	BIT(0), BIT(0), BIT(0), BIT(0),
 /* -64 */	BIT(0), BIT(0), BIT(0), BIT(0),
-/* -68 */	BIT(0), BIT(0), BIT(0), BIT(0),
+/* -68 */	BIT(0), 0,	0,	BIT(0),/* 66-67 Reserved */
 /* -72 */	BIT(0), BIT(0), BIT(0), BIT(0),
 /* -76 */	BIT(0), BIT(6), BIT(6), BIT(0), /* 74 - mmc1_pow, 75 - mmc1_sdwp */
 /* -80 */	BIT(0), BIT(0), BIT(0), BIT(1), /* 80 - mmc1_sdcd */
@@ -81,6 +81,6 @@
 /* -256 */	BIT(0), BIT(0), BIT(0), BIT(0),
 /* -260 */	BIT(0), BIT(0), BIT(0), BIT(0),
 /* -264 */	BIT(0), BIT(0), BIT(0), BIT(0),
-/* -268 */	BIT(0), BIT(0), BIT(0), BIT(0),
+/* -268 */	0,	0,	0,	0, /*265-269 Reserved */
 		/* 270 usb0_drvvbus, fn1, pulldn enable */
-/* -271 */	BIT(0), BIT(0), BIT(0),
+/* -271 */	0,	BIT(0), BIT(0),
