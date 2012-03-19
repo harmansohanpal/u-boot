@@ -145,9 +145,9 @@ u32 get_sysboot_bw(void)
 }
 
 /***************************************************
- * u32 opp_val_dm385() - return the opp specifi value
+ * u32 opp_val_ti813x() - return the opp specifi value
  ***************************************************/
-u32 opp_val_dm385(u32 opp100_val, u32 opp120_val)
+u32 opp_val_ti813x(u32 opp100_val, u32 opp120_val)
 {
 	/* Get OPP usage */
 	if (OPP_CONFIG == 100)
@@ -164,7 +164,7 @@ int print_cpuinfo (void)
 {
 	char *cpu_s, *sec_s;
 	int arm_freq, ddr_freq , rev;
-#ifdef CONFIG_DM385
+#ifdef CONFIG_TI813X
 	int l3_freq, dss_freq, iva_freq, iss_freq;
 #endif
 
@@ -176,8 +176,8 @@ int print_cpuinfo (void)
 	case TI8148:
 		cpu_s = "TI8148";
 		break;
-	case DM385:
-		cpu_s = "DM385";
+	case TI813X:
+		cpu_s = "TI813X";
 		break;
 	case TI811X:
 		cpu_s = "TI811X";
@@ -242,7 +242,7 @@ int print_cpuinfo (void)
 	/* clk_out  = ((OSC_0/ ( N+1 )) * M) / M2   */
 	arm_freq = ((OSC_0_FREQ / (MODENA_N + 1) * MODENA_M) / MODENA_M2);
 	ddr_freq = ((OSC_0_FREQ / (DDR_N + 1) * DDR_M) / DDR_M2);
-#ifdef CONFIG_DM385
+#ifdef CONFIG_TI813X
 	l3_freq = ((OSC_0_FREQ / (L3_N + 1) * L3_M) / L3_M2);
 	dss_freq = ((OSC_0_FREQ / (DSS_N + 1) * DSS_M) / DSS_M2);
 	iva_freq = ((OSC_0_FREQ / (IVA_N + 1) * IVA_M) / IVA_M2);
@@ -251,7 +251,7 @@ int print_cpuinfo (void)
 #endif
 	printf("ARM clk: %dMHz\n", arm_freq);
 	printf("DDR clk: %dMHz\n", ddr_freq);
-#ifdef CONFIG_DM385
+#ifdef CONFIG_TI813X
 	printf("L3 clk: %dMHz\n", l3_freq);
 	printf("DSS clk: %dMHz\n", dss_freq);
 	printf("IVA clk: %dMHz\n", iva_freq);

@@ -32,7 +32,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#ifdef CONFIG_DM385_CONFIG_DDR
+#ifdef CONFIG_TI813X_CONFIG_DDR
 static void cmd_macro_config(u32 ddr_phy, u32 inv_clk_out,
 			 u32 ctrl_slave_ratio_cs0, u32 cmd_dll_lock_diff)
 {
@@ -146,7 +146,7 @@ int board_init(void)
 	__raw_writel(regVal, UART_SYSCFG);
 
 	/* mach type passed to kernel */
-	gd->bd->bi_arch_number = MACH_TYPE_DM385EVM;
+	gd->bd->bi_arch_number = MACH_TYPE_TI813XEVM;
 
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_DRAM_1 + 0x100;
@@ -183,32 +183,32 @@ int dram_init(void)
 
 int misc_init_r(void)
 {
-	#ifdef CONFIG_DM385_MIN_CONFIG
+	#ifdef CONFIG_TI813X_MIN_CONFIG
 	printf("The 2nd stage U-Boot will now be auto-loaded\n");
 	printf("Please do not interrupt the countdown till "
-		"DM385_EVM prompt if 2nd stage is already flashed\n");
+		"TI813X_EVM prompt if 2nd stage is already flashed\n");
 	#endif
 
-#ifdef CONFIG_DM385_ASCIIART
+#ifdef CONFIG_TI813X_ASCIIART
 	int i = 0, j = 0;
 
-	char dm385[22][67] = {
+	char ti813x[22][67] = {
 "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
 "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
 "@@                                                               @@",
 "@@                                                               @@",
 "@@                                                               @@",
 "@@                                                               @@",
-"@@      @@@        @.   @.         @@@@    @@@@  G@@@@@@         @@",
-"@@      @@@@@     L@@  @@@        @@@@@@  @@@@@i @@@@@@          @@",
-"@@      @@ @@@.   @@@  @@@            @@  @,  @@ :@@             @@",
-"@@      @@   @@   @@@  @@@          @@@@  @@;@@: C@@@@@.         @@",
-"@@      @@    @@  @@@.l@L@         G@@@   ,@@@@  @@@  @@         @@",
-"@@      @@    @@ l@ @@@@ @.          l@@  @@ L@@  @   G@         @@",
-"@@      @@    @@ @@ @@@@ @@           @@ C@   @@      @@         @@",
-"@@      @@   ,@C @@ @@@  @@       @i  @@ C@   @@ @@   @@         @@",
-"@@      @@@@@@@  @@  @@  @@       @@@@@l  @@@@@@ L@@@@@          @@",
-"@@       @@@@@   @   @    @        L@@     @@@,   ,@@G           @@",
+"@@                                                               @@",
+"@@     88888888888 8888888 .d8888b.   d888   .d8888b.            @@",
+"@@         888       888  d88P  Y88b d8888  d88P  Y88b           @@",
+"@@         888       888  Y88b. d88P   888       .d88P           @@",
+"@@         888       888    Y88888    888      8888   888  888   @@",
+"@@         888       888  .d8P88Y8b.   888        Y8b.  Y8 8P    @@",
+"@@         888       888  888    888   888  888    888   88      @@",
+"@@         888       888  Y88b  d88P   888  Y88b  d88P .d8 8b.   @@",
+"@@         888     8888888  Y8888P  8888888   Y8888P   888 888   @@",
+"@@                                                               @@",
 "@@                                                               @@",
 "@@                                                               @@",
 "@@                                                               @@",
@@ -218,15 +218,15 @@ int misc_init_r(void)
 
 	for (i = 0; i < 22; i++) {
 		for (j = 0; j < 67; j++)
-			printf("%c", dm385[i][j]);
+			printf("%c", ti813x[i][j]);
 			printf("\n");
 	}
 	printf("\n");
 #endif
 	return 0;
 }
-#ifdef CONFIG_DM385_CONFIG_DDR
-static void config_dm385_ddr(void)
+#ifdef CONFIG_TI813X_CONFIG_DDR
+static void config_ti813x_ddr(void)
 {
 	int macro, emif = 0;
 
@@ -885,7 +885,7 @@ void s_init(u32 in_ddr)
 	 * Disable Write Allocate on miss to avoid starvation of other masters
 	 * (than A8).
 	 *
-	 * Ref DM385 Erratum: TODO
+	 * Ref TI813X Erratum: TODO
 	 */
 	l2_disable_wa();
 
@@ -894,9 +894,9 @@ void s_init(u32 in_ddr)
 	unlock_pll_control_mmr();
 	/* Setup the PLLs and the clocks for the peripherals */
 	prcm_init(in_ddr);
-#ifdef CONFIG_DM385_CONFIG_DDR
+#ifdef CONFIG_TI813X_CONFIG_DDR
 	if (!in_ddr)
-		config_dm385_ddr();	/* Do DDR settings */
+		config_ti813x_ddr();	/* Do DDR settings */
 #endif
 }
 

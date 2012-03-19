@@ -23,6 +23,6 @@ TI_DEVICE = ti81xx
 TI_LOAD_ADDR = 0x40300000
 TEXT_BASE = 0x80700000
 CROSS_COMPILE:= arm-none-linux-gnueabi-
-LDSCRIPT:=board/ti/dm385/u-boot.lds
+LDSCRIPT:=board/ti/ti813x/u-boot.lds
 # Over-ride the macros if supplied from the Makefile
 sinclude $(OBJTREE)/board/$(BOARDDIR)/config.tmp

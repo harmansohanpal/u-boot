@@ -90,7 +90,7 @@
 #define DATA3_REG_PHY0_DLL_LOCK_DIFF_0		(0x324 + DDR0_PHY_BASE_ADDR)
 
 /* DDR1 Phy MMRs */
-#if !defined(CONFIG_DM385) && !defined(CONFIG_TI811X)
+#if !defined(CONFIG_TI813X) && !defined(CONFIG_TI811X)
 #define	CMD0_REG_PHY1_CTRL_SLAVE_RATIO_0	(0x01C + DDR1_PHY_BASE_ADDR)
 #define	CMD0_REG_PHY1_DLL_LOCK_DIFF_0		(0x028 + DDR1_PHY_BASE_ADDR)
 #define	CMD0_REG_PHY1_INVERT_CLKOUT_0		(0x02C + DDR1_PHY_BASE_ADDR)
@@ -183,8 +183,8 @@
 #define DDR3_PHY_RD_DQS_GATE_CS0_DEFINE		0xBC
 #define DDR3_PHY_WR_DATA_CS0_DEFINE		0x62
 #define DDR3_PHY_CTRL_SLAVE_RATIO_CS0_DEFINE	0x80
-#elif defined(CONFIG_DM385)
-/* DM385 DDR3 PHY CFG parameters   <emif0> */
+#elif defined(CONFIG_TI813X)
+/* TI813X DDR3 PHY CFG parameters   <emif0> */
 #define DDR3_PHY_RD_DQS_CS0_DEFINE		0x30
 #define DDR3_PHY_WR_DQS_CS0_DEFINE		0x21
 #define DDR3_PHY_RD_DQS_GATE_CS0_DEFINE		0xC0
@@ -215,12 +215,12 @@
 #define DDR2_EMIF_SDRAM_CONFIG		0x40801AB2
 #define DDR2_EMIF_SDRAM_ZQCR		0x50074BE1
 
-#ifdef CONFIG_DM385
+#ifdef CONFIG_TI813X
 /* select the DDR3 Freq and timing paramets */
-#define CONFIG_DM385_DDR3_400 /* Values supported 400,533 */
+#define CONFIG_TI813X_DDR3_400 /* Values supported 400,533 */
 
-/* DM385 DDR3 EMIF CFG Registers values 400MHz */
-#if defined(CONFIG_DM385_DDR3_400)
+/* TI813X DDR3 EMIF CFG Registers values 400MHz */
+#if defined(CONFIG_TI813X_DDR3_400)
 #define DDR3_EMIF_READ_LATENCY		0x00173209
 #define DDR3_EMIF_TIM1			0x132BB953
 #define DDR3_EMIF_TIM2			0x20437FDA
@@ -230,8 +230,8 @@
 #define DDR3_EMIF_SDRAM_ZQCR		0x50074BE1
 #endif
 
-/* DM385 DDR3 EMIF CFG Registers values 533MHz */
-#if defined(CONFIG_DM385_DDR3_533)
+/* TI813X DDR3 EMIF CFG Registers values 533MHz */
+#if defined(CONFIG_TI813X_DDR3_533)
 #define DDR3_EMIF_READ_LATENCY		0x0017320A
 #define DDR3_EMIF_TIM1			0x110F783B
 #define DDR3_EMIF_TIM2			0x238581E6
@@ -279,7 +279,7 @@
 #define PG2_1_DMM_LISA_MAP__3		0x80640300
 
 /*
- * DM385 DMM LISA MAPPING
+ * TI813X DMM LISA MAPPING
  * 1G contiguous section with no interleaving
  */
 #define DDR3_DMM_LISA_MAP__0		0x0

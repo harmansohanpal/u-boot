@@ -14,17 +14,17 @@
  * GNU General Public License for more details.
  */
 
-#ifndef __CONFIG_DM385_EVM_H
-#define __CONFIG_DM385_EVM_H
+#ifndef __CONFIG_TI813X_EVM_H
+#define __CONFIG_TI813X_EVM_H
 
 /*
- *#define CONFIG_DM385_NO_RUNTIME_PG_DETECT
+ *#define CONFIG_TI813X_NO_RUNTIME_PG_DETECT
  */
 
 /* Display CPU info */
 #define CONFIG_DISPLAY_CPUINFO          1
 /* In the 1st stage we have just 110K, so cut down wherever possible */
-#ifdef CONFIG_DM385_MIN_CONFIG
+#ifdef CONFIG_TI813X_MIN_CONFIG
 
 # define CONFIG_CMD_MEMORY      /* for mtest */
 # undef CONFIG_GZIP
@@ -33,8 +33,8 @@
 # define CONFIG_CMD_LOADB       /* loadb                        */
 # define CONFIG_CMD_LOADY       /* loady */
 # define CONFIG_SETUP_PLL
-# define CONFIG_DM385_CONFIG_DDR
-# define CONFIG_DM385_EVM_DDR3
+# define CONFIG_TI813X_CONFIG_DDR
+# define CONFIG_TI813X_EVM_DDR3
 # define CONFIG_ENV_SIZE                0x400
 # define CONFIG_SYS_MALLOC_LEN          (CONFIG_ENV_SIZE + (8 * 1024))
 # define CONFIG_SYS_PROMPT              "TI-MIN#"
@@ -78,7 +78,7 @@
 /* size in bytes reserved for initial data */
 # define CONFIG_ENV_OVERWRITE
 # define CONFIG_SYS_LONGHELP
-# define CONFIG_SYS_PROMPT		"DM385_EVM#"
+# define CONFIG_SYS_PROMPT		"TI813X_EVM#"
 /* Use HUSH parser to allow command parsing */
 # define CONFIG_SYS_HUSH_PARSER
 # define CONFIG_SYS_PROMPT_HUSH_PS2     "> "
@@ -122,8 +122,8 @@
 
 # define CONFIG_SYS_GBL_DATA_SIZE	128
 # define CONFIG_MISC_INIT_R		1
-#ifndef CONFIG_DM385_MIN_CONFIG
-# define CONFIG_DM385_ASCIIART		1
+#ifndef CONFIG_TI813X_MIN_CONFIG
+# define CONFIG_TI813X_ASCIIART		1
 #endif
 # define CONFIG_CMD_CACHE
 # define CONFIG_CMD_ECHO
@@ -308,9 +308,9 @@ extern unsigned int boot_flash_type;
 # undef CONFIG_CMD_NAND
 # undef CONFIG_NAND_TI81XX
 # undef CONFIG_SKIP_LOWLEVEL_INIT
-# define CONFIG_DM385_CONFIG_DDR
+# define CONFIG_TI813X_CONFIG_DDR
 # define CONFIG_SETUP_PLL
-# define CONFIG_DM385_EVM_DDR3
+# define CONFIG_TI813X_EVM_DDR3
 # undef CONFIG_ENV_IS_NOWHERE
 # ifdef CONFIG_SYS_MALLOC_LEN
 #  undef CONFIG_SYS_MALLOC_LEN
@@ -366,5 +366,5 @@ extern unsigned int boot_flash_type;
 /* Unsupported features */
 #undef CONFIG_USE_IRQ
 
-#endif	  /* ! __CONFIG_DM385_EVM_H */
+#endif	  /* ! __CONFIG_TI813X_EVM_H */
 
