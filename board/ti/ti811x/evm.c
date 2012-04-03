@@ -130,7 +130,7 @@ int board_init(void)
 	nor_pad_config_mux();
 
 	/* setup RMII_REFCLK to be sourced from audio_pll */
-	__raw_writel(0x4, RMII_REFCLK_SRC);
+	__raw_writel(0x30004, RMII_REFCLK_SRC);
 
 	/*program GMII_SEL register for RGMII mode */
 	__raw_writel(0x30a, GMII_SEL);
