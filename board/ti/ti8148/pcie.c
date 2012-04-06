@@ -50,28 +50,29 @@ static inline void write_reg_bits(unsigned int a, unsigned int v,
 }
 
 #define read_pcie_appl_reg(offset)	\
-		read_reg(TI81XX_PCIE_BASE + offset)
+	read_reg(TI81XX_PCIE_BASE + offset)
 
 #define write_pcie_appl_reg(offset, v)	\
-		write_reg(TI81XX_PCIE_BASE + offset, v)
+	write_reg(TI81XX_PCIE_BASE + offset, v)
 
 #define read_pcie_appl_reg_bits(offset, mask)	\
-		read_reg_bits(TI81XX_PCIE_BASE + offset, mask)
+	read_reg_bits(TI81XX_PCIE_BASE + offset, mask)
 
 #define write_pcie_appl_reg_bits(offset, v, mask)	\
-		write_reg(TI81XX_PCIE_BASE + offset, v, mask)
+	write_reg(TI81XX_PCIE_BASE + offset, v, mask)
 
 #define read_pcie_lcfg_reg(offset)	\
-		read_reg(TI81XX_PCIE_BASE + SPACE0_LOCAL_CFG_OFFSET + offset)
+	read_reg(TI81XX_PCIE_BASE + SPACE0_LOCAL_CFG_OFFSET + offset)
 
 #define write_pcie_lcfg_reg(offset, v)	\
-		write_reg(TI81XX_PCIE_BASE + SPACE0_LOCAL_CFG_OFFSET + offset, v)
+	write_reg(TI81XX_PCIE_BASE + SPACE0_LOCAL_CFG_OFFSET + offset, v)
 
 #define read_pcie_lcfg_reg_bits(offset, mask)	\
-		read_reg_bits(TI81XX_PCIE_BASE + SPACE0_LOCAL_CFG_OFFSET + offset, mask)
+	read_reg_bits(TI81XX_PCIE_BASE + SPACE0_LOCAL_CFG_OFFSET + offset, mask)
 
-#define write_pcie_lcfg_reg_bits(offset, v, mask)	\
-		write_reg_bits(TI81XX_PCIE_BASE + SPACE0_LOCAL_CFG_OFFSET + offset, v, mask)
+#define write_pcie_lcfg_reg_bits(offset, v, mask)			\
+	write_reg_bits(TI81XX_PCIE_BASE + SPACE0_LOCAL_CFG_OFFSET	\
+			+ offset, v, mask)
 
 #define DEBUG_LTSSM
 
@@ -84,127 +85,243 @@ int app_retry_enable(void)
 {
 	write_pcie_appl_reg(CMD_STATUS,
 			read_pcie_appl_reg(CMD_STATUS) | (1 << 4));
-        return 0;
+	return 0;
 }
 
 int app_retry_disable(void)
 {
-        write_pcie_appl_reg(CMD_STATUS,
+	write_pcie_appl_reg(CMD_STATUS,
 			read_pcie_appl_reg(CMD_STATUS) & (~(1 << 4)));
-        return 0;
+	return 0;
 }
 
 int set_basic_config(void)
 {
-        /* set vendor device id */
-        write_pcie_lcfg_reg(VENDOR_DEVICE_ID, TI8148_ID);
-        /* set magic no */
-        write_pcie_appl_reg(GPR0, MAGIC_NO);
-        /* set class code */
-        write_pcie_lcfg_reg(CLSCODE_REVID, 0x04000001);
-        return 0;
+	/* set vendor device id */
+	write_pcie_lcfg_reg(VENDOR_DEVICE_ID, TI8148_ID);
+	/* set magic no */
+	write_pcie_appl_reg(GPR0, MAGIC_NO);
+	/* set class code */
+	write_pcie_lcfg_reg(CLSCODE_REVID, 0x04000001);
+	return 0;
 }
 
 int set_bar_config_32(void)
 {
 	/* BAR0 & BAR1 are always enabled, BAR0 hardwired to appl space */
 	write_pcie_lcfg_reg(BAR0, BAR_NONPREF_32BIT);
-	write_pcie_lcfg_reg(BAR1, BAR__START_LOW_0 | BAR_PREF_32BIT);
-
+	write_pcie_lcfg_reg(BAR1, BAR_START_LOW_0 | BAR_PREF_32BIT);
 	if (bar_enable_mask & (1 << 2))
-		write_pcie_lcfg_reg(BAR2, BAR__START_LOW_1 | BAR_PREF_32BIT);
+		write_pcie_lcfg_reg(BAR2, BAR_START_LOW_1 | BAR_PREF_32BIT);
 	else
 		write_pcie_lcfg_reg(BAR2, BAR_NONPREF_32BIT);
 
 	if (bar_enable_mask & (1 << 3))
-		write_pcie_lcfg_reg(BAR3, BAR__START_LOW_2 | BAR_PREF_32BIT);
+		write_pcie_lcfg_reg(BAR3, BAR_START_LOW_2 | BAR_PREF_32BIT);
 	else
 		write_pcie_lcfg_reg(BAR3, BAR_NONPREF_32BIT);
 
 	if (bar_enable_mask & (1 << 4))
-		write_pcie_lcfg_reg(BAR4, BAR__START_LOW_3 | BAR_PREF_32BIT);
+		write_pcie_lcfg_reg(BAR4, BAR_START_LOW_3 | BAR_PREF_32BIT);
 	else
 		write_pcie_lcfg_reg(BAR4, BAR_NONPREF_32BIT);
 
 	/* BAR5 always kept disabled */
 
-        return 0;
-}
-
-int read_gpmc_pin_config(void)
-{
-	g_pin_conf.boot_dev_size = (unsigned char) ((read_reg(TI81XX_CONTROL_BASE +
-					CONTROL_STATUS) & 
-				(TI8148_BT_DEVSIZE_MASK)) >> BT_MSK_SHIFT);
-
-	g_pin_conf.cs0_mux_dev = (unsigned char) ((read_reg(TI81XX_CONTROL_BASE +
-					CONTROL_STATUS) & 
-				(TI8148_CS0_DEVSIZE_MASK)) >> CS0_MSK_SHIFT);
-
-        g_pin_conf.boot_wait_en = (unsigned char) ((read_reg(TI81XX_CONTROL_BASE +
-                                                        CONTROL_STATUS) &
-				(TI8148_BTW_EN)) >> BTW_EN_MSK_SHIFT);
 	return 0;
 }
 
-int set_bar_size(void)
+int set_bar_config_64(void)
 {
-        unsigned int bar2_pins, bar3_pins, bar4_pins;
-
-        write_pcie_lcfg_reg(BAR0, SIZE_4KB);
-        write_pcie_lcfg_reg(BAR1, SIZE_8MB);
-	write_pcie_lcfg_reg(BAR5, DISABLE);
-	bar_enable_mask = (1 << 0) | (1 << 1);
-        bar2_pins = g_pin_conf.boot_dev_size;
-
-        bar3_pins = g_pin_conf.cs0_mux_dev;
-        bar4_pins = g_pin_conf.boot_wait_en;
-
-	switch(bar2_pins) {
-        case 0:
-                write_pcie_lcfg_reg(BAR2, DISABLE);
-        break;
-        case 1:
-                write_pcie_lcfg_reg(BAR2, SIZE_16MB);
-		bar_enable_mask |= (1 << 2);
-        break;
-        default:
-                write_pcie_lcfg_reg(BAR2, DISABLE);
-        }
-
-        switch(bar3_pins) {
-        case 0:
-                write_pcie_lcfg_reg(BAR3, DISABLE);
-        break;
-        case 1:
-                write_pcie_lcfg_reg(BAR3, SIZE_32MB);
-		bar_enable_mask |= (1 << 3);
-        break;
-        case 2:
-                write_pcie_lcfg_reg(BAR3, SIZE_64MB);
-		bar_enable_mask |= (1 << 3);
-        break;
-        case 3:
-                write_pcie_lcfg_reg(BAR3, SIZE_128MB);
-		bar_enable_mask |= (1 << 3);
-        break;
-        default:
-                write_pcie_lcfg_reg(BAR3, DISABLE);
-        }
-	switch(bar4_pins) {
-        case 0:
-                write_pcie_lcfg_reg(BAR4, DISABLE);
-        break;
-        case 1:
-                write_pcie_lcfg_reg(BAR4, SIZE_256MB);
-		bar_enable_mask |= (1 << 4);
-        break;
-        default:
-               write_pcie_lcfg_reg (BAR4, DISABLE);
-        }
-
-        return 0;
+	write_pcie_lcfg_reg(BAR0, BAR_NONPREF_64BIT);
+	if (bar_enable_mask & (1 << 2))
+		write_pcie_lcfg_reg(BAR2, BAR_PREF_64BIT);
+	else
+		write_pcie_lcfg_reg(BAR2, BAR_NONPREF_64BIT);
+	if (bar_enable_mask & (1 << 4))
+		write_pcie_lcfg_reg(BAR4, BAR_PREF_64BIT);
+	else
+		write_pcie_lcfg_reg(BAR4, BAR_NONPREF_64BIT);
+	return 0;
 }
+
+int set_bar_sizes_64(void)
+{
+	unsigned int reg2_pins, reg4_pins;
+	reg2_pins = (g_pin_conf.boot_dev_size) |
+			((g_pin_conf.boot_wait_en) << 1);
+	reg4_pins = g_pin_conf.cs0_mux_dev;
+	write_pcie_lcfg_reg(BAR0, SIZE_4KB);
+	write_pcie_lcfg_reg(BAR1, DISABLE);
+	write_pcie_lcfg_reg(BAR5, DISABLE);
+	write_pcie_lcfg_reg(BAR3, DISABLE);
+	bar_enable_mask = (1 << 0); /* for region 0*/
+
+#ifndef TI81XX_NO_PIN_GPMC
+	switch (reg2_pins) {
+	case 0:
+		write_pcie_lcfg_reg(BAR2, DISABLE);
+		break;
+	case 1:
+		write_pcie_lcfg_reg(BAR2, SIZE_256MB);
+		bar_enable_mask |= (1 << 2); /* for region 2*/
+		break;
+	case 2:
+		write_pcie_lcfg_reg(BAR2, SIZE_512MB);
+		bar_enable_mask |= (1 << 2);
+		break;
+	case 3:
+		write_pcie_lcfg_reg(BAR2, SIZE_1GB);
+		bar_enable_mask |= (1 << 2);
+		break;
+	default:
+		write_pcie_lcfg_reg(BAR2, DISABLE);
+	}
+
+	switch (reg4_pins) {
+	case 0:
+		write_pcie_lcfg_reg(BAR4, DISABLE);
+		break;
+	case 1:
+		write_pcie_lcfg_reg(BAR4, SIZE_1GB);
+		bar_enable_mask |= (1 << 4); /* for region 4*/
+		break;
+	case 2:
+		write_pcie_lcfg_reg(BAR4, SIZE_2GB);
+		bar_enable_mask |= (1 << 4);
+		break;
+	case 3:
+		write_pcie_lcfg_reg(BAR4, SIZE_4GB);
+		bar_enable_mask |= (1 << 4);
+		break;
+	default:
+		write_pcie_lcfg_reg(BAR4, DISABLE);
+	}
+#else
+	DEBUGF("\nconfiguration for 64 bit present,"
+			"avoiding GPMC pin config\n");
+	if (CONFIG_BAR_SIZE(CONFIG_REG2_64)) {
+		write_pcie_lcfg_reg(BAR2, CONFIG_BAR_SIZE(CONFIG_REG2_64));
+		bar_enable_mask |= (1 << 2);
+	} else
+		write_pcie_lcfg_reg(BAR2, CONFIG_BAR_SIZE(CONFIG_REG2_64));
+
+	if (CONFIG_BAR_SIZE(CONFIG_REG4_64)) {
+		write_pcie_lcfg_reg(BAR4, CONFIG_BAR_SIZE(CONFIG_REG4_64));
+		bar_enable_mask |= (1 << 4);
+	} else
+		write_pcie_lcfg_reg(BAR4, CONFIG_BAR_SIZE(CONFIG_REG4_64));
+#endif
+	return 0;
+}
+
+
+
+
+int read_gpmc_pin_config(void)
+{
+	g_pin_conf.boot_dev_size = (unsigned char)
+					((read_reg(TI81XX_CONTROL_BASE +
+						   CONTROL_STATUS) &
+					  (TI8148_BT_DEVSIZE_MASK)) >>
+					 BT_MSK_SHIFT);
+
+	g_pin_conf.cs0_mux_dev = (unsigned char) ((read_reg(TI81XX_CONTROL_BASE
+					+ CONTROL_STATUS) &
+					(TI8148_CS0_DEVSIZE_MASK)) >>
+					CS0_MSK_SHIFT);
+
+	g_pin_conf.boot_wait_en = (unsigned char) ((read_reg(TI81XX_CONTROL_BASE
+					+ CONTROL_STATUS) & (TI8148_BTW_EN)) >>
+					BTW_EN_MSK_SHIFT);
+	return 0;
+}
+
+int set_bar_size_32(void)
+{
+	unsigned int bar2_pins, bar3_pins, bar4_pins;
+
+	write_pcie_lcfg_reg(BAR0, SIZE_4KB);
+	write_pcie_lcfg_reg(BAR5, DISABLE);
+	bar_enable_mask = (1 << 0);
+	bar2_pins = g_pin_conf.boot_dev_size;
+
+	bar3_pins = g_pin_conf.cs0_mux_dev;
+	bar4_pins = g_pin_conf.boot_wait_en;
+#ifndef TI81XX_NO_PIN_GPMC
+	write_pcie_lcfg_reg(BAR1, SIZE_8MB);
+	bar_enable_mask |= (1 << 1);
+	switch (bar2_pins) {
+	case 0:
+		write_pcie_lcfg_reg(BAR2, DISABLE);
+		break;
+	case 1:
+		write_pcie_lcfg_reg(BAR2, SIZE_16MB);
+		bar_enable_mask |= (1 << 2);
+		break;
+	default:
+		write_pcie_lcfg_reg(BAR2, DISABLE);
+	}
+
+	switch (bar3_pins) {
+	case 0:
+		write_pcie_lcfg_reg(BAR3, DISABLE);
+		break;
+	case 1:
+		write_pcie_lcfg_reg(BAR3, SIZE_32MB);
+		bar_enable_mask |= (1 << 3);
+		break;
+	case 2:
+		write_pcie_lcfg_reg(BAR3, SIZE_64MB);
+		bar_enable_mask |= (1 << 3);
+		break;
+	case 3:
+		write_pcie_lcfg_reg(BAR3, SIZE_128MB);
+		bar_enable_mask |= (1 << 3);
+		break;
+	default:
+			write_pcie_lcfg_reg(BAR3, DISABLE);
+	}
+
+	switch (bar4_pins) {
+	case 0:
+		write_pcie_lcfg_reg(BAR4, DISABLE);
+		break;
+	case 1:
+		write_pcie_lcfg_reg(BAR4, SIZE_256MB);
+		bar_enable_mask |= (1 << 4);
+		break;
+	default:
+		write_pcie_lcfg_reg(BAR4, DISABLE);
+	}
+#else
+	DEBUGF("\nconfiguration for 32 bit present,
+			avoiding GPMC pin config \n");
+	if (CONFIG_BAR_SIZE(CONFIG_BAR1_32)) {
+		write_pcie_lcfg_reg(BAR1, CONFIG_BAR_SIZE(CONFIG_BAR1_32));
+		bar_enable_mask |= (1 << 1);
+	} else
+		write_pcie_lcfg_reg(BAR1, CONFIG_BAR_SIZE(CONFIG_BAR1_32));
+	if (CONFIG_BAR_SIZE(CONFIG_BAR2_32)) {
+		write_pcie_lcfg_reg(BAR2, CONFIG_BAR_SIZE(CONFIG_BAR2_32));
+		bar_enable_mask |= (1 << 2);
+	} else
+		write_pcie_lcfg_reg(BAR2, CONFIG_BAR_SIZE(CONFIG_BAR2_32));
+	if (CONFIG_BAR_SIZE(CONFIG_BAR3_32)) {
+		write_pcie_lcfg_reg(BAR3, CONFIG_BAR_SIZE(CONFIG_BAR3_32));
+		bar_enable_mask |= (1 << 3);
+	} else
+		write_pcie_lcfg_reg(BAR3, CONFIG_BAR_SIZE(CONFIG_BAR3_32));
+	if (CONFIG_BAR_SIZE(CONFIG_BAR4_32)) {
+		write_pcie_lcfg_reg(BAR4, CONFIG_BAR_SIZE(CONFIG_BAR4_32));
+		bar_enable_mask |= (1 << 4);
+	} else
+		write_pcie_lcfg_reg(BAR4, CONFIG_BAR_SIZE(CONFIG_BAR4_32));
+#endif
+
+	return 0;
+}
+
 
 int enable_dbi_cs2(void)
 {
@@ -214,7 +331,7 @@ int enable_dbi_cs2(void)
 
 	while ((read_pcie_appl_reg(CMD_STATUS) & (1 << 5)) == 0);
 
-        return 0;
+	return 0;
 }
 
 int disable_dbi_cs2(void)
@@ -222,7 +339,7 @@ int disable_dbi_cs2(void)
 	write_pcie_appl_reg(CMD_STATUS,
 			read_pcie_appl_reg(CMD_STATUS) & (~(1 << 5)));
 
-        return 0;
+	return 0;
 }
 
 int config_appl_regs(void)
@@ -343,15 +460,29 @@ int pcie_init(void)
 	DEBUGF("set basic config() done\n");
 
 	write_pcie_lcfg_reg_bits(STATUS_COMMAND,
-			CFG_REG__CMD_STATUS__MEM_SPACE__ENB,
-			CFG_REG__CMD_STATUS__MEM_SPACE);
+			CFG_REG_CMD_STATUS_MEM_SPACE_ENB,
+			CFG_REG_CMD_STATUS_MEM_SPACE);
 	enable_dbi_cs2();
 	DEBUGF("enable_dbi_cs2() done\n");
-	set_bar_size();
+#ifdef CONFIG_TI81XX_PCIE_32
+	set_bar_size_32();
+#endif
+
+#ifdef CONFIG_TI81XX_PCIE_64
+	set_bar_sizes_64();
+#endif
+
 	DEBUGF("set_bar_size() done\n");
 	disable_dbi_cs2();
 	DEBUGF("disable_dbi_cs2() done\n");
+#ifdef CONFIG_TI81XX_PCIE_32
 	set_bar_config_32();
+#endif
+
+#ifdef CONFIG_TI81XX_PCIE_64
+	set_bar_config_64();
+#endif
+
 	DEBUGF("set_bar_config32() done\n");
 	config_appl_regs();
 	DEBUGF("config_appl_regs() done\n");
@@ -401,7 +532,7 @@ int pcie_init(void)
 	__raw_writel(0x4030000C,0xE3A01002);
 	__raw_writel(0x40300010,0xE5801000);
 
- 
+
 	while (1) {
 		if (__raw_readl(TI814X_BOOTFLAG_ADDR) != 0 )
 		{

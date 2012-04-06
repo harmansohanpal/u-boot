@@ -26,6 +26,50 @@
 #endif
 
 /*
+ * Bar sizes can be decided on two basis:
+ * 1 - CONFIG_MACROS defined below
+ * 2 - GPMC pin settings
+ * if config macros are present then they will be prefered over pin
+ * settings and pin setting in this  case will  have no effect over
+ * bar sizes. if config macro are not present then pin setting will
+ * be considered for bar sizes.
+ */
+/* CONFIG MACROS for bar size */
+/* In case of 32 bit PCIE settings
+ * BAR(n)-- Region(n) referring same thing
+ * BAR1 -- Region 1
+ * BAR2 -- Region 2
+ * BAR3 -- region 3
+ * BAR4 -- region 4
+ * BAR5 -- Region 5
+ * In case of 64 bit PCIE settings
+ * BAR(n+1):BAR(n) : Region(n) n-- 0,2,4
+ * [BAR1 : BAR0] : Region 0
+ * [BAR3 : BAR2] : Region 2
+ * [BAR5 : BAR4] : Region 4
+ * Region0 and BAR0 will always be 4KB
+ */
+
+#define TI81XX_NO_PIN_GPMC /* commnet this Macro to use GPMC pin setting */
+#ifdef TI81XX_NO_PIN_GPMC
+#define CONFIG_BAR1_32	(0x800000ULL)	/* enter size in bytes */
+#define CONFIG_BAR2_32  (0x800000ULL)  /* enter size in bytes */
+#define CONFIG_BAR3_32  (0xfffULL)  /* enter size in bytes */
+#define CONFIG_BAR4_32  (0x1001ULL)  /* enter size in bytes */
+#define CONFIG_REG2_64  (0x1000000ULL)  /* enter size in bytes */
+#define CONFIG_REG4_64  (0x1000000ULL)  /* enter size in bytes */
+/* Replace these max and min bar sizes according to PCIE specs */
+#define MAX_BAR_SIZE	(0x40000000ULL) /* maximum size will be trucated according to PCIE specs*/
+#define MIN_BAR_SIZE	(0x1000ULL) /* alignment on base of min bar size  according to PCIE specs*/
+/* Generalized Macro for BAR size settings */
+#define CONFIG_BAR_SIZE(SIZE)	\
+	((SIZE > MAX_BAR_SIZE) ? (MAX_BAR_SIZE - 1) : \
+	 ((SIZE % MIN_BAR_SIZE) ? \
+	  ((SIZE / MIN_BAR_SIZE + 1) * MIN_BAR_SIZE - 1) : \
+	  (SIZE ? SIZE - 1 : 0)))
+#endif
+
+/*
  * OCMC location to communicate boot process
  */
 #define TI814X_BOOTFLAG_ADDR				0x4031b7fc
@@ -47,17 +91,9 @@ struct gpmc_config {
 };
 
 /*
- * PRCM control for enabling/resetting PCIe module
- */
-/* TODO: Add PRCM register address macros here */
-
-
-
-/*
  * Control module configuraiton regsiters needed to enable/set PCIe and sample
  * configuration pins
  */
-/* TODO: Add PCIe mode and sysboot registers here */
 
 #define	PCIE_CFG	0x480
 #define PCIE_PLLSTATUS  0x6EC
@@ -67,13 +103,6 @@ struct gpmc_config {
 #define PCIE_PLLCFG3	0x6E4 
 #define PCIE_PLLCFG4	0x6E8
 #define SMA0		0x1318
-
-
-/*
- * PLL configuraiton regsiters and bitfields
- */
-/* TODO: Add PLL setting bits here */
-
 
 /*
  * PCIe registers
@@ -163,7 +192,10 @@ struct gpmc_config {
 #define SIZE_2GB	0x7FFFFFFF
 #define SIZE_4GB	0xFFFFFFFF
 
-/* Device SYSBOOT pins values to be read from thsi register for setting BAR sizes */
+/*
+ * Device SYSBOOT pins values to be read from this register for setting BAR
+ * size
+ */
 #define CONTROL_STATUS			0x40
 
 #define TI8148_BT_DEVSIZE_MASK		(0x00010000)
@@ -183,21 +215,21 @@ struct gpmc_config {
 #define BAR_NONPREF_64BIT	0x4
 #define BAR_PREF_64BIT		0xC
 
-#define  BAR__START_LOW   0x20000000
-#define  BAR__START_LOW_0 0x40000000
-#define  BAR__START_LOW_1 0x60000000
-#define  BAR__START_LOW_2 0x80000000
-#define  BAR__START_LOW_3 0xa0000000
+#define  BAR_START_LOW   0x20000000
+#define  BAR_START_LOW_0 0x40000000
+#define  BAR_START_LOW_1 0x60000000
+#define  BAR_START_LOW_2 0x80000000
+#define  BAR_START_LOW_3 0xa0000000
 
-#define  BAR__OFFSET_0 0x40300000  // OCMC RAM Base
-#define  BAR__OFFSET_1 0x50000000  // GPMC Base
-#define  BAR__OFFSET_2 0x80000000  // DDR 0 Base
-#define  BAR__OFFSET_3 0xC0000000  // DDR 1 Base
+#define  BAR_OFFSET_0 0x40300000  /* OCMC RAM Base */
+#define  BAR_OFFSET_1 0x50000000  /* GPMC Base */
+#define  BAR_OFFSET_2 0x80000000  /* DDR 0 Base */
+#define  BAR_OFFSET_3 0xC0000000  /* DDR 1 Base */
 
-#define CFG_REG__CMD_STATUS__MEM_SPACE__POS   1
-#define CFG_REG__CMD_STATUS__MEM_SPACE        \
-        (1 << CFG_REG__CMD_STATUS__MEM_SPACE__POS)
-#define CFG_REG__CMD_STATUS__MEM_SPACE__ENB   0x1
+#define CFG_REG_CMD_STATUS_MEM_SPACE_POS   1
+#define CFG_REG_CMD_STATUS_MEM_SPACE        \
+	(1 << CFG_REG_CMD_STATUS_MEM_SPACE_POS)
+#define CFG_REG_CMD_STATUS_MEM_SPACE_ENB   0x1
 
 
 #endif /*_TI81XX_PCIE_H_*/

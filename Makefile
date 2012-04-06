@@ -3209,7 +3209,8 @@ ti8148_evm_min_spi	\
 ti8148_evm_min_uart	\
 ti8148_evm_min_nand	\
 ti8148_evm_min_eth	\
-ti8148_evm_min_pcie	\
+ti8148_evm_min_pcie_32	\
+ti8148_evm_min_pcie_64  \
 ti8148_evm_min_sd:	unconfig
 	@mkdir -p $(obj)include
 	@echo "#define CONFIG_TI81XX"	>>$(obj)include/config.h
@@ -3229,11 +3230,19 @@ ti8148_evm_min_sd:	unconfig
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_TI81XX_SPI_BOOT"	>>$(obj)include/config.h ; \
 			echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/ti8148/config.tmp;\
-		elif [ "$(findstring pcie,$@)" ] ; then \
+		elif [ "$(findstring pcie_32,$@)" ] ; then \
 			echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
                         echo "#define CONFIG_TI81XX_PCIE_BOOT" >>$(obj)include/config.h ; \
                         echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_TI81XX_SPI_BOOT"   >>$(obj)include/config.h ; \
+			echo "#define CONFIG_TI81XX_PCIE_32"	>>$(obj)include/config.h ; \
+                        echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/ti8148/config.tmp;\
+		elif [ "$(findstring pcie_64,$@)" ] ; then \
+                        echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
+                        echo "#define CONFIG_TI81XX_PCIE_BOOT" >>$(obj)include/config.h ; \
+                        echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+                        echo "#define CONFIG_TI81XX_SPI_BOOT"   >>$(obj)include/config.h ; \
+			echo "#define CONFIG_TI81XX_PCIE_64"    >>$(obj)include/config.h ; \
                         echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/ti8148/config.tmp;\
 		elif [ "$(findstring uart,$@)" ] ; then \
 			echo "#define CONFIG_UART_BOOT"	>>$(obj)include/config.h ; \
