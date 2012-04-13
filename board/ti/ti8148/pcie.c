@@ -295,8 +295,8 @@ int set_bar_size_32(void)
 		write_pcie_lcfg_reg(BAR4, DISABLE);
 	}
 #else
-	DEBUGF("\nconfiguration for 32 bit present,
-			avoiding GPMC pin config \n");
+	DEBUGF("\nconfiguration for 32 bit present,"
+			"avoiding GPMC pin config \n");
 	if (CONFIG_BAR_SIZE(CONFIG_BAR1_32)) {
 		write_pcie_lcfg_reg(BAR1, CONFIG_BAR_SIZE(CONFIG_BAR1_32));
 		bar_enable_mask |= (1 << 1);
