@@ -17,31 +17,51 @@
 #ifndef __CONFIG_TI816X_EVM_H
 #define __CONFIG_TI816X_EVM_H
 
+/* Display CPU info */
+#define CONFIG_DISPLAY_CPUINFO		1
+/* minimal config for 1st stage boot */
+#ifdef CONFIG_TI816X_MIN_CONFIG
+
+# define CONFIG_CMD_MEMORY      /* for mtest */
+# undef	CONFIG_GZIP
+# undef CONFIG_ZLIB
+# undef CONFIG_SYS_HUSH_PARSER
+# define CONFIG_CMD_LOADB       /* loadb                        */
+# define CONFIG_CMD_LOADY       /* loady */
+# define CONFIG_SETUP_PLL
+# define CONFIG_TI816X_CONFIG_DDR
+# define CONFIG_SYS_PROMPT              "TI-MIN#"
+/* set to negative value for no autoboot */
+# define CONFIG_BOOTDELAY               0
+# if defined(CONFIG_SPI_BOOT)           /* Autoload the 2nd stage from SPI */
+#  define CONFIG_SPI                    1
+
+# if defined(CONFIG_TI81XX_PCIE_BOOT)
+# define CONFIG_CMD_SOURCE
+# define CONFIG_EXTRA_ENV_SETTINGS \
+	"verify=yes\0" \
+	"bootcmd=source 0x80400000\0" \
+	""
+/* user can override default size configuration here.
+ * it will only come in effect if TI81xx_NO_PIN_GPMC
+ * is defined in include/asm/arch/pcie.h
+ */
+
+#define CONFIG_BAR1_32  (0x1000000ULL)
+#define CONFIG_BAR2_32  (0x800000ULL)
+#define CONFIG_BAR3_32  (0xfffULL)
+#define CONFIG_BAR4_32  (0x1001ULL)
+#define CONFIG_REG2_64  (0x1000000ULL)
+#define CONFIG_REG4_64  (0x2000000ULL)
+#endif
+#endif
+#else /* 1st stage boot ends */
+
 /* U-Boot default commands */
 #include <config_cmd_default.h>
 
-/* Display CPU info */
-#define CONFIG_DISPLAY_CPUINFO		1
-
-//#define CONFIG_SETUP_1V
-/*
- * Size of malloc() pool
- */
-#define CONFIG_ENV_SIZE			0x2000
-#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (32 * 1024))
-#define CONFIG_SYS_GBL_DATA_SIZE	128	/* size in bytes reserved for
-						   initial data */
-
-/* Only one the following two options (DDR3/DDR2) should be enabled */
-#define CONFIG_TI816X_EVM_DDR3			/* Configure DDR3 in U-Boot */
-//#define CONFIG_TI816X_EVM_DDR2				/* Configure DDR2 in U-Boot */
-#define CONFIG_TI816X_TWO_EMIF		1
-#define CONFIG_MISC_INIT_R		1
+/*#define CONFIG_SETUP_1V*/
 #define CONFIG_TI816X_ASCIIART		1	/* The eye */
-
-#define CONFIG_CMDLINE_TAG		1	/* enable passing of ATAGs  */
-#define CONFIG_SETUP_MEMORY_TAGS	1
-#define CONFIG_INITRD_TAG		1	/* Required for ramdisk support */
 
 #define CONFIG_CMD_ASKENV
 #define CONFIG_VERSION_VARIABLE
@@ -111,16 +131,38 @@
 
 
 #endif
+#endif
 
 /*
  * Miscellaneous configurable options
  */
+#ifndef CONFIG_TI81XX_PCIE_BOOT
 /* allow overwriting serial config and ethaddr */
 #define CONFIG_ENV_OVERWRITE
 /* Undef to save memory */
 #define CONFIG_SYS_LONGHELP
 /* Monitor Command Prompt */
 #define CONFIG_SYS_PROMPT		"TI8168_EVM#"
+#endif
+
+#define CONFIG_CMDLINE_TAG             1       /* enable passing of ATAGs  */
+#define CONFIG_SETUP_MEMORY_TAGS       1
+#define CONFIG_INITRD_TAG              1	/* for ramdisk support */
+#define CONFIG_TI816X_TWO_EMIF		1
+#define CONFIG_MISC_INIT_R		1
+
+/* Only one the following two options (DDR3/DDR2) should be enabled */
+#define CONFIG_TI816X_EVM_DDR3                  /* Configure DDR3 in U-Boot */
+/*#define CONFIG_TI816X_EVM_DDR2*/		/* Configure DDR2 in U-Boot */
+/*
+ * Size of malloc() pool
+ */
+
+#define CONFIG_ENV_SIZE                 0x2000
+#define CONFIG_SYS_MALLOC_LEN           (CONFIG_ENV_SIZE + (32 * 1024))
+#define CONFIG_SYS_GBL_DATA_SIZE        128     /* size in bytes reserved for
+						initial data */
+
 /* Console I/O Buffer Size */
 #define CONFIG_SYS_CBSIZE		512
 /* Print Buffer Size */
@@ -177,6 +219,7 @@
 #define CONFIG_CONS_INDEX		1
 #define CONFIG_SYS_CONSOLE_INFO_QUIET
 
+#ifndef CONFIG_TI81XX_PCIE_BOOT
 #if defined(CONFIG_NO_ETH)
 # undef CONFIG_CMD_NET
 #else
@@ -195,6 +238,7 @@
 # define CONFIG_BOOTP_SUBNETMASK
 # define CONFIG_NET_RETRY_COUNT		10
 # define CONFIG_NET_MULTI
+#endif
 #endif
 
 #if defined(CONFIG_SYS_NO_FLASH)
@@ -241,7 +285,7 @@ extern unsigned int boot_flash_sec;
 extern unsigned int boot_flash_type;
 # endif
 #endif /* NAND support */
-
+#ifndef CONFIG_TI81XX_PCIE_BOOT
 /* SPI support */
 #ifdef CONFIG_SPI
 # define CONFIG_OMAP3_SPI
@@ -250,6 +294,7 @@ extern unsigned int boot_flash_type;
 # define CONFIG_SPI_FLASH_WINBOND
 # define CONFIG_CMD_SF
 # define CONFIG_SF_DEFAULT_SPEED	(75000000)
+#endif
 #endif
 
 /* ENV in SPI */
@@ -332,6 +377,5 @@ extern unsigned int boot_flash_type;
 
 /* Unsupported features */
 #undef CONFIG_USE_IRQ
-
 #endif	  /* ! __CONFIG_TI816X_EVM_H */
 

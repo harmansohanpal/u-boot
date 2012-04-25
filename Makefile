@@ -3322,6 +3322,8 @@ ti8168_evm_config_nor	\
 ti8168_evm_config_spi	\
 ti8168_evm_config_sd	\
 ti8168_evm_min_ocmc	\
+ti8168_evm_min_pcie_32  \
+ti8168_evm_min_pcie_64  \
 ti8168_evm_min_sd:	unconfig
 	@mkdir -p $(obj)include
 	@echo "#define CONFIG_TI81XX"	>>$(obj)include/config.h
@@ -3344,6 +3346,26 @@ ti8168_evm_min_sd:	unconfig
 		echo "#define CONFIG_SD_BOOT"    >>$(obj)include/config.h ; \
 		echo "TI_IMAGE = u-boot.min.sd" >>$(obj)board/ti/ti8168/config.tmp; \
 		echo "Setting up TI8168 SD boot minimal build..." ; \
+	elif [ "$(findstring _min_pcie_32,$@)" ] ; then \
+		echo "TEXT_BASE = 0x80700000" >> $(obj)board/ti/ti8168/config.tmp; \
+                echo "#define CONFIG_TI816X_MIN_CONFIG"    >>$(obj)include/config.h ; \
+                echo "Setting up TI8168 minimal build for 1st stage..." ; \
+		echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
+                echo "#define CONFIG_TI81XX_PCIE_BOOT" >>$(obj)include/config.h ; \
+		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+                echo "#define CONFIG_TI81XX_SPI_BOOT"   >>$(obj)include/config.h ; \
+                echo "#define CONFIG_TI81XX_PCIE_32"    >>$(obj)include/config.h ; \
+                echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/ti8168/config.tmp;\
+	elif [ "$(findstring _min_pcie_64,$@)" ] ; then \
+		echo "TEXT_BASE = 0x80700000" >> $(obj)board/ti/ti8168/config.tmp; \
+                echo "#define CONFIG_TI816X_MIN_CONFIG"    >>$(obj)include/config.h ; \
+                echo "Setting up TI8168 minimal build for 1st stage..." ; \
+                echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
+                echo "#define CONFIG_TI81XX_PCIE_BOOT" >>$(obj)include/config.h ; \
+                echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+                echo "#define CONFIG_TI81XX_SPI_BOOT"   >>$(obj)include/config.h ; \
+                echo "#define CONFIG_TI81XX_PCIE_64"    >>$(obj)include/config.h ; \
+                echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/ti8168/config.tmp;\
 	elif [ "$(findstring _sd,$@)" ] ; then \
 		echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 		echo "#define CONFIG_MMC_ENV"    >>$(obj)include/config.h ; \

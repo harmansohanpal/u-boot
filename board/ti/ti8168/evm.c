@@ -923,6 +923,12 @@ static void ddr_pll_init_ti816x(u32 sil_index, u32 clk_index)
  ********************************************************/
 int misc_init_r (void)
 {
+#if defined(CONFIG_TI81XX_PCIE_BOOT) && defined(CONFIG_TI816X_MIN_CONFIG)
+	extern int pcie_init(void);
+	printf("\nSetting up for pcie boot...\n");
+	pcie_init();
+	return 0;
+#endif
 	#ifdef CONFIG_TI816X_ASCIIART
 	int i = 0, j = 0;
 	char ti816x[23][79] = {
