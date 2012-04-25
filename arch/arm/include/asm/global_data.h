@@ -53,6 +53,9 @@ typedef	struct	global_data {
 	phys_size_t	ram_size;	/* RAM size */
 	unsigned long	reset_status;	/* reset status register at boot */
 #endif
+#if !(defined(CONFIG_SYS_NO_ICACHE) && defined(CONFIG_SYS_NO_DCACHE))
+	unsigned long   tlb_addr;
+#endif
 	void		**jt;		/* jump table */
 } gd_t;
 

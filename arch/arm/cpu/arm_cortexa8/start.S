@@ -177,6 +177,14 @@ clbss_l:
 	add	r0, r0, #4		@ increment clear index pointer
 	bne	clbss_l			@ keep clearing till at end
 
+/*
+ * If I-cache is enabled invalidate it
+ */
+#ifndef CONFIG_SYS_NO_ICACHE
+	mcr	p15, 0, r0, c7, c5, 0	@ invalidate icache
+	mcr	p15, 0, r0, c7, c10, 4	@ DSB
+	mcr	p15, 0, r0, c7, c5, 4	@ ISB
+#endif
 	ldr	pc, _start_armboot	@ jump to C code
 
 _start_armboot: .word start_armboot
@@ -197,6 +205,9 @@ cpu_init_crit:
 	mov	r0, #0			@ set up for MCR
 	mcr	p15, 0, r0, c8, c7, 0	@ invalidate TLBs
 	mcr	p15, 0, r0, c7, c5, 0	@ invalidate icache
+	mcr	p15, 0, r0, c7, c5, 6	@ invalidate BP array
+	mcr	p15, 0, r0, c7, c10, 4	@ DSB
+	mcr	p15, 0, r0, c7, c5, 4	@ ISB
 
 	/*
 	 * disable MMU stuff and caches
@@ -206,6 +217,11 @@ cpu_init_crit:
 	bic	r0, r0, #0x00000007	@ clear bits 2:0 (-CAM)
 	orr	r0, r0, #0x00000002	@ set bit 1 (--A-) Align
 	orr	r0, r0, #0x00000800	@ set bit 12 (Z---) BTB
+#ifdef CONFIG_SYS_NO_ICACHE
+	bic	r0, r0, #0x00001000	@ clear bit 12 (I) I-cache
+#else
+	orr	r0, r0, #0x00001000	@ set bit 12 (I) I-cache
+#endif
 	mcr	p15, 0, r0, c1, c0, 0
 
 	/*

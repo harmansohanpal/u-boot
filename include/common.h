@@ -607,9 +607,11 @@ ulong	video_setmem (ulong);
 void	flush_cache   (unsigned long, unsigned long);
 void	flush_dcache_range(unsigned long start, unsigned long stop);
 void	invalidate_dcache_range(unsigned long start, unsigned long stop);
+void	flush_dcache_all(void);
+void	invalidate_icache_all(void);
+void	invalidate_dcache_all(void);
 
-
-/* arch/$(ARCH)/lib/ticks.S */
+/* arch/$(arch)/lib/ticks.S */
 unsigned long long get_ticks(void);
 void	wait_ticks    (unsigned long);
 

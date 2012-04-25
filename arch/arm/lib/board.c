@@ -272,6 +272,7 @@ void start_armboot (void)
 {
 	init_fnc_t **init_fnc_ptr;
 	char *s;
+	unsigned long addr;
 #if defined(CONFIG_VFD) || defined(CONFIG_LCD)
 	unsigned long addr;
 #endif
@@ -303,6 +304,16 @@ void start_armboot (void)
 	/* configure available FLASH banks */
 	display_flash_config (flash_init ());
 #endif /* CONFIG_SYS_NO_FLASH */
+
+#if !(defined(CONFIG_SYS_NO_ICACHE) && defined(CONFIG_SYS_NO_DCACHE))
+	addr = PHYS_DRAM_1 + PHYS_DRAM_1_SIZE;
+	/* reserve TLB table */
+	addr -= (4096 * 4);
+
+	/* round down to next 64 kB limit */
+	addr &= ~(0x10000 - 1);
+	gd->tlb_addr = addr;
+#endif
 
 #ifdef CONFIG_VFD
 #	ifndef PAGE_SIZE
