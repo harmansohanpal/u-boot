@@ -102,7 +102,7 @@ int is_ddr3(void)
 	 * To use PG2.1 and DDR2 enable #define CONFIG_TI814X_EVM_DDR2
 	 * in "include/configs/ti8148_evm.h"
 	 */
-	if (PG2_1 == get_cpu_rev())
+	if (PG2_1 <= get_cpu_rev())
 		#ifdef CONFIG_TI814X_EVM_DDR2
 			return 0;
 		#else
@@ -157,7 +157,7 @@ int board_init(void)
 	/* setup RMII_REFCLK to be sourced from audio_pll */
 	__raw_writel(0x4, RMII_REFCLK_SRC);
 
-	if (PG2_1 == get_cpu_rev()) {
+	if (PG2_1 <= get_cpu_rev()) {
 		/*program GMII_SEL register for RGMII mode */
 		__raw_writel(0x30a,GMII_SEL);
 	}

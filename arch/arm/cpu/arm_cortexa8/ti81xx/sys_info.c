@@ -52,6 +52,8 @@ u32 get_cpu_rev(void)
 	 */
 	if (0x3 == rev || 0xc == rev)
 		return PG2_1;
+	else if (0x4 == rev)
+		return PG3_0;
 	else
 		return PG1_0;
 #endif
@@ -205,7 +207,8 @@ int print_cpuinfo (void)
 	}
 
 	if (rev < PG_END) {
-		char cpu_rev_str[5][4] = {"1.0", "1.1", "2.0", "2.1"}, *cpu_rev;
+		char cpu_rev_str[6][4] = {"1.0", "1.1", "2.0", "2.1", "3.0"};
+		char *cpu_rev;
 
 		cpu_rev = cpu_rev_str[rev];
 		printf("%s-%s rev %s\n",

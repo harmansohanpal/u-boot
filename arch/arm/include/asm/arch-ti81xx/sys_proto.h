@@ -35,6 +35,7 @@ enum cpu_rev {
 	PG1_1 = 1,
 	PG2_0 = 2,
 	PG2_1 = 3,
+	PG3_0 = 4,
 	PG_END
 };
 
