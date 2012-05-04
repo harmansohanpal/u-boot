@@ -1018,6 +1018,7 @@ static struct cpsw_platform_data cpsw_data = {
 	.control		= cpsw_control,
 	.phy_init		= phy_init,
 	.host_port_num		= 0,
+	.bd_ram_ofs		= 0x2000,
 };
 
 extern void cpsw_eth_set_mac_addr (const u_int8_t *addr);

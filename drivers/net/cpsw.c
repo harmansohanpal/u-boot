@@ -206,7 +206,7 @@ struct cpsw_priv {
 	struct cpsw_host_regs		*host_port_regs;
 	void				*ale_regs;
 
-	struct cpdma_desc		descs[NUM_DESCS];
+	struct cpdma_desc		*descs;
 	struct cpdma_desc		*desc_free;
 	struct cpdma_chan		rx_chan, tx_chan;
 
@@ -763,7 +763,7 @@ static int cpsw_init(struct eth_device *dev, bd_t *bis)
 		desc_write(&priv->descs[i], hw_next,
 			   (i == (NUM_DESCS - 1)) ? 0 : &priv->descs[i+1]);
 	}
-	priv->desc_free = &priv->descs[0];
+	priv->desc_free = priv->descs;
 
 	/* initialize channels */
 	memset(&priv->rx_chan, 0, sizeof(struct cpdma_chan));
@@ -883,6 +883,7 @@ int cpsw_register(struct cpsw_platform_data *data)
 	priv->dma_regs		= regs + data->cpdma_reg_ofs;
 	priv->dma_sram_regs	= regs + data->cpdma_sram_ofs;
 	priv->ale_regs		= regs + data->ale_reg_ofs;
+	priv->descs		= regs + data->bd_ram_ofs;
 
 	for_each_slave(priv, cpsw_slave_setup, idx, priv);
 
