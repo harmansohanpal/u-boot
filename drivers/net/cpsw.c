@@ -820,6 +820,7 @@ static int cpsw_send(struct eth_device *dev, volatile void *packet, int length)
 	while (cpdma_process(priv, &priv->tx_chan, &buffer, &len) >= 0)
 		;
 
+	flush_dcache_range(buffer, buffer + PKTSIZE_ALIGN);
 	return cpdma_submit(priv, &priv->tx_chan, packet, length);
 }
 
@@ -830,6 +831,7 @@ static int cpsw_recv(struct eth_device *dev)
 	int len;
 
 	while (cpdma_process(priv, &priv->rx_chan, &buffer, &len) >= 0) {
+		invalidate_dcache_range(buffer, buffer + PKTSIZE_ALIGN);
 		NetReceive(buffer, len);
 		cpdma_submit(priv, &priv->rx_chan, buffer, PKTSIZE);
 	}

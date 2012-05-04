@@ -67,7 +67,7 @@
 # define PKTBUFSRX	4
 #endif
 
-#define PKTALIGN	32
+#define PKTALIGN	64
 
 typedef ulong		IPaddr_t;
 
