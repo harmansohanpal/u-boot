@@ -220,7 +220,9 @@ void pcie_pll_setup(void)
 	delay_loop(50); /*Wait 50 us*/
 	__raw_writel(0x481406E8, 0x0000609C); /*cfgpll4//SERDES CFG4*/
 	delay_loop(50); /* Wait 50 us*/
-	__raw_writel(0x48141318, 0x00000E7B); /*pcie_serdes_cfg_misc*/
+
+	if (get_cpu_rev() < PG2_0)
+		__raw_writel(0x48141318, 0x00000E7B); /*pcie_serdes_cfg_misc*/
 
 	/*delay_loop(1); // Wait 50 us*/
 	delay_loop(50); /*Wait 50 us*/
