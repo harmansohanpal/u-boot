@@ -830,7 +830,8 @@ static int cpsw_send(struct eth_device *dev, volatile void *packet, int length)
 	while (cpdma_process(priv, &priv->tx_chan, &buffer, &len) >= 0)
 		;
 
-	flush_dcache_range(buffer, buffer + PKTSIZE_ALIGN);
+	flush_dcache_range((unsigned long)packet,
+			   (unsigned long)(packet + PKTSIZE_ALIGN));
 	return cpdma_submit(priv, &priv->tx_chan, packet, length);
 }
 
