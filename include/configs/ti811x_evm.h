@@ -191,6 +191,16 @@
 #define CONFIG_CONS_INDEX		1
 #define CONFIG_SYS_CONSOLE_INFO_QUIET
 
+/*
+ * TI811X EVM Ethernet and NOR can not be used at
+ * same time due to the Muxing of GPMC addr lines
+ * and EMAC_0/1. Here we are removing ETH support
+ * for enabling NOR boot.
+ */
+#if defined(CONFIG_NOR)
+#define CONFIG_NO_ETH
+#endif
+
 #if defined(CONFIG_NO_ETH)
 # undef CONFIG_CMD_NET
 #else

@@ -52,9 +52,17 @@ _TEXT_BASE:
 #define GPIO_NO		22
 
 #define GPMC_A12_MUX_VAL	MODE(5)
+
+#ifdef CONFIG_TI811X
+#define GPMC_A13_MUX_VAL	(MODE(5) | PULL_UP_EN)
+#define GPMC_A14_MUX_VAL	(MODE(5) | PULL_UP_EN)
+#define GPMC_A15_MUX_VAL	MODE(5)
+#else
 #define GPMC_A13_MUX_VAL	(MODE(2) | PULL_UP_EN)
 #define GPMC_A14_MUX_VAL	(MODE(2) | PULL_UP_EN)
 #define GPMC_A15_MUX_VAL	MODE(2)
+#endif
+
 #define GPMC_A16_MUX_VAL	MODE(1)
 #define GPMC_A17_MUX_VAL	MODE(1)
 #define GPMC_A18_MUX_VAL	MODE(1)
