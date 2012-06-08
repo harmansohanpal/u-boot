@@ -383,6 +383,7 @@ void wait_for_host(void)
 		__asm__("dmb");
 	}
 
+	__raw_writel(bootflag, 0x0);
 	printf("\t---> boot command received, proceed to auto boot...\n");
 }
 

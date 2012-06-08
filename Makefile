@@ -3408,6 +3408,8 @@ ti813x_evm_min_uart	\
 ti813x_evm_min_spi	\
 ti813x_evm_min_nand	\
 ti813x_evm_min_eth	\
+ti813x_evm_min_pcie_32	\
+ti813x_evm_min_pcie_64  \
 ti813x_evm_min_sd:	unconfig
 	@mkdir -p $(obj)include
 	@echo "#define CONFIG_TI81XX"	>>$(obj)include/config.h
@@ -3432,6 +3434,17 @@ ti813x_evm_min_sd:	unconfig
 			echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \
 			echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
 			echo "TEXT_BASE = 0x40310000" >>$(obj)board/ti/ti813x/config.tmp; \
+		elif [ "$(findstring pcie,$@)" ] ; then \
+			echo "#define CONFIG_SPI_BOOT" >>$(obj)include/config.h;\
+                        echo "#define CONFIG_TI81XX_PCIE_BOOT" >>$(obj)include/config.h ; \
+                        echo "#define CONFIG_SYS_NO_FLASH"    >>$(obj)include/config.h ; \
+			echo "#define CONFIG_TI81XX_SPI_BOOT"   >>$(obj)include/config.h ; \
+			if [ "$(findstring pcie_64,$@)" ] ; then \
+				echo "#define CONFIG_TI81XX_PCIE_64"    >>$(obj)include/config.h ; \
+			else \
+				echo "#define CONFIG_TI81XX_PCIE_32"	>>$(obj)include/config.h ; \
+			fi; \
+                        echo "TI_IMAGE = u-boot.min" >> $(obj)board/ti/ti813x/config.tmp;\
 		elif [ "$(findstring uart,$@)" ] ; then \
 			echo "#define CONFIG_UART_BOOT"	>>$(obj)include/config.h ; \
 			echo "#define CONFIG_NO_ETH"    >>$(obj)include/config.h ; \

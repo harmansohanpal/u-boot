@@ -216,7 +216,6 @@ int dram_init(void)
 int misc_init_r (void)
 {
 #if defined(CONFIG_TI81XX_PCIE_BOOT) && defined(CONFIG_TI814X_MIN_CONFIG)
-	extern int pcie_init(void);
 	printf("\nSetting up for pcie boot...\n");
 	pcie_init();
 	return 0;

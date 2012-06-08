@@ -95,8 +95,10 @@
 #endif
 
 #define TI81XX_VENDORID         ((unsigned int)0x104C)
-#define TI8148_DEVICEID         ((unsigned int)0xB801)
 #define TI8168_DEVICEID         ((unsigned int)0xB800)
+#define TI8148_DEVICEID         ((unsigned int)0xB801)
+#define TI813X_DEVICEID         ((unsigned int)0xB802)
+
 #define MAGIC_NO                0x10101010
 
 #define TI81XX_PCIE_BASE                0x51000000
@@ -131,6 +133,8 @@
 			+ offset, v, mask)
 #define DEBUG_LTSSM
 
+/* Entry function for PCIe setup - defined in common pcie.c */
+int pcie_init(void);
 
 /* these register at offset 0x1000 from PCIE_BASE */
 #define VENDOR_DEVICE_ID                0x0

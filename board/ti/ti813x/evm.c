@@ -183,11 +183,16 @@ int dram_init(void)
 
 int misc_init_r(void)
 {
-	#ifdef CONFIG_TI813X_MIN_CONFIG
+#ifdef CONFIG_TI813X_MIN_CONFIG
+#ifdef CONFIG_TI81XX_PCIE_BOOT
+	printf("\nSetting up for pcie boot...\n");
+	pcie_init();
+	return 0;
+#endif
 	printf("The 2nd stage U-Boot will now be auto-loaded\n");
 	printf("Please do not interrupt the countdown till "
 		"TI813X_EVM prompt if 2nd stage is already flashed\n");
-	#endif
+#endif
 
 #ifdef CONFIG_TI813X_ASCIIART
 	int i = 0, j = 0;

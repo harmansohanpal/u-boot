@@ -16,6 +16,8 @@
 
 #include <common.h>
 #include <exports.h>
+#include <asm/arch-ti81xx/cpu.h>
+#include <asm/arch-ti81xx/sys_proto.h>
 #include <asm/arch/pcie.h>
 
 /*
@@ -203,7 +205,10 @@ void get_size_boot_mode_pin_64(int *bar_enable_mask,
 
 inline unsigned int get_ti81xx_device_id(void)
 {
-	return TI8148_DEVICEID;
+	if (get_cpu_type() == TI813X)
+		return TI813X_DEVICEID;
+	else
+		return TI8148_DEVICEID;
 }
 
 void pcie_pll_setup(void)
@@ -221,7 +226,7 @@ void pcie_pll_setup(void)
 	__raw_writel(0x481406E8, 0x0000609C); /*cfgpll4//SERDES CFG4*/
 	delay_loop(50); /* Wait 50 us*/
 
-	if (get_cpu_rev() < PG2_0)
+	if ((get_cpu_type == TI8148) && (get_cpu_rev() < PG2_0))
 		__raw_writel(0x48141318, 0x00000E7B); /*pcie_serdes_cfg_misc*/
 
 	/*delay_loop(1); // Wait 50 us*/

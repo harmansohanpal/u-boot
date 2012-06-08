@@ -42,10 +42,33 @@
 # define CONFIG_BOOTDELAY               0
 # if defined(CONFIG_SPI_BOOT)           /* Autoload the 2nd stage from SPI */
 #  define CONFIG_SPI                    1
+# if defined(CONFIG_TI81XX_PCIE_BOOT)
+# define CONFIG_CMDLINE_TAG		1	/* enable passing of ATAGs  */
+# define CONFIG_SETUP_MEMORY_TAGS	1
+# define CONFIG_INITRD_TAG		1	/* for ramdisk support */
+# define CONFIG_CMD_SOURCE
+# define CONFIG_EXTRA_ENV_SETTINGS \
+	"verify=yes\0" \
+	"bootcmd=source 0x80400000\0" \
+	""
+/* user can override default size configuration here.
+ * it will only come in effect if TI81xx_NO_PIN_GPMC
+ * is defined in include/asm/arch/pcie.h
+ */
+#define CONFIG_BAR1_32  (0x1000000ULL)
+#define CONFIG_BAR2_32  (0x800000ULL)
+#define CONFIG_BAR3_32  (0xfffULL)
+#define CONFIG_BAR4_32  (0x1001ULL)
+#define CONFIG_REG2_64  (0x1000000ULL)
+#define CONFIG_REG4_64  (0x2000000ULL)
+
+
+# else
 #  define CONFIG_EXTRA_ENV_SETTINGS \
         "verify=yes\0" \
         "bootcmd=sf probe 0; sf read 0x81000000 0x20000 0x40000; go 0x81000000\0" \
 
+# endif
 # elif defined(CONFIG_NAND_BOOT)                /* Autoload the 2nd stage from NAND */
 #  define CONFIG_NAND                   1
 #  define CONFIG_EXTRA_ENV_SETTINGS \
@@ -67,7 +90,6 @@
 #  define CONFIG_EXTRA_ENV_SETTINGS \
 	"verify=yes\0" \
 	"bootcmd=setenv autoload no;dhcp; tftp 0x81000000 u-boot.bin; go 0x81000000\0"
-
 # endif
 
 #else /*2nd stage configs*/
