@@ -46,7 +46,7 @@ u32 get_cpu_rev(void)
 	id = readl(DEVICE_ID);
 	rev = (id >> 28) & 0xF;
 
-#ifdef CONFIG_TI814X
+#if defined(CONFIG_TI814X) && !defined(CONFIG_TI811X) && !defined(CONFIG_TI813X)
 	/* PG2.1 devices should read 0x3 as chip rev
 	 * Some PG2.1 devices have 0xc as chip rev
 	 */
