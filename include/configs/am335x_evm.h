@@ -165,6 +165,42 @@
 #define CONFIG_SKIP_LOWLEVEL_INIT
 #endif
 
+
+/*
+ * USB configuration
+ * Enables CONFIG_MUSB_HCD for Host functionalities MSC for USB1
+ * Enables CONFIG_MUSB_UDC for Device functionalities for USB0
+ * Selected according to the USB module selected from boards.cfg.
+ */
+
+#define CONFIG_USB_AM335X
+#ifdef CONFIG_AM335X_USB0
+#define CONFIG_MUSB_UDC
+#elif defined(CONFIG_AM335X_USB1)
+#define CONFIG_MUSB_HCD
+#endif
+
+#ifdef CONFIG_MUSB_HCD
+#define CONFIG_CMD_USB
+#define CONFIG_USB_STORAGE
+#define CONGIG_CMD_STORAGE
+#define CONFIG_CMD_FAT
+#endif /* CONFIG_MUSB_HCD */
+
+#ifdef CONFIG_MUSB_UDC
+/* USB device configuration */
+#ifndef CONFIG_SPL_BUILD
+#define CONFIG_USB_DEVICE
+#define CONFIG_USB_TTY
+#define CONFIG_SYS_CONSOLE_IS_IN_ENV
+#endif	/* CONFIG_SPL_BUILD */
+/* Change these to suit your needs */
+#define CONFIG_USBD_VENDORID            0x0451
+#define CONFIG_USBD_PRODUCTID           0x5678
+#define CONFIG_USBD_MANUFACTURER        "Texas Instruments"
+#define CONFIG_USBD_PRODUCT_NAME        "AM335xEVM"
+#endif /* CONFIG_MUSB_UDC */
+
 /* Unsupported features */
 #undef CONFIG_USE_IRQ
 
