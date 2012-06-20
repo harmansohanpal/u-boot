@@ -105,8 +105,5 @@ extern unsigned char new[];
 #define RH_REQ_ERR		   -1
 #define RH_NACK			   0x00
 
-/* extern functions */
-extern int musb_platform_init(void);
-extern void musb_platform_deinit(void);
 
 #endif	/* __MUSB_HCD_H__ */

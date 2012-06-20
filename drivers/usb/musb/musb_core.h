@@ -360,6 +360,8 @@ extern void musb_start(void);
 extern void musb_configure_ep(const struct musb_epinfo *epinfo, u8 cnt);
 extern void write_fifo(u8 ep, u32 length, void *fifo_data);
 extern void read_fifo(u8 ep, u32 length, void *fifo_data);
+extern int musb_platform_init(void);
+extern void musb_platform_deinit(void);
 
 #if defined(CONFIG_USB_BLACKFIN)
 /* Every USB register is accessed as a 16-bit even if the value itself
