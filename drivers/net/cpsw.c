@@ -804,6 +804,16 @@ static int cpsw_init(struct eth_device *dev, bd_t *bis)
 static void cpsw_halt(struct eth_device *dev)
 {
 	struct cpsw_priv	*priv = dev->priv;
+
+	__raw_writel(0, priv->dma_regs + CPDMA_TXCONTROL);
+	__raw_writel(0, priv->dma_regs + CPDMA_RXCONTROL);
+
+	/* soft reset the controller and initialize priv */
+	soft_reset(&priv->regs->soft_reset);
+
+	/* clear dma state */
+	soft_reset(priv->dma_regs + CPDMA_SOFTRESET);
+
 	priv->data.control(0);
 }
 
