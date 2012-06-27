@@ -45,6 +45,7 @@
 #define CONFIG_MMC
 #define CONFIG_NAND
 #define CONFIG_SPI
+#define CONFIG_USE_NAND
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"bootfile=uImage\0" \
@@ -126,6 +127,7 @@
 		"tftp ${kloadaddr} ${bootfile}; " \
 		"run net_args; " \
 		"bootm ${kloadaddr}\0" \
+	"mtdparts=default\0"
 
 #define CONFIG_BOOTCOMMAND \
 	"if mmc rescan; then " \
@@ -412,6 +414,40 @@
 #define CONFIG_CMD_FAT
 #define CONFIG_CMD_EXT2
 #endif
+
+/* USB Support */
+#define CONFIG_USB_AM335X
+#ifdef CONFIG_MUSB_HCD         /* include support for usb host */
+#define CONFIG_CMD_USB         /* include support for usb cmd */
+#define CONFIG_USB_STORAGE     /* MSC class support */
+#define CONFIG_CMD_STORAGE     /* inclue support for usb-storage cmd */
+#define CONFIG_CMD_FAT         /* inclue support for FAT/storage */
+#define CONFIG_DOS_PARTITION   /* inclue support for FAT/storage */
+#endif /* CONFIG_MUSB_HCD */
+
+#define CONFIG_MUSB_UDC   /*Include Support for USB device */
+#ifdef CONFIG_MUSB_UDC
+#define CONFIG_USB_DEVICE
+#define CONFIG_USBD_MANUFACTURER       "Texas Instruments"
+#define CONFIG_USBD_PRODUCT_NAME       "AM335X"
+#define CONFIG_USBD_DFU /* ADD DFU Spport */
+#ifdef CONFIG_USBD_DFU
+#define CONFIG_CMD_MTDPARTS
+#define CONFIG_MTD_DEVICE
+#define MTDIDS_DEFAULT          "nand0=nand.0"
+#define NUMBER_OF_PARTITIONS		11
+#define MTDPARTS_DEFAULT                "mtdparts=nand.0:128k(spl),"\
+					"128k(spl.backup1),"\
+					"128k(spl.backup2),128k(spl.backup3),"\
+					"1920k(u-boot),128k(ubootenv),"\
+					"5120k(kernel),-(filesystem)"
+#define CONFIG_CMD_DFU /* U-boot Commands for DFU mode */
+#define CONFIG_USBD_DFU_XFER_SIZE 4096
+#define CONFIG_USBD_DFU_INTERFACE 2
+#define CONFIG_USBD_VENDORID	0x0525
+#define CONFIG_USBD_PRODUCTID_DFU	0xa4a7
+#endif /* CONFIG_USBD_DFU */
+#endif /* CONFIG_MUSB_UDC */
 
 /* Unsupported features */
 #undef CONFIG_USE_IRQ

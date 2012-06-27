@@ -31,6 +31,9 @@
 
 #include <malloc.h>
 #include <usbdevice.h>
+#ifdef CONFIG_USBD_DFU
+#include <usb/usb_dfu.h>
+#endif
 
 #define MAX_INTERFACES 2
 
@@ -199,6 +202,23 @@ struct usb_alternate_instance *usbd_device_alternate_instance (struct usb_device
 }
 
 
+/* *
+ * usbd_device_qualifier_descriptor
+ * @device: which device
+ * @configuration: index to configuration, 0 - N-1
+ * @port: which port
+ *
+ * Return the specified configuration descriptor for the specified device.
+ */
+struct usb_device_qualifier_descriptor *usbd_device_qualifier_descriptor
+				(struct usb_device_instance *device, int port)
+{
+#ifdef CONFIG_USBD_DFU
+	if (device->dfu_state != DFU_STATE_appIDLE)
+		return device->dfu_dev_qual_desc;
+#endif
+	return NULL;
+}
 /* *
  * usbd_device_device_descriptor
  * @device: which device

@@ -115,6 +115,14 @@ static struct urb *ep0_urb;
 struct usb_endpoint_instance *ep0_endpoint;
 static struct usb_device_instance *udc_device;
 static int enabled;
+static int rx_on;
+
+#ifdef CONFIG_USBD_DFU
+void dealloc_urb(void)
+{
+	usbd_dealloc_urb(ep0_urb);
+}
+#endif
 
 #ifdef MUSB_DEBUG
 static void musb_db_regs(void)
@@ -184,7 +192,11 @@ static void musb_peri_softconnect(void)
 	 * The usb device interface is usb 1.1
 	 * Disable 2.0 high speed by clearring the hsenable bit.
 	 */
+#ifdef CONFIG_USBD_DFU
+	power |= MUSB_POWER_HSENAB;
+#else
 	power &= ~MUSB_POWER_HSENAB;
+#endif
 	writeb(power, &musbr->power);
 
 	/* Check if device is in b-peripheral mode */
@@ -194,6 +206,10 @@ static void musb_peri_softconnect(void)
 		serial_printf("ERROR : Unsupport USB mode\n");
 		serial_printf("Check that mini-B USB cable is attached "
 			      "to the device\n");
+#ifdef CONFIG_USBD_DFU
+		dfu_mode_end();
+		printf("Sorry! This module does not support device mode\n");
+#endif
 	}
 
 	if (debug_setup && (debug_level > 1))
@@ -356,7 +372,10 @@ static void musb_peri_ep0_rx_data_request(void)
 
 	ep0_endpoint->rcv_urb = ep0_urb;
 	ep0_urb->actual_length = 0;
+	ep0_urb->buffer = (u8 *) ep0_urb->buffer_data;
+	ep0_urb->buffer_length = sizeof(ep0_urb->buffer_data);
 	SET_EP0_STATE(RX);
+	rx_on = 1;
 }
 
 static void musb_peri_ep0_tx_data_request(int err)
@@ -379,6 +398,7 @@ static void musb_peri_ep0_idle(void)
 	int err;
 	u16 csr0;
 
+#ifndef CONFIG_USBD_DFU /* No need to verify address in DFU mode */
 	/*
 	 * Verify addresses
 	 * A lot of confusion can be caused if the address
@@ -403,6 +423,7 @@ static void musb_peri_ep0_idle(void)
 			hang();
 		}
 	}
+#endif
 
 	csr0 = readw(&musbr->ep[0].ep0.csr0);
 
@@ -541,6 +562,14 @@ static void musb_peri_ep0_rx(void)
 		if (debug_level > 0)
 			serial_printf("ERROR : %s with nothing to do\n",
 				      __PRETTY_FUNCTION__);
+	}
+	if (ep0_urb->device_request.wLength == ep0_urb->actual_length) {
+		musb_peri_ep0_last();
+		SET_EP0_STATE(IDLE);
+		ep0_recv_setup(ep0_urb);
+		if (rx_on)
+			rx_on = 0;
+		return;
 	}
 }
 
@@ -714,7 +743,7 @@ static void musb_peri_rx(u16 intr)
 static void musb_peri_tx(u16 intr)
 {
 	/* Check for EP0 */
-	if (0x01 & intr)
+	if ((0x01 & intr) && (rx_on == 0))
 		musb_peri_ep0_tx();
 
 	/*
@@ -770,8 +799,8 @@ void udc_irq(void)
 		}
 
 		if (MUSB_INTR_SUSPEND & intrusb) {
-			usbd_device_event_irq(udc_device,
-					      DEVICE_BUS_INACTIVE, 0);
+			usbd_device_event_irq(udc_device, DEVICE_RESET, 0);
+			musb_peri_reset();
 		}
 
 		if (ep0_state != SET_ADDRESS) {
@@ -937,12 +966,20 @@ void udc_startup_events(struct usb_device_instance *device)
 	udc_enable(device);
 }
 
+#ifdef CONFIG_USBD_DFU
+int udc_init(int i)
+#else
 int udc_init(void)
+#endif
 {
 	int ret;
 	int ep_loop;
 
+#ifdef CONFIG_USBD_DFU
+	ret = musb_platform_init(i);
+#else
 	ret = musb_platform_init();
+#endif
 	if (ret < 0)
 		goto end;
 

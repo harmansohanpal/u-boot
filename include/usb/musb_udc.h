@@ -34,7 +34,31 @@ void udc_disconnect(void);
 void udc_enable(struct usb_device_instance *device);
 void udc_disable(void);
 void udc_startup_events(struct usb_device_instance *device);
+#ifdef CONFIG_USB_AM335X
+#ifdef CONFIG_USBD_DFU
+int musb_platform_init(int i);
+int drv_usbdfu_init(int i);
+void dfu_usbdfu_init(void);
+void musb_platform_deinit(int i);
+int udc_init(int);
+void usbd_dealloc_urb(struct urb *);
+void dealloc_urb(void);
+void dfu_mode_end(void);
+#else
+int musb_platform_init(void);
+static void musb_platform_deinit(void);
 int udc_init(void);
+#endif
+#endif
+
+#ifdef CONFIG_USBD_DFU
+#define EP0_MAX_PACKET_SIZE	64 /* EP0_FIFO_SIZE */
+#if defined(CONFIG_CMD_MTDPARTS)
+extern struct list_head devices;
+extern int errno;
+
+#endif
+#endif
 
 /* usbtty */
 #ifdef CONFIG_USB_TTY
