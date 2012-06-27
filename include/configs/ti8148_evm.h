@@ -120,6 +120,7 @@
 /* By default, 2nd stage will have MMC, NAND, SPI and I2C support */
 # define CONFIG_MMC			1
 # define CONFIG_NAND			1
+# define CONFIG_USE_NAND
 # define CONFIG_SPI			1
 # define CONFIG_I2C			1
 # define CONFIG_EXTRA_ENV_SETTINGS \
@@ -131,6 +132,7 @@
 	"loadbootscript=fatload mmc 0 ${script_addr} boot.scr\0" \
 	"bootscript= echo Running bootscript from MMC/SD to set the ENV...; " \
 		"source ${script_addr}\0" \
+	"mtdparts=default\0" \
 
 # define CONFIG_BOOTCOMMAND \
 	"if mmc rescan 0; then " \
@@ -384,6 +386,42 @@ extern unsigned int boot_flash_type;
 #endif
 
 /* Unsupported features */
+/* USB Support */
+#define CONFIG_USB_TI81XX
+#ifdef CONFIG_MUSB_HCD         /* include support for usb host */
+#define CONFIG_CMD_USB         /* include support for usb cmd */
+#define CONFIG_USB_STORAGE     /* MSC class support */
+#define CONFIG_CMD_STORAGE     /* inclue support for usb-storage cmd */
+#define CONFIG_CMD_FAT         /* inclue support for FAT/storage */
+#define CONFIG_DOS_PARTITION   /* inclue support for FAT/storage */
+
+#endif /* CONFIG_MUSB_HCD */
+#define CONFIG_MUSB_UDC   /*Include Support for USB device */
+#ifdef CONFIG_MUSB_UDC
+#define CONFIG_USB_DEVICE
+#define CONFIG_USBD_MANUFACTURER       "Texas Instruments"
+#define CONFIG_USBD_PRODUCT_NAME       "TI8148"
+#define CONFIG_USBD_DFU /* ADD DFU Spport */
+#ifdef CONFIG_USBD_DFU
+#define CONFIG_CMD_MTDPARTS
+#define CONFIG_MTD_DEVICE
+#define MTDIDS_DEFAULT          "nand0=nand.0"
+#define NUMBER_OF_PARTITIONS           11
+#define MTDPARTS_DEFAULT                "mtdparts=nand.0:128k(spl),"\
+					"128k(spl.backup1),"\
+					"128k(spl.backup2),128k(spl.backup3),"\
+					"1920k(u-boot),128k(ubootenv),"\
+					"5120k(kernel),-(filesystem)"
+#define CONFIG_CMD_DFU /* Commands for DFU mode in u-boot*/
+#define CONFIG_USBD_DFU_XFER_SIZE 4096
+#define CONFIG_USBD_DFU_INTERFACE 2
+#define CONFIG_USBD_VENDORID   0x0525
+#define CONFIG_USBD_PRODUCTID_DFU      0xa4a7
+#endif /* CONFIG_USBD_DFU */
+#endif /* CONFIG_MUSB_UDC */
+
+
+
 #undef CONFIG_USE_IRQ
 
 #endif	  /* ! __CONFIG_TI8148_EVM_H */
