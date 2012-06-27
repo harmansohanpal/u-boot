@@ -33,6 +33,7 @@
 
 #include <common.h>
 #include "usbdescriptors.h"
+#include <usb/usb_dfu_descriptors.h>
 
 
 #define MAX_URBS_QUEUED 5
@@ -209,6 +210,7 @@ struct usb_bus_instance;
 #define USB_DT_STRING			0x03
 #define USB_DT_INTERFACE		0x04
 #define USB_DT_ENDPOINT			0x05
+#define USB_DT_QUALIFIER		0x06
 
 #define USB_DT_HID			(USB_TYPE_CLASS | 0x01)
 #define USB_DT_REPORT			(USB_TYPE_CLASS | 0x02)
@@ -292,6 +294,7 @@ struct usb_bus_instance;
  */
 
 #define USB_BCD_VERSION			0x0110
+#define USB_BCD_VERSION200		0x0200
 
 
 /*
@@ -467,7 +470,11 @@ typedef struct urb_link {
  * function driver to inform it that data has arrived.
  */
 
+#ifdef CONFIG_USBD_DFU
+#define URB_BUF_SIZE (CONFIG_USBD_DFU_XFER_SIZE)
+#else
 #define URB_BUF_SIZE 128 /* in linux we'd malloc this, but in u-boot we prefer static data */
+#endif
 struct urb {
 
 	struct usb_endpoint_instance *endpoint;
@@ -595,6 +602,12 @@ struct usb_device_instance {
 	unsigned long usbd_rxtx_timestamp;
 	unsigned long usbd_last_rxtx_timestamp;
 
+#ifdef CONFIG_USBD_DFU
+	struct usb_device_qualifier_descriptor *dfu_dev_qual_desc;
+	struct _dfu_desc *dfu_cfg_desc;
+	enum dfu_state dfu_state;
+	u_int8_t dfu_status;
+#endif
 };
 
 /* Bus Interface configuration structure
@@ -623,6 +636,8 @@ extern char *usbd_device_states[];
 extern char *usbd_device_status[];
 extern char *usbd_device_requests[];
 extern char *usbd_device_descriptors[];
+
+extern struct usb_string_descriptor **usb_strings;
 
 void urb_link_init (urb_link * ul);
 void urb_detach (struct urb *urb);
@@ -658,6 +673,8 @@ struct usb_endpoint_descriptor *usbd_device_endpoint_descriptor (struct usb_devi
 int				usbd_device_endpoint_transfersize (struct usb_device_instance *, int, int, int, int, int);
 struct usb_string_descriptor *usbd_get_string (u8);
 struct usb_device_descriptor *usbd_device_device_descriptor (struct usb_device_instance *, int);
+struct usb_device_qualifier_descriptor *usbd_device_qualifier_descriptor
+					(struct usb_device_instance *, int);
 
 int usbd_endpoint_halted (struct usb_device_instance *device, int endpoint);
 void usbd_rcv_complete(struct usb_endpoint_instance *endpoint, int len, int urb_bad);
